@@ -1,98 +1,159 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { jobApi, talentApi } from "../../services/api";
-import { MdLocationOn, MdKeyboardArrowLeft } from "react-icons/md";
+import { useParams, useNavigate } from "react-router-dom";
+import { jobApi, talentApi, applicationApi } from "../../services/api";
+import { MdLocationOn, MdKeyboardArrowLeft, MdClose, MdCheck } from "react-icons/md";
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import { FiEdit2, FiTrash2, FiAlertCircle, FiDownload } from "react-icons/fi";
 import { formatDistanceToNow } from 'date-fns';
+import toast, { Toaster } from 'react-hot-toast';
+
+const SkeletonLoader = () => (
+    <div className="max-w-5xl mx-auto animate-pulse">
+        <div className="flex flex-col md:flex-row justify-between mb-8 gap-4">
+            <div className="h-16 bg-gray-200 rounded-2xl flex-1"></div>
+            <div className="h-16 bg-gray-200 rounded-2xl w-full md:w-40"></div>
+        </div>
+        <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border border-gray-100 mb-10">
+            <div className="flex flex-col md:flex-row gap-6 mb-8">
+                <div className="w-24 h-24 bg-gray-200 rounded-full"></div>
+                <div className="flex-1 space-y-4">
+                    <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            </div>
+        </div>
+        <div className="space-y-6">
+            {[1, 2].map(i => (
+                <div key={i} className="h-44 bg-white border border-gray-100 rounded-[2rem]"></div>
+            ))}
+        </div>
+    </div>
+);
 
 const JobDetailPageCompany = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [job, setJob] = useState(null);
     const [allTalents, setAllTalents] = useState([]);
+    const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeDetailTab, setActiveDetailTab] = useState('Matches');
 
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        occupation: "", location: "", salary_min: "", salary_max: "",
+        description: "", skils: "", specialty: "", job_type: "", workplace_type: ""
+    });
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const [jobRes, talentRes, appRes] = await Promise.all([
+                jobApi.getById(id),
+                talentApi.getAll(),
+                applicationApi.getAll()
+            ]);
+
+            const jobData = jobRes.data;
+            setJob(jobData);
+            setAllTalents(talentRes.data || []);
+
+            const appsData = appRes.data?.data || appRes.data || [];
+            // FILTER: Faqat shu jobga tegishli va REJECTED bo'lmaganlar
+            const filteredApps = appsData.filter(app =>
+                Number(app.job_id) === Number(id) && app.status !== 'rejected'
+            );
+            setApplications(filteredApps);
+
+            setFormData({
+                occupation: jobData.occupation || "",
+                location: jobData.location || "",
+                salary_min: jobData.salary_min || "",
+                salary_max: jobData.salary_max || "",
+                description: jobData.description || "",
+                skils: Array.isArray(jobData.skils) ? jobData.skils.join(", ") : jobData.skils || "",
+                specialty: jobData.specialty || jobData.occupation || "",
+                job_type: jobData.job_type || "Full-time",
+                workplace_type: jobData.workplace_type || "Remote"
+            });
+        } catch (error) {
+            toast.error("Ma'lumotlarni yuklashda xatolik yuz berdi");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [jobRes, talentRes] = await Promise.all([
-                    jobApi.getById(id),
-                    talentApi.getAll()
-                ]);
-                setJob(jobRes.data);
-                setAllTalents(talentRes.data || []);
-            } catch (error) {
-                console.error("Ma'lumotlarni yuklashda xatolik:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchData();
     }, [id]);
 
-    // --- Skeleton Components ---
-    const HeaderSkeleton = () => (
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 animate-pulse">
-            <div className="bg-gray-200 h-16 rounded-2xl flex-1 w-full"></div>
-            <div className="bg-gray-200 h-16 w-full md:w-40 rounded-2xl"></div>
-        </div>
-    );
+    const handleStatusUpdate = async (appId, newStatus) => {
+        try {
+            await applicationApi.updateStatus(appId, { status: newStatus });
+            toast.success(`Application ${newStatus}!`);
+            fetchData();
+        } catch (error) {
+            toast.error("Statusni yangilashda xatolik");
+        }
+    };
 
-    const JobCardSkeleton = () => (
-        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 mb-6 animate-pulse">
-            <div className="flex flex-col lg:flex-row justify-between gap-6 mb-8">
-                <div className="flex flex-col md:flex-row gap-6 items-center">
-                    <div className="w-24 h-24 rounded-full bg-gray-200"></div>
-                    <div className="space-y-3 flex-1">
-                        <div className="h-8 bg-gray-200 rounded w-64 mx-auto md:mx-0"></div>
-                        <div className="h-5 bg-gray-200 rounded w-40 mx-auto md:mx-0"></div>
-                        <div className="h-4 bg-gray-200 rounded w-32 mx-auto md:mx-0"></div>
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <div className="h-5 bg-gray-200 rounded w-24 ml-auto"></div>
-                    <div className="h-8 bg-gray-200 rounded w-32 ml-auto"></div>
-                </div>
-            </div>
-            <div className="space-y-3 mb-8">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            </div>
-            <div className="flex gap-3 pt-6 border-t border-gray-50">
-                <div className="h-10 bg-gray-200 rounded-xl w-24"></div>
-                <div className="h-10 bg-gray-200 rounded-xl w-24"></div>
-                <div className="h-10 bg-gray-200 rounded-xl w-24"></div>
-            </div>
-        </div>
-    );
+    const handleSendInvitation = async (talentId) => {
+        try {
+            await applicationApi.create({
+                job_id: id,
+                talent_id: talentId,
+                status: 'pending'
+            });
+            toast.success("Taklif muvaffaqiyatli yuborildi!");
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Taklif yuborishda xatolik");
+        }
+    };
 
-    const TalentCardSkeleton = () => (
-        <div className="bg-white border border-gray-100 rounded-[2rem] p-8 animate-pulse">
-            <div className="flex flex-col md:flex-row justify-between mb-6">
-                <div className="flex gap-6 items-center">
-                    <div className="w-20 h-20 rounded-full bg-gray-200"></div>
-                    <div className="space-y-2">
-                        <div className="h-6 bg-gray-200 rounded w-48"></div>
-                        <div className="h-4 bg-gray-200 rounded w-32"></div>
-                    </div>
-                </div>
-                <div className="space-y-2 mt-4 md:mt-0">
-                    <div className="h-4 bg-gray-200 rounded w-24 ml-auto"></div>
-                    <div className="h-6 bg-gray-200 rounded w-20 ml-auto"></div>
-                </div>
-            </div>
-            <div className="h-4 bg-gray-200 rounded w-full mb-6"></div>
-            <div className="flex justify-between items-end pt-6 border-t border-gray-50">
-                <div className="flex gap-2">
-                    <div className="h-8 bg-gray-200 rounded-lg w-20"></div>
-                    <div className="h-8 bg-gray-200 rounded-lg w-20"></div>
-                </div>
-                <div className="h-12 bg-gray-200 rounded-xl w-32"></div>
-            </div>
-        </div>
-    );
+    const handleDeleteJob = async () => {
+        try {
+            await jobApi.delete(id);
+            toast.success("E'lon muvaffaqiyatli o'chirildi");
+            navigate('/company/my-jobs');
+        } catch (error) {
+            toast.error("O'chirishda xatolik yuz berdi");
+        } finally {
+            setIsDeleteModalOpen(false);
+        }
+    };
+
+    const handleUpdateJob = async (e) => {
+        e.preventDefault();
+        const updatePromise = jobApi.update(id, {
+            ...formData,
+            company_id: job.company_id,
+            salary_min: Number(formData.salary_min),
+            salary_max: Number(formData.salary_max)
+        });
+
+        toast.promise(updatePromise, {
+            loading: 'Yangilanmoqda...',
+            success: 'Ish muvaffaqiyatli yangilandi! 🎉',
+            error: (err) => `Xatolik: ${err.response?.data?.message || 'Saqlab bo‘lmadi'}`,
+        });
+
+        try {
+            await updatePromise;
+            setIsEditModalOpen(false);
+            fetchData();
+        } catch (error) { console.error(error); }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
     const getInitials = (firstName, lastName) => {
         const f = firstName ? firstName.charAt(0).toUpperCase() : '';
@@ -110,7 +171,10 @@ const JobDetailPageCompany = () => {
 
     const getJobSkills = () => {
         if (!job?.skils) return [];
-        return Array.isArray(job.skils) ? job.skils : job.skils.split(',').map(s => s.trim());
+        if (typeof job.skils === 'string') {
+            return job.skils.split(',').map(s => s.trim()).filter(s => s !== "");
+        }
+        return Array.isArray(job.skils) ? job.skils : [];
     };
 
     const formatPrice = (price) => {
@@ -121,197 +185,231 @@ const JobDetailPageCompany = () => {
 
     const matchedTalents = allTalents.filter(talent => {
         if (!job || !job.skils) return false;
+        const isAlreadyApplied = applications.some(app => Number(app.talent_id) === Number(talent.id));
+        if (isAlreadyApplied) return false;
+
         const jobSkillsArr = getJobSkills().map(s => s.toLowerCase());
         const talentSkills = parseTalentSkills(talent.skils);
-        return talentSkills.some(t => jobSkillsArr.includes(t.skill.toLowerCase()));
+        return talentSkills.some(t => jobSkillsArr.includes(t.skill?.toLowerCase()));
     });
 
-    if (loading) {
-        return (
-            <div className="w-full min-h-screen bg-[#F8F9FA] p-3 sm:p-6 md:p-8">
-                <div className="max-w-5xl mx-auto">
-                    <HeaderSkeleton />
-                    <JobCardSkeleton />
-                    <div className="h-16 bg-gray-200 rounded-[1.5rem] mb-10"></div>
-                    <div className="space-y-6">
-                        <TalentCardSkeleton />
-                        <TalentCardSkeleton />
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
+    if (loading) return <div className="w-full min-h-screen bg-[#F8F9FA] p-8"><SkeletonLoader /></div>;
     if (!job) return <div className="p-10 text-center text-red-500">Job not found</div>;
 
     return (
         <div className="w-full min-h-screen bg-[#F8F9FA] p-3 sm:p-6 md:p-8 text-left font-sans">
-            <div className="max-w-5xl mx-auto">
+            <Toaster position="top-center" />
 
-                {/* 1. Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 mt-2 md:mt-0 w-full">
-                    <div className="bg-white px-6 sm:px-8 py-4 rounded-2xl shadow-sm border border-gray-100 flex-1 w-full">
-                        <h1 className="text-xl sm:text-2xl font-bold text-[#4B5563] text-center md:text-left">
-                            Job Details
-                        </h1>
-                    </div>
-                    <button className="bg-[#5CB85C] hover:bg-[#4cae4c] text-white w-full md:w-auto px-10 py-4 rounded-2xl font-bold shadow-md active:scale-95 transition-all shrink-0">
-                        Post a Job
-                    </button>
-                </div>
-
-                {/* 2. Main Job Card */}
-                <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 md:p-10 shadow-sm border border-gray-100 mb-6">
-                    <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-6 mb-8">
-                        <div className="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
-                            <div className="w-24 h-24 shrink-0 rounded-full bg-[#00A7AC] flex items-center justify-center text-white text-4xl font-bold overflow-hidden border-4 border-gray-50 shadow-sm">
-                                {job.company?.profileimg_url ? (
-                                    <img src={job.company.profileimg_url} className="w-full h-full object-cover" alt="logo" />
-                                ) : (job.occupation?.charAt(0) || "J")}
-                            </div>
-                            <div>
-                                <h2 className="text-2xl sm:text-3xl font-bold text-[#343C44]">{job.occupation}</h2>
-                                <p className="text-[#8E8E8E] font-[600] text-[22px] sm:text-[22px] mt-1">{job.company?.company_name}</p>
-                                <div className="text-[#a7a6a6] flex items-center justify-center md:justify-start gap-1 mt-2 text-base sm:text-lg font-medium">
-                                    <MdLocationOn /> {job.location} ({job.work_type || "Onsite"})
+            <div className="max-w-5xl mx-auto relative">
+                {/* --- DELETE MODAL --- */}
+                {isDeleteModalOpen && (
+                    <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                        <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl">
+                            <div className="text-center">
+                                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <FiAlertCircle size={40} className="text-red-500" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-2">Ishonchingiz komilmi?</h2>
+                                <p className="text-gray-500 mb-6">Bu e'lonni butunlay o'chirib tashlaysizmi?</p>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3.5 bg-gray-100 text-gray-700 font-bold rounded-2xl">Bekor qilish</button>
+                                    <button onClick={handleDeleteJob} className="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-2xl">O'chirish</button>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                )}
 
-                        <div className="text-center lg:text-right w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0">
+                {/* --- EDIT MODAL --- */}
+                {isEditModalOpen && (
+                    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+                        <div className="bg-white w-full max-w-2xl rounded-[2.5rem] p-6 sm:p-10 shadow-2xl relative max-h-[90vh] overflow-y-auto text-left">
+                            <button onClick={() => setIsEditModalOpen(false)} className="absolute top-6 right-6 p-2 text-gray-400 hover:bg-gray-100 rounded-full"><MdClose size={28} /></button>
+                            <h2 className="text-2xl font-bold text-[#343C44] mb-8">Edit Job Position</h2>
+                            <form onSubmit={handleUpdateJob} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-bold text-[#343C44]">Occupation</label>
+                                    <input name="occupation" value={formData.occupation} onChange={handleInputChange} className="w-full px-4 py-3 bg-[#F8F9FA] border border-gray-100 rounded-xl" required />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-bold text-[#343C44]">Location</label>
+                                    <input name="location" value={formData.location} onChange={handleInputChange} className="w-full px-4 py-3 bg-[#F8F9FA] border border-gray-100 rounded-xl" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-bold text-[#343C44]">Salary Min ($)</label>
+                                    <input name="salary_min" type="number" value={formData.salary_min} onChange={handleInputChange} className="w-full px-4 py-3 bg-[#F8F9FA] border border-gray-100 rounded-xl" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-bold text-[#343C44]">Salary Max ($)</label>
+                                    <input name="salary_max" type="number" value={formData.salary_max} onChange={handleInputChange} className="w-full px-4 py-3 bg-[#F8F9FA] border border-gray-100 rounded-xl" />
+                                </div>
+                                <div className="flex flex-col gap-2 md:col-span-2">
+                                    <label className="text-sm font-bold text-[#343C44]">Skills (comma separated)</label>
+                                    <input name="skils" value={formData.skils} onChange={handleInputChange} className="w-full px-4 py-3 bg-[#F8F9FA] border border-gray-100 rounded-xl" />
+                                </div>
+                                <div className="flex flex-col gap-2 md:col-span-2">
+                                    <label className="text-sm font-bold text-[#343C44]">Description</label>
+                                    <textarea name="description" rows="4" value={formData.description} onChange={handleInputChange} className="w-full px-4 py-3 bg-[#F8F9FA] border border-gray-100 rounded-xl resize-none" />
+                                </div>
+                                <button type="submit" className="md:col-span-2 w-full mt-4 py-4 bg-[#5CB85C] text-white font-bold rounded-2xl">Update Job Details</button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 mt-2 md:mt-0 w-full">
+                    <div className="bg-white px-6 sm:px-8 py-4 rounded-2xl shadow-sm border border-gray-100 flex-1 w-full text-center md:text-left">
+                        <h1 className="text-xl sm:text-2xl font-bold text-[#4B5563]">Job Details</h1>
+                    </div>
+                    <button onClick={() => navigate('/company/post-job')} className="bg-[#5CB85C] hover:bg-[#4cae4c] text-white w-full md:w-auto px-10 py-4 rounded-2xl font-bold">Post a Job</button>
+                </div>
+
+                {/* Job Header Card */}
+                <div className="bg-white rounded-[2.5rem] p-6 sm:p-10 shadow-sm border border-gray-100 mb-10 relative">
+                    <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-8 mb-8 lg:pr-12">
+                        <div className="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
+                            <div className="w-24 h-24 shrink-0 rounded-full bg-[#00A7AC] flex items-center justify-center text-white text-4xl font-bold overflow-hidden border-4 border-gray-50 shadow-sm">
+                                {job.company?.profileimg_url ? <img src={job.company.profileimg_url} className="w-full h-full object-cover" alt="logo" /> : (job.occupation?.charAt(0) || "J")}
+                            </div>
+                            <div className="max-w-md">
+                                <h2 className="text-2xl sm:text-3xl font-bold text-[#343C44] leading-tight">{job.occupation}</h2>
+                                <p className="text-[#8E8E8E] font-[600] text-[22px] mt-1">{job.company?.company_name || "Company"}</p>
+                                <div className="text-[#a7a6a6] flex items-center justify-center md:justify-start gap-1 mt-2 text-base sm:text-lg font-medium">
+                                    <MdLocationOn className="shrink-0" />
+                                    <span>{job.location} ({job.workplace_type || "Remote"})</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-center lg:text-right w-full lg:w-auto border-t lg:border-none pt-6 lg:pt-0 mt-2 lg:mt-0">
                             <p className="text-[#8E8E8E] text-base sm:text-[18px] font-[600] mb-1">
                                 {job.createdAt ? formatDistanceToNow(new Date(job.createdAt), { addSuffix: true }) : 'Recently'}
                             </p>
-                            <p className="text-2xl sm:text-[28px] font-bold text-[#4B5563]">
+                            <p className="text-2xl sm:text-[28px] font-bold text-[#4B5563] whitespace-nowrap">
                                 ${job.salary_min?.toLocaleString()} {job.salary_max ? `- $${job.salary_max.toLocaleString()}` : ""}
                             </p>
                         </div>
                     </div>
-
                     <p className="text-[#343C44] text-base sm:text-lg leading-relaxed mb-8 text-center md:text-left">{job.description}</p>
-
-                    <div className="pt-6 border-t border-gray-50">
-                        <h4 className="text-[#343C44] font-bold mb-4 uppercase text-xs sm:text-sm tracking-widest text-center md:text-left">Required skills</h4>
-                        <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3">
-                            {getJobSkills().map((skill, index) => (
-                                <span key={index} className="px-4 sm:px-5 py-1.5 sm:py-2 bg-[#F3F4F6] text-[#4B5563] rounded-xl font-semibold border border-gray-100 text-sm sm:text-base">
-                                    {skill}
-                                </span>
-                            ))}
+                    <div className="pt-6 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="w-full">
+                            <h4 className="text-[#343C44] font-bold mb-4 uppercase text-xs sm:text-sm tracking-widest text-center md:text-left">Required skills</h4>
+                            <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3">
+                                {getJobSkills().map((skill, index) => (
+                                    <span key={index} className="px-4 sm:px-5 py-1.5 sm:py-2 bg-[#F3F4F6] text-[#4B5563] rounded-xl font-semibold border border-gray-100 text-sm sm:text-base">{skill}</span>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                            <button onClick={() => setIsEditModalOpen(true)} className="p-4 bg-gray-50 text-gray-400 rounded-2xl hover:bg-[#73dd73] hover:text-white border border-gray-100"><FiEdit2 size={22} /></button>
+                            <button onClick={() => setIsDeleteModalOpen(true)} className="p-4 bg-red-50 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white border border-red-100"><FiTrash2 size={22} /></button>
                         </div>
                     </div>
                 </div>
 
-                <button
-                    onClick={() => navigate(-1)}
-                    className="group flex items-center justify-center md:justify-start gap-2 text-[#1D3D54] font-bold mb-10 py-2 px-4 rounded-lg transition-all duration-300 hover:bg-[#1D3D54]/5 w-full md:w-auto"
-                >
-                    <div className="p-1 rounded-full bg-transparent group-hover:bg-[#1D3D54] group-hover:text-white transition-all duration-300">
-                        <MdKeyboardArrowLeft size={20} />
-                    </div>
-                    <span>Back to my jobs</span>
+                <button onClick={() => navigate('/company/my-jobs')} className="group flex items-center justify-center gap-3 text-[#1D3D54] font-bold mb-10 w-full sm:w-[240px] h-[60px] border-2 border-[#1D3D54] rounded-2xl bg-white shadow-sm transition-all duration-300 hover:bg-[#1D3D54] hover:text-white">
+                    <MdKeyboardArrowLeft size={28} className="transition-transform duration-300 group-hover:-translate-x-2" />
+                    <span className="text-[18px]">Back to My jobs</span>
                 </button>
-                {/* 3. Sliding Tabs */}
-                <div className="flex bg-[#E9E9E9] p-1.5 rounded-[1.5rem] w-full relative mb-10 overflow-hidden">
-                    <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-[1.2rem] shadow-sm transition-all duration-300
-                        ${activeDetailTab === 'Matches' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
 
-                    <button onClick={() => setActiveDetailTab('Matches')} className={`flex-1 py-3.5 sm:py-4 z-10 font-bold text-xs sm:text-sm transition-colors ${activeDetailTab === 'Matches' ? 'text-[#343C44]' : 'text-[#8E8E8E]'}`}>
-                        All Matches
-                    </button>
-                    <button onClick={() => setActiveDetailTab('Invitations')} className={`flex-1 py-3.5 sm:py-4 z-10 font-bold text-xs sm:text-sm transition-colors ${activeDetailTab === 'Invitations' ? 'text-[#343C44]' : 'text-[#8E8E8E]'}`}>
-                        Invitations sent
-                    </button>
+                <div className="flex bg-[#E9E9E9] p-1.5 rounded-[1.5rem] w-full relative mb-10 overflow-hidden">
+                    <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-[1.2rem] shadow-sm transition-all duration-300 ${activeDetailTab === 'Matches' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
+                    <button onClick={() => setActiveDetailTab('Matches')} className={`flex-1 py-3.5 z-10 font-bold text-xs sm:text-sm transition-colors ${activeDetailTab === 'Matches' ? 'text-[#343C44]' : 'text-[#8E8E8E]'}`}>All Matches</button>
+                    <button onClick={() => setActiveDetailTab('Invitations')} className={`flex-1 py-3.5 z-10 font-bold text-xs sm:text-sm transition-colors ${activeDetailTab === 'Invitations' ? 'text-[#343C44]' : 'text-[#8E8E8E]'}`}>Invitations sent</button>
                 </div>
 
-                {/* 4. Matches Content */}
                 <div className="pb-20">
-                    {activeDetailTab === 'Matches' ? (
-                        <>
-                            <div className="mb-6 flex items-baseline justify-center md:justify-start gap-2">
-                                <span className="text-xl sm:text-2xl font-bold text-[#343C44]">{matchedTalents.length}</span>
-                                <span className="text-xl sm:text-2xl font-bold text-[#343C44]">candidates</span>
-                            </div>
+                    <div className="mb-6 flex items-baseline justify-center md:justify-start gap-2">
+                        <span className="text-xl sm:text-2xl font-bold text-[#343C44]">
+                            {activeDetailTab === 'Matches' ? matchedTalents.length : applications.length}
+                        </span>
+                        <span className="text-xl sm:text-2xl font-bold text-[#343C44]">candidates</span>
+                    </div>
 
-                            <div className="space-y-6">
-                                {matchedTalents.length > 0 ? matchedTalents.map(talent => {
-                                    const tSkills = parseTalentSkills(talent.skils);
-                                    return (
-                                        <div key={talent.id} className="bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-md transition-all p-6 sm:p-8">
-                                            <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-4 mb-6">
-                                                <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6 text-center md:text-left">
-                                                    <div className="w-20 h-20 shrink-0 rounded-full overflow-hidden border-2 border-gray-100 bg-[#E6E7E9] flex items-center justify-center shadow-sm">
-                                                        {talent.image ? (
-                                                            <img
-                                                                src={talent.image}
-                                                                className="w-full h-full object-cover grayscale"
-                                                                alt="talent"
-                                                                onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                                                            />
-                                                        ) : null}
-                                                        <span className="text-[#1D3D54] text-2xl font-bold" style={{ display: talent.image ? 'none' : 'flex' }}>
-                                                            {getInitials(talent.first_name, talent.last_name)}
-                                                        </span>
-                                                    </div>
+                    <div className="grid grid-cols-1 min-[1350px]:grid-cols-2 gap-6 sm:gap-8 w-full">
+                        {(activeDetailTab === 'Matches' ? matchedTalents.map(t => ({ talent: t, isMatch: true })) : applications).map((item, idx) => {
+                            const talent = item.talent;
+                            const appId = item.id;
+                            const status = item.status || 'pending';
+                            const resumeUrl = item.resume_url || talent?.resume; // API'dan kelayotgan link
 
-                                                    <div>
-                                                        <h2 className="text-xl sm:text-2xl font-bold text-[#3a3a3a] leading-tight">
-                                                            {talent.specialty || talent.occupation || "Specialist"}
-                                                        </h2>
-                                                        <p className="text-gray-500 text-base sm:text-lg font-medium mt-1">
-                                                            {talent.first_name} {talent.last_name}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="text-center md:text-right border-t md:border-none pt-3 md:pt-0 w-full md:w-auto">
-                                                    <div className="flex items-center justify-center md:justify-end gap-1 text-gray-400 font-semibold mb-1 text-sm sm:text-base">
-                                                        <HiOutlineLocationMarker size={20} /> {talent.city || talent.location || "Uzbekistan"}
-                                                    </div>
-                                                    <div className="text-xl sm:text-2xl font-bold text-[#4c4c4c]">
-                                                        {formatPrice(talent.minimum_salary)}
-                                                    </div>
-                                                </div>
+                            return talent && (
+                                <div key={talent.id || idx} className="bg-white border border-gray-100 rounded-[2rem] shadow-sm p-6 sm:p-7 flex flex-col justify-between hover:shadow-md transition-all min-h-[400px]">
+                                    <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-5 mb-5 w-full">
+                                        <div className="flex flex-col lg:flex-row items-center gap-4 flex-1 w-full min-w-0">
+                                            <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-full bg-[#F3F4F6] flex items-center justify-center overflow-hidden border border-gray-100">
+                                                {talent.image ? <img src={talent.image} className="w-full h-full object-cover" alt="" /> : <span className="text-2xl font-bold text-gray-400">{getInitials(talent.first_name, talent.last_name)}</span>}
                                             </div>
-
-                                            <p className="text-gray-600 text-sm sm:text-[17px] leading-relaxed line-clamp-2 mb-6 text-center md:text-left">
-                                                {talent.about || "Experience and passion in building great products..."}
-                                            </p>
-
-                                            <div className="flex flex-col xl:flex-row justify-between items-center xl:items-end gap-6 border-t border-gray-50 pt-6">
-                                                <div className="w-full">
-                                                    <h4 className="text-gray-400 text-[11px] sm:text-[13px] font-bold uppercase mb-3 tracking-widest text-center md:text-left">Candidate skills:</h4>
-                                                    <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                                                        {tSkills.length > 0 ? tSkills.map((s, i) => (
-                                                            <span key={i} className="px-3 sm:px-4 py-1 sm:py-1.5 bg-[#f1f5f9] text-[#475569] text-xs sm:text-sm font-semibold rounded-lg border border-gray-50">
-                                                                {s.skill} ({s.experience_years})
-                                                            </span>
-                                                        )) : <span className="text-gray-400 italic text-sm">No skills listed</span>}
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto shrink-0">
-                                                    <Link to={`/talents/${talent.id}`} className="px-6 sm:px-10 py-3 bg-[#1D3D54] text-white text-center font-bold rounded-xl hover:bg-[#162f41] transition-all text-sm sm:text-base">
-                                                        View profile
-                                                    </Link>
-                                                    <button className="px-6 sm:px-8 py-3 border-2 border-[#1D3D54] text-[#1D3D54] font-bold rounded-xl hover:bg-gray-50 transition-all text-sm sm:text-base">
-                                                        Send alert
-                                                    </button>
-                                                </div>
+                                            <div className="w-full min-w-0 text-center lg:text-left">
+                                                <h2 className="text-[20px] sm:text-[24px] font-bold text-[#3a3a3a] leading-tight mb-1">{talent.specialty || "Specialist"}</h2>
+                                                <p className="text-gray-500 text-[16px] sm:text-[18px] font-medium">{talent.first_name} {talent.last_name}</p>
                                             </div>
                                         </div>
-                                    );
-                                }) : (
-                                    <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200 text-gray-400 text-lg px-4">
-                                        Hozircha mos keladigan talentlar topilmadi.
+                                        <div className="shrink-0 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0 text-center lg:text-right">
+                                            <div className="text-[22px] sm:text-[26px] font-bold text-[#1D3D54] leading-tight">{formatPrice(talent.minimum_salary)}</div>
+                                            <div className="flex items-center justify-center lg:justify-end gap-1 text-gray-400 text-[13px] font-bold uppercase mt-2">
+                                                <HiOutlineLocationMarker size={16} className="text-[#00A7AC]" />
+                                                <span className="whitespace-nowrap">{talent.city || "UZB"}</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </>
-                    ) : (
-                        <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200 text-gray-400 text-lg px-4">
-                            Yuborilgan taklifnomalar ro'yxati bo'sh.
-                        </div>
-                    )}
+
+                                    <div className="flex-1 my-6">
+                                        <h4 className="text-[12px] text-gray-400 font-bold uppercase tracking-wider mb-3 text-center lg:text-left">Candidate Skills:</h4>
+                                        <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                                            {parseTalentSkills(talent.skils).slice(0, 6).map((s, i) => (
+                                                <span key={i} className="px-4 py-1.5 bg-[#f8fafc] text-[#64748b] text-[13px] font-semibold rounded-xl border border-gray-100">{s.skill}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* --- BUTTONS SECTION (CENTERED) --- */}
+                                    <div className="flex flex-col sm:flex-row gap-4 mt-auto items-center justify-center w-full">
+                                        {/* Har doim ko'rinadigan "View Profile" tugmasi */}
+                                        <button onClick={() => navigate(`/company/talents/${talent.id}`)} className="flex-1 w-full py-3 px-4 border-2 border-[#1D3D54] text-[#1D3D54] rounded-2xl font-bold hover:bg-[#1D3D54] hover:text-white transition-all duration-300 shadow-sm text-sm sm:text-base">
+                                            View Profile
+                                        </button>
+
+                                        {item.isMatch ? (
+                                            /* "All Matches" tabida "Send Invitation" tugmasi */
+                                            <button onClick={() => handleSendInvitation(talent.id)} className="flex-1 w-full py-3 px-4 rounded-2xl font-bold bg-[#1D3D54] text-white hover:bg-[#2c5a7a] transition-all shadow-md active:scale-95 text-sm sm:text-base">
+                                                Send Invitation
+                                            </button>
+                                        ) : (
+                                            /* "Invitations Sent" tabidagi mantiq */
+                                            <div className="flex-1 w-full flex items-center justify-center gap-3">
+                                                {status === 'pending' ? (
+                                                    <>
+                                                        {/* RESUME TUGMASI (YANGI QO'SHILDI) */}
+                                                        {resumeUrl && (
+                                                            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex-1 h-[52px] flex items-center justify-center gap-2 bg-blue-50 text-blue-600 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm text-sm" title="Download Resume">
+                                                                <FiDownload size={18} /> CV
+                                                            </a>
+                                                        )}
+
+                                                        {/* ACCEPT/REJECT TUGMALARI */}
+                                                        <button onClick={() => handleStatusUpdate(appId, 'accepted')} className="h-12 w-12 shrink-0 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-sm border border-emerald-100 group" title="Accept">
+                                                            <MdCheck size={28} className="group-hover:scale-110 transition-transform" />
+                                                        </button>
+                                                        <button onClick={() => handleStatusUpdate(appId, 'rejected')} className="h-12 w-12 shrink-0 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300 shadow-sm border border-rose-100 group" title="Reject">
+                                                            <MdClose size={28} className="group-hover:scale-110 transition-transform" />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    /* Accepted bo'lsa faqat status chiqadi */
+                                                    <div className={`flex-1 py-3 text-center rounded-2xl font-bold uppercase text-xs tracking-widest border-2 ${status === 'accepted' ? 'border-emerald-500 bg-emerald-50 text-emerald-600' : 'border-rose-500 bg-rose-50 text-rose-600'}`}>
+                                                        {status}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        {activeDetailTab === 'Invitations' && applications.length === 0 && (
+                            <div className="col-span-full text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200 text-gray-400">Hech qanday taklif yuborilmagan.</div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
