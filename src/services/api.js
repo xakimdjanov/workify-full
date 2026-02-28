@@ -206,7 +206,7 @@ export const notificationApi = {
   send: (data) => api.post("/notifications", data),
   getAll: () => api.get("/notifications"),
   markAsRead: (id) => api.put(`/notifications/${id}/read`),
-  delete: (id) => api.delete(`/notifications/${id}`),
+  delete: (id) => api.delete(`/notifications/${id}`), //notification
 };
 
 
