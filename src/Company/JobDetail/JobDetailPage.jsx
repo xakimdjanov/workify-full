@@ -183,13 +183,17 @@ const JobDetailPageCompany = () => {
         }).format(price || 0);
     };
 
+    // --- MANTIQ O'ZGARTIRILDI ---
     const matchedTalents = allTalents.filter(talent => {
         if (!job || !job.skils) return false;
+
+        // Agar ushbu nomzod allaqachon application yaratgan bo'lsa, Matchesda ko'rsatmaymiz
         const isAlreadyApplied = applications.some(app => Number(app.talent_id) === Number(talent.id));
         if (isAlreadyApplied) return false;
 
         const jobSkillsArr = getJobSkills().map(s => s.toLowerCase());
         const talentSkills = parseTalentSkills(talent.skils);
+
         return talentSkills.some(t => jobSkillsArr.includes(t.skill?.toLowerCase()));
     });
 
@@ -201,7 +205,7 @@ const JobDetailPageCompany = () => {
             <Toaster position="top-center" />
 
             <div className="max-w-5xl mx-auto relative">
-                {/* --- DELETE MODAL --- */}
+                {/* --- MODALLAR QOLADI --- */}
                 {isDeleteModalOpen && (
                     <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl">
@@ -219,8 +223,6 @@ const JobDetailPageCompany = () => {
                         </div>
                     </div>
                 )}
-
-                {/* --- EDIT MODAL --- */}
                 {isEditModalOpen && (
                     <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
                         <div className="bg-white w-full max-w-2xl rounded-[2.5rem] p-6 sm:p-10 shadow-2xl relative max-h-[90vh] overflow-y-auto text-left">
@@ -257,6 +259,7 @@ const JobDetailPageCompany = () => {
                     </div>
                 )}
 
+                {/* --- HEADER --- */}
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 mt-2 md:mt-0 w-full">
                     <div className="bg-white px-6 sm:px-8 py-4 rounded-2xl shadow-sm border border-gray-100 flex-1 w-full text-center md:text-left">
                         <h1 className="text-xl sm:text-2xl font-bold text-[#4B5563]">Job Details</h1>
@@ -311,12 +314,14 @@ const JobDetailPageCompany = () => {
                     <span className="text-[18px]">Back to My jobs</span>
                 </button>
 
+                {/* --- TABS --- */}
                 <div className="flex bg-[#E9E9E9] p-1.5 rounded-[1.5rem] w-full relative mb-10 overflow-hidden">
                     <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-[1.2rem] shadow-sm transition-all duration-300 ${activeDetailTab === 'Matches' ? 'left-1.5' : 'left-[calc(50%+3px)]'}`} />
                     <button onClick={() => setActiveDetailTab('Matches')} className={`flex-1 py-3.5 z-10 font-bold text-xs sm:text-sm transition-colors ${activeDetailTab === 'Matches' ? 'text-[#343C44]' : 'text-[#8E8E8E]'}`}>All Matches</button>
                     <button onClick={() => setActiveDetailTab('Invitations')} className={`flex-1 py-3.5 z-10 font-bold text-xs sm:text-sm transition-colors ${activeDetailTab === 'Invitations' ? 'text-[#343C44]' : 'text-[#8E8E8E]'}`}>Invitations sent</button>
                 </div>
 
+                {/* --- CARDLAR RO'YXATI --- */}
                 <div className="pb-20">
                     <div className="mb-6 flex items-baseline justify-center md:justify-start gap-2">
                         <span className="text-xl sm:text-2xl font-bold text-[#343C44]">
@@ -326,14 +331,21 @@ const JobDetailPageCompany = () => {
                     </div>
 
                     <div className="grid grid-cols-1 min-[1350px]:grid-cols-2 gap-6 sm:gap-8 w-full">
-                        {(activeDetailTab === 'Matches' ? matchedTalents.map(t => ({ talent: t, isMatch: true })) : applications).map((item, idx) => {
-                            const talent = item.talent;
-                            const appId = item.id;
+                        {/* --- FILTERLANGAN MA'LUMOTLARNI MAP QILISH --- */}
+                        {(activeDetailTab === 'Matches' ? matchedTalents : applications).map((item, idx) => {
+                            // Mantiq: Matches tabida 'item' bu to'g'ridan-to'g'ri talent, Invitationsda application
+                            const talent = activeDetailTab === 'Matches' ? item : (item.talent || {});
+                            const appId = item.id; // Faqat invitations uchun kerak
                             const status = item.status || 'pending';
-                            const resumeUrl = item.resume_url || talent?.resume; // API'dan kelayotgan link
+                            const resumeUrl = item.resume_url || talent?.resume;
+
+                            // --- YECHIM: Noyob key yaratish ---
+                            const uniqueKey = activeDetailTab === 'Matches'
+                                ? `match-${talent.id}`
+                                : `app-${appId}`;
 
                             return talent && (
-                                <div key={talent.id || idx} className="bg-white border border-gray-100 rounded-[2rem] shadow-sm p-6 sm:p-7 flex flex-col justify-between hover:shadow-md transition-all min-h-[400px]">
+                                <div key={uniqueKey} className="bg-white border border-gray-100 rounded-[2rem] shadow-sm p-6 sm:p-7 flex flex-col justify-between hover:shadow-md transition-all min-h-[400px]">
                                     <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-5 mb-5 w-full">
                                         <div className="flex flex-col lg:flex-row items-center gap-4 flex-1 w-full min-w-0">
                                             <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-full bg-[#F3F4F6] flex items-center justify-center overflow-hidden border border-gray-100">
@@ -362,40 +374,53 @@ const JobDetailPageCompany = () => {
                                         </div>
                                     </div>
 
-                                    {/* --- BUTTONS SECTION (CENTERED) --- */}
+                                    {/* --- BUTTONS SECTION --- */}
                                     <div className="flex flex-col sm:flex-row gap-4 mt-auto items-center justify-center w-full">
-                                        {/* Har doim ko'rinadigan "View Profile" tugmasi */}
-                                        <button onClick={() => navigate(`/company/talents/${talent.id}`)} className="flex-1 w-full py-3 px-4 border-2 border-[#1D3D54] text-[#1D3D54] rounded-2xl font-bold hover:bg-[#1D3D54] hover:text-white transition-all duration-300 shadow-sm text-sm sm:text-base">
+                                        <button
+                                            onClick={() => navigate(`/company/talents/${talent.id}`)}
+                                            className="flex-1 w-full py-3 px-4 border-2 border-[#1D3D54] text-[#1D3D54] rounded-2xl font-bold hover:bg-[#1D3D54] hover:text-white transition-all duration-300 shadow-sm text-sm sm:text-base"
+                                        >
                                             View Profile
                                         </button>
 
-                                        {item.isMatch ? (
-                                            /* "All Matches" tabida "Send Invitation" tugmasi */
-                                            <button onClick={() => handleSendInvitation(talent.id)} className="flex-1 w-full py-3 px-4 rounded-2xl font-bold bg-[#1D3D54] text-white hover:bg-[#2c5a7a] transition-all shadow-md active:scale-95 text-sm sm:text-base">
+                                        {activeDetailTab === 'Matches' ? (
+                                            <button
+                                                onClick={() => handleSendInvitation(talent.id)}
+                                                className="flex-1 w-full py-3 px-4 rounded-2xl font-bold bg-[#1D3D54] text-white hover:bg-[#2c5a7a] transition-all shadow-md active:scale-95 text-sm sm:text-base"
+                                            >
                                                 Send Invitation
                                             </button>
                                         ) : (
-                                            /* "Invitations Sent" tabidagi mantiq */
                                             <div className="flex-1 w-full flex items-center justify-center gap-3">
                                                 {status === 'pending' ? (
                                                     <>
-                                                        {/* RESUME TUGMASI (YANGI QO'SHILDI) */}
                                                         {resumeUrl && (
-                                                            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="flex-1 h-[52px] flex items-center justify-center gap-2 bg-blue-50 text-blue-600 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm text-sm" title="Download Resume">
+                                                            <a
+                                                                href={resumeUrl}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex-1 h-[52px] flex items-center justify-center gap-2 bg-blue-50 text-blue-600 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm text-sm"
+                                                                title="Download Resume"
+                                                            >
                                                                 <FiDownload size={18} /> CV
                                                             </a>
                                                         )}
-
-                                                        {/* ACCEPT/REJECT TUGMALARI */}
-                                                        <button onClick={() => handleStatusUpdate(appId, 'accepted')} className="h-12 w-12 shrink-0 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-sm border border-emerald-100 group" title="Accept">
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(appId, 'accepted')}
+                                                            className="h-12 w-12 shrink-0 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-sm border border-emerald-100 group"
+                                                            title="Accept"
+                                                        >
                                                             <MdCheck size={28} className="group-hover:scale-110 transition-transform" />
                                                         </button>
-                                                        <button onClick={() => handleStatusUpdate(appId, 'rejected')} className="h-12 w-12 shrink-0 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300 shadow-sm border border-rose-100 group" title="Reject">
+                                                        <button
+                                                            onClick={() => handleStatusUpdate(appId, 'rejected')}
+                                                            className="h-12 w-12 shrink-0 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all duration-300 shadow-sm border border-rose-100 group"
+                                                            title="Reject"
+                                                        >
                                                             <MdClose size={28} className="group-hover:scale-110 transition-transform" />
                                                         </button>
                                                     </>
                                                 ) : (
-                                                    /* Accepted bo'lsa faqat status chiqadi */
                                                     <div className={`flex-1 py-3 text-center rounded-2xl font-bold uppercase text-xs tracking-widest border-2 ${status === 'accepted' ? 'border-emerald-500 bg-emerald-50 text-emerald-600' : 'border-rose-500 bg-rose-50 text-rose-600'}`}>
                                                         {status}
                                                     </div>
@@ -406,8 +431,13 @@ const JobDetailPageCompany = () => {
                                 </div>
                             );
                         })}
+
+                        {/* --- EMPTY STATES --- */}
                         {activeDetailTab === 'Invitations' && applications.length === 0 && (
                             <div className="col-span-full text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200 text-gray-400">Hech qanday taklif yuborilmagan.</div>
+                        )}
+                        {activeDetailTab === 'Matches' && matchedTalents.length === 0 && (
+                            <div className="col-span-full text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200 text-gray-400">Mos nomzodlar topilmadi.</div>
                         )}
                     </div>
                 </div>
