@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { talentApi } from '../../services/api';
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import toast from 'react-hot-toast';
 
 function Talents() {
     const [talents, setTalents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expandedAbout, setExpandedAbout] = useState({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTalents = async () => {
@@ -24,6 +26,29 @@ function Talents() {
         };
         fetchTalents();
     }, []);
+
+    // --- TUZATILGAN FUNKSIYA ---
+    const handleViewProfile = (talentId) => {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+        if (!token) {
+            // 1. Toast xabarini chiqarish
+            toast.error("Profilni ko'rish uchun ro'yxatdan o'ting!", {
+                duration: 4000,
+                position: 'top-center',
+            });
+
+            // 2. Login sahifasiga yo'naltirish (sizning loyihangizga qarab pathni to'g'rilang)
+            // Masalan: navigate('/company/signin') yoki navigate('/roleSelection')
+            navigate('/roleSelection');
+
+            return;
+        }
+
+        // Token bo'lsa profilga o'tadi
+        navigate(`/talents/${talentId}`);
+    };
+    // ---------------------------
 
     const toggleExpand = (id) => {
         setExpandedAbout(prev => ({ ...prev, [id]: !prev[id] }));
@@ -139,7 +164,7 @@ function Talents() {
 
                                             <div className="flex flex-row md:flex-col justify-between items-center md:items-end w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0">
                                                 <div className="flex items-center gap-1 text-[#4b5563] text-sm md:text-lg font-semibold">
-                                                    <HiOutlineLocationMarker className="text-[#8b8d8f]" size={22}/>
+                                                    <HiOutlineLocationMarker className="text-[#8b8d8f]" size={22} />
                                                     {talent.city || talent.location || "Uzbekistan"}
                                                 </div>
                                                 <div className="text-[18px] md:text-[25px] font-bold text-[#343434] mt-2">
@@ -184,10 +209,14 @@ function Talents() {
                                                     )}
                                                 </div>
                                             </div>
+
                                             <div className="flex flex-col sm:flex-row justify-end gap-3 md:gap-4 mt-2">
-                                                <Link to={`/talents/${talent.id}`} className="px-6 md:px-[60px] py-3 bg-[#1D3D54] text-white font-[650] rounded-lg text-center">
+                                                <button
+                                                    onClick={() => handleViewProfile(talent.id)}
+                                                    className="px-6 md:px-[60px] py-3 bg-[#1D3D54] text-white font-[650] rounded-lg text-center"
+                                                >
                                                     View profile
-                                                </Link>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

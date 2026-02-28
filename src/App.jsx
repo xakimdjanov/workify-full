@@ -53,8 +53,16 @@ import TalentDetail from "./Company/Talen/TalentDetail.jsx";
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
-  if (!token) return <Navigate to="/roleSelection" replace />;
+  console.log("!!! PROTECTED ROUTE CHECK !!!");
+  console.log("Token mavjudmi?:", !!token);
+  console.log("Token qiymati:", token);
 
+  if (!token) {
+    console.log("Ruxsat yo'q, roleSelectionga yuborilmoqda");
+    return <Navigate to="/roleSelection" replace />;
+  }
+
+  console.log("Ruxsat bor");
   return children ? children : <Outlet />;
 };
 
@@ -140,7 +148,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/company/talents/:id" element={<TalentDetail />} />
+          <Route
+            path="/talents/:id"
+            element={
+              <ProtectedRoute>
+                <TalentDetail />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/company/faq"
             element={
