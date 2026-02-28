@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { talenApi, jobApi } from "../../services/api"; // jobApi qo'shildi
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { talenApi, jobApi } from "../../services/api";
 import { HiOutlineLocationMarker, HiOutlineBriefcase } from "react-icons/hi";
 import { IoChevronBack, IoStarSharp } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
@@ -29,7 +29,7 @@ const TalentDetail = () => {
         const res = await talenApi.getById(id);
         const data = res.data?.data || res.data;
         setTalent(data);
-        
+
         // Default title to'ldirish
         setNotifyForm((prev) => ({
           ...prev,
@@ -49,7 +49,7 @@ const TalentDetail = () => {
     e.preventDefault();
     const payload = {
       talent_id: Number(id),
-      job_id: null, 
+      job_id: null,
       title: notifyForm.title || `Opportunity Alert`,
       message: notifyForm.message,
       type: notifyForm.type,
@@ -183,45 +183,47 @@ const TalentDetail = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-bold text-gray-600 mb-1">
+                  Message
+                </label>
 
-           <div>
-  <label className="block text-sm font-bold text-gray-600 mb-1">
-    Message
-  </label>
-  
-  {/* Tayyor shablonlar (Quick Templates) */}
-  <div className="flex gap-2 mb-2">
-    <button
-      type="button"
-      onClick={() => setNotifyForm({ 
-        ...notifyForm, 
-        message: `Hello! We saw your profile and it matches our ${talent.occupation} position. We would like to invite you for an interview.` 
-      })}
-      className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors border border-blue-100"
-    >
-      + Use Template
-    </button>
-    <button
-      type="button"
-      onClick={() => setNotifyForm({ ...notifyForm, message: "" })}
-      className="text-[10px] bg-gray-50 text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100 transition-colors border border-gray-100"
-    >
-      Clear
-    </button>
-  </div>
+                {/* Tayyor shablonlar (Quick Templates) */}
+                <div className="flex gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNotifyForm({
+                        ...notifyForm,
+                        message: `Hello! We saw your profile and it matches our ${talent.occupation} position. We would like to invite you for an interview.`,
+                      })
+                    }
+                    className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors border border-blue-100"
+                  >
+                    + Use Template
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNotifyForm({ ...notifyForm, message: "" })
+                    }
+                    className="text-[10px] bg-gray-50 text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100 transition-colors border border-gray-100"
+                  >
+                    Clear
+                  </button>
+                </div>
 
-  <textarea
-    rows="4"
-    className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none resize-none focus:border-blue-400 transition-all"
-    placeholder={`Hello! We saw your profile and it matches our ${talent.occupation} position...`}
-    value={notifyForm.message}
-    onChange={(e) =>
-      setNotifyForm({ ...notifyForm, message: e.target.value })
-    }
-    required
-  />
-</div>
-
+                <textarea
+                  rows="4"
+                  className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none resize-none focus:border-blue-400 transition-all"
+                  placeholder={`Hello! We saw your profile and it matches our ${talent.occupation} position...`}
+                  value={notifyForm.message}
+                  onChange={(e) =>
+                    setNotifyForm({ ...notifyForm, message: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
               <button
                 type="submit"
@@ -327,16 +329,26 @@ const TalentDetail = () => {
                 </div>
               </div>
 
-              <button className="w-full bg-[#1D3D54] text-white py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition-all shadow-lg active:scale-[0.98] mb-4">
-                Hire {talent.first_name}
-              </button>
+              <div className="flex flex-col gap-4 p-4">
+                <button
+                  onClick={() => setIsNotifyModalOpen(true)}
+                  className="w-full py-4 border-2 border-[#1D3D54] text-[#1D3D54] font-bold rounded-xl text-sm 
+               hover:bg-[#1D3D54] hover:text-white active:scale-[0.98] 
+               transition-all duration-300 ease-in-out"
+                >
+                  Send message
+                </button>
 
-              <button
-                onClick={() => setIsNotifyModalOpen(true)}
-                className="w-full py-4 border-2 border-[#1D3D54] text-[#1D3D54] font-bold rounded-2xl text-sm hover:bg-gray-50 transition-colors active:scale-95"
-              >
-                Send alert
-              </button>
+                <Link to="/company/contacts" className="w-full">
+                  <button
+                    className="w-full bg-[#1D3D54] text-white py-4 rounded-xl font-bold text-lg 
+                       hover:bg-[#2a5675] hover:shadow-xl active:scale-[0.98] 
+                       transition-all duration-300 ease-in-out shadow-md"
+                  >
+                    Contacts
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
