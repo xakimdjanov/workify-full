@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { talenApi, jobApi } from "../../services/api"; // jobApi qo'shildi
+import { talenApi, jobApi } from "../../services/api";
 import { HiOutlineLocationMarker, HiOutlineBriefcase } from "react-icons/hi";
-import { IoChevronBack, IoStarSharp } from "react-icons/io5";
+import { IoStarSharp } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import { FiSend } from "react-icons/fi";
+import { ArrowLeft } from "lucide-react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useTheme } from "../../talent/Context/ThemeContext";
 
 const TalentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [talent, setTalent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { settings } = useTheme();
+  const isDark = settings.darkMode;
 
-  // --- SEND ALERT STATES (TOGRILANDI) ---
   const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false);
   const [notifyForm, setNotifyForm] = useState({
     title: "",
@@ -29,8 +32,6 @@ const TalentDetail = () => {
         const res = await talenApi.getById(id);
         const data = res.data?.data || res.data;
         setTalent(data);
-        
-        // Default title to'ldirish
         setNotifyForm((prev) => ({
           ...prev,
           title: `${data.occupation || ""} - New Opportunity!`,
@@ -44,12 +45,11 @@ const TalentDetail = () => {
     if (id) fetchTalentDetail();
   }, [id]);
 
-  // --- SEND ALERT FUNCTION (TOGRILANDI) ---
   const handleSendAlert = async (e) => {
     e.preventDefault();
     const payload = {
       talent_id: Number(id),
-      job_id: null, 
+      job_id: null,
       title: notifyForm.title || `Opportunity Alert`,
       message: notifyForm.message,
       type: notifyForm.type,
@@ -60,7 +60,7 @@ const TalentDetail = () => {
     try {
       const response = await axios.post(
         "https://workifybackend-production.up.railway.app/api/notifications",
-        payload,
+        payload
       );
       if (response.status === 200 || response.status === 201) {
         toast.success(`Xabarnoma ${talent.first_name}ga yuborildi! 🎉`);
@@ -69,7 +69,7 @@ const TalentDetail = () => {
       }
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Xabarnoma yuborishda xatolik",
+        error.response?.data?.message || "Xabarnoma yuborishda xatolik"
       );
     }
   };
@@ -77,51 +77,61 @@ const TalentDetail = () => {
   const defaultAvatar =
     "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=";
 
+  const cardBg = isDark
+    ? "bg-[#1E1E1E] border-gray-800 shadow-[#5CB85C]/10"
+    : "bg-white border-gray-50 shadow-sm";
+
+  const btnPrimary = `hover:bg-[#4cae4c] text-white transition-all active:scale-95 shadow-sm ${
+    isDark
+      ? "bg-[#5CB85C] shadow-[#5CB85C]/30 hover:shadow-[#5CB85C]/40"
+      : "bg-[#5CB85C]"
+  }`;
+
   const DetailSkeleton = () => (
-    <div className="max-w-[1100px] mx-auto px-6 mt-8 animate-pulse">
+    <div className="max-w-5xl mx-auto px-4 mt-8 animate-pulse">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+          <div className={`rounded-[2rem] p-8 border ${cardBg}`}>
             <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-[28px] bg-gray-200" />
+              <div className={`w-32 h-32 md:w-40 md:h-40 rounded-[28px] ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
               <div className="flex-1 space-y-4">
-                <div className="h-8 bg-gray-200 rounded-md w-1/2" />
-                <div className="h-4 bg-gray-200 rounded-md w-1/3" />
+                <div className={`h-8 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded-md w-1/2`} />
+                <div className={`h-4 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded-md w-1/3`} />
                 <div className="flex gap-4 mt-6">
-                  <div className="h-10 bg-gray-100 rounded-lg w-24" />
-                  <div className="h-10 bg-gray-100 rounded-lg w-24" />
+                  <div className={`h-10 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded-lg w-24`} />
+                  <div className={`h-10 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded-lg w-24`} />
                 </div>
               </div>
             </div>
-            <div className="mt-10 pt-8 border-t border-gray-50">
-              <div className="h-6 bg-gray-200 rounded w-1/4 mb-4" />
+            <div className={`mt-10 pt-8 border-t ${isDark ? "border-gray-700" : "border-gray-50"}`}>
+              <div className={`h-6 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded w-1/4 mb-4`} />
               <div className="flex flex-wrap gap-2">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-9 w-20 bg-gray-100 rounded-full" />
+                  <div key={i} className={`h-9 w-20 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded-full`} />
                 ))}
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
-            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4" />
+          <div className={`rounded-[2rem] p-8 border ${cardBg}`}>
+            <div className={`h-6 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded w-1/4 mb-4`} />
             <div className="space-y-3">
-              <div className="h-4 bg-gray-100 rounded w-full" />
-              <div className="h-4 bg-gray-100 rounded w-5/6" />
-              <div className="h-4 bg-gray-100 rounded w-4/6" />
+              <div className={`h-4 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded w-full`} />
+              <div className={`h-4 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded w-5/6`} />
+              <div className={`h-4 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded w-4/6`} />
             </div>
           </div>
         </div>
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm space-y-6">
+          <div className={`rounded-[2rem] p-8 border ${cardBg} space-y-6`}>
             <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded w-1/2" />
-              <div className="h-10 bg-gray-200 rounded w-3/4" />
+              <div className={`h-4 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded w-1/2`} />
+              <div className={`h-10 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded w-3/4`} />
             </div>
             <div className="space-y-4">
-              <div className="h-10 bg-gray-100 rounded w-full" />
-              <div className="h-10 bg-gray-100 rounded w-full" />
+              <div className={`h-10 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded w-full`} />
+              <div className={`h-10 ${isDark ? "bg-gray-800" : "bg-gray-100"} rounded w-full`} />
             </div>
-            <div className="h-14 bg-gray-200 rounded-2xl w-full" />
+            <div className={`h-14 ${isDark ? "bg-gray-700" : "bg-gray-200"} rounded-2xl w-full`} />
           </div>
         </div>
       </div>
@@ -130,9 +140,9 @@ const TalentDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FDFEFF] pb-20">
-        <div className="max-w-[1100px] mx-auto px-6 pt-8">
-          <div className="h-6 w-32 bg-gray-100 rounded" />
+      <div className={`min-h-screen ${isDark ? "bg-[#121212]" : "bg-[#FDFEFF]"} pb-20 transition-colors duration-300`}>
+        <div className="max-w-5xl mx-auto px-4 pt-8">
+          <div className={`h-6 w-32 ${isDark ? "bg-gray-700" : "bg-gray-100"} rounded`} />
         </div>
         <DetailSkeleton />
       </div>
@@ -141,8 +151,8 @@ const TalentDetail = () => {
 
   if (!talent)
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 font-bold">Talent not found.</p>
+      <div className={`min-h-screen flex items-center justify-center ${isDark ? "bg-[#121212]" : ""}`}>
+        <p className={`${isDark ? "text-gray-400" : "text-gray-500"} font-bold`}>Talent not found.</p>
       </div>
     );
 
@@ -151,81 +161,90 @@ const TalentDetail = () => {
     : JSON.parse(talent.skils || "[]");
 
   return (
-    <div className="min-h-screen bg-[#FDFEFF] font-gilroy text-[#1A1C21] pb-20">
+    <div className={`min-h-screen ${isDark ? "bg-[#121212] text-gray-100" : "bg-[#FDFEFF] text-[#1A1C21]"} font-gilroy pb-20 transition-colors duration-300`}>
       <Toaster position="top-center" />
 
-      {/* MODAL (TOGRILANDI) */}
+      {/* MODAL */}
       {isNotifyModalOpen && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 text-left">
-          <div className="bg-white rounded-[2.5rem] p-8 max-w-lg w-full shadow-2xl relative animate-in zoom-in duration-200">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 text-left">
+          <div className={`${isDark ? "bg-[#1E1E1E] text-gray-100 border border-gray-800" : "bg-white"} rounded-[2.5rem] p-8 max-w-lg w-full shadow-2xl relative animate-in zoom-in duration-200`}>
             <button
               onClick={() => setIsNotifyModalOpen(false)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-gray-600"
+              className={`absolute top-6 right-6 ${isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"} transition-colors`}
             >
               <MdClose size={24} />
             </button>
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-[#343C44]">
-              <FiSend className="text-blue-500" /> Send Alert
+            <h2 className={`text-2xl font-bold mb-6 flex items-center gap-3 ${isDark ? "text-gray-100" : "text-[#343C44]"}`}>
+              <FiSend className="text-[#5CB85C]" /> Send Alert
             </h2>
             <form onSubmit={handleSendAlert} className="space-y-4 text-left">
               <div>
-                <label className="block text-sm font-bold text-gray-600 mb-1">
+                <label className={`block text-sm font-semibold ${isDark ? "text-gray-300" : "text-gray-700"} mb-1`}>
                   Notification Title (Occupation include)
                 </label>
                 <input
                   type="text"
-                  className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5CB85C] transition-all ${
+                    isDark
+                      ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500"
+                      : "bg-gray-50 border-gray-200"
+                  }`}
                   value={notifyForm.title}
-                  onChange={(e) =>
-                    setNotifyForm({ ...notifyForm, title: e.target.value })
-                  }
+                  onChange={(e) => setNotifyForm({ ...notifyForm, title: e.target.value })}
                   required
                 />
               </div>
 
-
-           <div>
-  <label className="block text-sm font-bold text-gray-600 mb-1">
-    Message
-  </label>
-  
-  {/* Tayyor shablonlar (Quick Templates) */}
-  <div className="flex gap-2 mb-2">
-    <button
-      type="button"
-      onClick={() => setNotifyForm({ 
-        ...notifyForm, 
-        message: `Hello! We saw your profile and it matches our ${talent.occupation} position. We would like to invite you for an interview.` 
-      })}
-      className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors border border-blue-100"
-    >
-      + Use Template
-    </button>
-    <button
-      type="button"
-      onClick={() => setNotifyForm({ ...notifyForm, message: "" })}
-      className="text-[10px] bg-gray-50 text-gray-600 px-2 py-1 rounded-md hover:bg-gray-100 transition-colors border border-gray-100"
-    >
-      Clear
-    </button>
-  </div>
-
-  <textarea
-    rows="4"
-    className="w-full px-4 py-3 bg-gray-50 border rounded-xl outline-none resize-none focus:border-blue-400 transition-all"
-    placeholder={`Hello! We saw your profile and it matches our ${talent.occupation} position...`}
-    value={notifyForm.message}
-    onChange={(e) =>
-      setNotifyForm({ ...notifyForm, message: e.target.value })
-    }
-    required
-  />
-</div>
-
+              <div>
+                <label className={`block text-sm font-semibold ${isDark ? "text-gray-300" : "text-gray-700"} mb-1`}>
+                  Message
+                </label>
+                <div className="flex gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNotifyForm({
+                        ...notifyForm,
+                        message: `Hello! We saw your profile and it matches our ${talent.occupation} position. We would like to invite you for an interview.`,
+                      })
+                    }
+                    className={`text-[10px] px-2 py-1 rounded-md transition-colors border ${
+                      isDark
+                        ? "bg-[#5CB85C]/10 text-[#5CB85C] border-[#5CB85C]/30 hover:bg-[#5CB85C]/20"
+                        : "bg-green-50 text-green-600 border-green-100 hover:bg-green-100"
+                    }`}
+                  >
+                    + Use Template
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNotifyForm({ ...notifyForm, message: "" })}
+                    className={`text-[10px] px-2 py-1 rounded-md transition-colors border ${
+                      isDark
+                        ? "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700"
+                        : "bg-gray-50 text-gray-600 border-gray-100 hover:bg-gray-100"
+                    }`}
+                  >
+                    Clear
+                  </button>
+                </div>
+                <textarea
+                  rows="4"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5CB85C] resize-none transition-all ${
+                    isDark
+                      ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500"
+                      : "bg-gray-50 border-gray-200"
+                  }`}
+                  placeholder={`Hello! We saw your profile and it matches our ${talent.occupation} position...`}
+                  value={notifyForm.message}
+                  onChange={(e) => setNotifyForm({ ...notifyForm, message: e.target.value })}
+                  required
+                />
+              </div>
 
               <button
                 type="submit"
-                className="w-full py-4 bg-[#1D3D54] text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all"
+                className={`${btnPrimary} w-full py-4 rounded-2xl font-bold text-lg`}
               >
                 Send for {talent.occupation} position
               </button>
@@ -234,55 +253,79 @@ const TalentDetail = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="max-w-[1100px] mx-auto px-6 pt-8 text-left">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-400 hover:text-[#1D3D54] transition-all font-medium group"
-        >
-          <IoChevronBack className="group-hover:-translate-x-1 transition-transform" />{" "}
-          Back to Search
-        </button>
+      {/* Header Nav */}
+      <div className="max-w-5xl mx-auto px-4 pt-8 mb-8">
+        <div className={`flex items-center justify-between p-3 rounded-[1.5rem] shadow-sm border transition-all ${
+          isDark ? "bg-[#1E1E1E] border-gray-800 shadow-[#5CB85C]/10" : "bg-white border-gray-50"
+        }`}>
+          <button
+            onClick={() => navigate(-1)}
+            className={`flex items-center gap-2 px-6 py-2 font-bold text-xl hover:text-[#5CB85C] transition-colors ${
+              isDark ? "text-gray-300" : "text-[#343C44]"
+            }`}
+          >
+            <ArrowLeft size={24} />
+            Back
+          </button>
+          <button
+            onClick={() => setIsNotifyModalOpen(true)}
+            className={`${btnPrimary} px-8 py-3 rounded-2xl font-bold`}
+          >
+            Send Alert
+          </button>
+        </div>
       </div>
 
-      <div className="max-w-[1100px] mx-auto px-6 mt-8 text-left">
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
+            {/* Profile Card */}
+            <div className={`rounded-[2rem] p-8 border ${cardBg}`}>
               <div className="flex flex-col md:flex-row gap-8 items-start">
                 <div className="relative">
                   <img
                     src={talent.image || talent.profilePhoto || defaultAvatar}
-                    className="w-32 h-32 md:w-40 md:h-40 rounded-[28px] object-cover ring-8 ring-[#F9F5FF]"
+                    className={`w-32 h-32 md:w-40 md:h-40 rounded-[28px] object-cover ring-8 ${
+                      isDark ? "ring-[#2A2A2A]" : "ring-gray-50"
+                    }`}
                     alt="Profile"
                   />
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold tracking-tight">
+                  <h1 className={`text-3xl font-bold tracking-tight ${isDark ? "text-white" : "text-[#1A1C21]"}`}>
                     {talent.first_name} {talent.last_name}
                   </h1>
-                  <p className="text-[#1D3D54] font-bold text-sm mt-2 tracking-wide uppercase">
+                  <p className={`font-bold text-sm mt-2 tracking-wide uppercase ${isDark ? "text-[#5CB85C]" : "text-[#5CB85C]"}`}>
                     {talent.occupation} • {talent.specialty}
                   </p>
-                  <div className="flex flex-wrap gap-5 mt-6 text-gray-500 text-sm font-medium">
-                    <div className="flex items-center gap-2 bg-[#F9FAFB] px-3 py-1.5 rounded-lg">
-                      <HiOutlineLocationMarker className="text-lg text-gray-400" />{" "}
+                  <div className={`flex flex-wrap gap-4 mt-5 text-sm font-medium ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${isDark ? "bg-[#2A2A2A]" : "bg-gray-50"}`}>
+                      <HiOutlineLocationMarker className="text-lg text-gray-400" />
                       {talent.city}, {talent.country}
                     </div>
-                    <div className="flex items-center gap-2 bg-[#F9FAFB] px-3 py-1.5 rounded-lg">
-                      <HiOutlineBriefcase className="text-lg text-gray-400" />{" "}
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${isDark ? "bg-[#2A2A2A]" : "bg-gray-50"}`}>
+                      <HiOutlineBriefcase className="text-lg text-gray-400" />
                       {talent.workplace_type || "Remote"}
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="mt-10 pt-8 border-t border-gray-50">
-                <h3 className="text-lg font-bold mb-4">Skills & Expertise</h3>
+
+              <div className={`mt-10 pt-8 border-t ${isDark ? "border-gray-700/60" : "border-gray-100"}`}>
+                <h3 className={`text-sm font-semibold uppercase tracking-wider mb-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                  Skills & Expertise
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {skillsArray.map((skill, i) => (
                     <span
                       key={i}
-                      className="bg-[#F9F5FF] text-[#1D3D54] px-4 py-2 rounded-full text-sm font-semibold border border-[#F4EBFF]"
+                      className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
+                        isDark
+                          ? "bg-[#5CB85C]/10 text-[#5CB85C] border-[#5CB85C]/30"
+                          : "bg-green-50 text-green-700 border-green-100"
+                      }`}
                     >
                       {typeof skill === "object" ? skill.skill : skill}
                     </span>
@@ -290,52 +333,71 @@ const TalentDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm">
-              <h3 className="text-lg font-bold mb-4">About</h3>
-              <p className="text-gray-500 leading-relaxed">
-                {talent.bio ||
-                  `${talent.first_name} is a highly skilled specialist.`}
+
+            {/* About Card */}
+            <div className={`rounded-[2rem] p-8 border ${cardBg}`}>
+              <h3 className={`text-sm font-semibold uppercase tracking-wider mb-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                About
+              </h3>
+              <p className={`leading-relaxed ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                {talent.bio || `${talent.first_name} is a highly skilled specialist.`}
               </p>
             </div>
           </div>
 
+          {/* Right Column — Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-[32px] p-8 border border-gray-100 shadow-md sticky top-8">
+            <div className={`rounded-[2rem] p-8 border sticky top-8 ${cardBg}`}>
+              {/* Salary */}
               <div className="mb-6">
-                <span className="text-gray-400 text-sm font-medium">
+                <span className={`text-sm font-medium ${isDark ? "text-gray-500" : "text-gray-400"}`}>
                   Expected Salary
                 </span>
                 <div className="flex items-baseline gap-1 mt-1">
-                  <span className="text-3xl font-bold text-[#101828]">
+                  <span className={`text-3xl font-bold ${isDark ? "text-white" : "text-[#101828]"}`}>
                     ${talent.minimum_salary?.toLocaleString()}
                   </span>
-                  <span className="text-gray-400 font-medium">/month</span>
+                  <span className={`font-medium ${isDark ? "text-gray-500" : "text-gray-400"}`}>/month</span>
                 </div>
               </div>
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center py-3 border-b border-gray-50">
-                  <span className="text-gray-500 text-sm">Employment</span>
-                  <span className="font-semibold text-sm">
+
+              {/* Details */}
+              <div className="space-y-1 mb-8">
+                <div className={`flex justify-between items-center py-3 border-b ${isDark ? "border-gray-700/60" : "border-gray-100"}`}>
+                  <span className={`text-sm ${isDark ? "text-gray-500" : "text-gray-500"}`}>Employment</span>
+                  <span className={`font-semibold text-sm ${isDark ? "text-gray-200" : ""}`}>
                     {talent.work_type || "Contract"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-3 border-b border-gray-50">
-                  <span className="text-gray-500 text-sm">Rating</span>
-                  <span className="font-semibold text-sm flex items-center gap-1">
+                <div className={`flex justify-between items-center py-3 border-b ${isDark ? "border-gray-700/60" : "border-gray-100"}`}>
+                  <span className={`text-sm ${isDark ? "text-gray-500" : "text-gray-500"}`}>Rating</span>
+                  <span className={`font-semibold text-sm flex items-center gap-1 ${isDark ? "text-[#5CB85C]" : "text-[#5CB85C]"}`}>
                     <IoStarSharp /> 4.8
+                  </span>
+                </div>
+                <div className={`flex justify-between items-center py-3 ${isDark ? "border-gray-700/60" : "border-gray-100"}`}>
+                  <span className={`text-sm ${isDark ? "text-gray-500" : "text-gray-500"}`}>Location</span>
+                  <span className={`font-semibold text-sm ${isDark ? "text-gray-200" : ""}`}>
+                    {talent.city || "—"}
                   </span>
                 </div>
               </div>
 
-              <button className="w-full bg-[#1D3D54] text-white py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition-all shadow-lg active:scale-[0.98] mb-4">
+              {/* Hire Button */}
+              <button className={`${btnPrimary} w-full py-4 rounded-2xl font-bold text-lg mb-3`}>
                 Hire {talent.first_name}
               </button>
 
+              {/* Send Alert Button */}
               <button
                 onClick={() => setIsNotifyModalOpen(true)}
-                className="w-full py-4 border-2 border-[#1D3D54] text-[#1D3D54] font-bold rounded-2xl text-sm hover:bg-gray-50 transition-colors active:scale-95"
+                className={`w-full py-4 border-2 font-bold rounded-2xl text-sm transition-colors active:scale-95 ${
+                  isDark
+                    ? "border-[#5CB85C] text-[#5CB85C] hover:bg-[#5CB85C]/10"
+                    : "border-[#5CB85C] text-[#5CB85C] hover:bg-green-50"
+                }`}
               >
-                Send alert
+                Send Alert
               </button>
             </div>
           </div>
