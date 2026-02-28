@@ -25,6 +25,8 @@ import MyJobs from "./Company/MyJobs/MyJobs.jsx";
 import JobDetailPageCompany from "./Company/JobDetail/JobDetailPage.jsx";
 import PostJob from "./Company/PostJob/PostJob.jsx";
 import Notification from "./Company/Notifications/Notification.jsx";
+import Contacts from "./Company/Contacts/Contacts.jsx";
+import Faaq from "./Company/Faq/Faq.jsx";
 
 // --- Talent Pages ---
 import MainLayout from "./talent/components/MainLayout.jsx";
@@ -72,6 +74,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/faq" element={<Faaq />} />
 
         {/* 1. COMPANY SECTION - Faqat Sidebarli sahifalar */}
         <Route element={<Layout />}>
