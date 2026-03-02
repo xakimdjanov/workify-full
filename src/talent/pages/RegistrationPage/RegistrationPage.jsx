@@ -75,19 +75,19 @@ export default function RegistrationForm() {
     if (size <= 8)
       return `+${phoneNumber.slice(0, 3)} (${phoneNumber.slice(
         3,
-        5
+        5,
       )}) ${phoneNumber.slice(5, 8)}`;
     if (size <= 10)
       return `+${phoneNumber.slice(0, 3)} (${phoneNumber.slice(
         3,
-        5
+        5,
       )}) ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}`;
     return `+${phoneNumber.slice(0, 3)} (${phoneNumber.slice(
       3,
-      5
+      5,
     )}) ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
       8,
-      10
+      10,
     )}-${phoneNumber.slice(10, 12)}`;
   };
 
@@ -129,6 +129,24 @@ export default function RegistrationForm() {
     if (!formData.last_name.trim()) errors.last_name = "Enter your last name";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       errors.email = "Invalid email address";
+
+    const firstName = formData.first_name.trim();
+    if (!firstName) {
+      errors.first_name = "Enter your first name";
+    } else if (firstName.length < 3) {
+      errors.first_name = "Must be at least 3 characters";
+    } else if (firstName.length > 30) {
+      errors.first_name = "Must be less than 30 characters";
+    }
+
+    const lastName = formData.last_name.trim();
+    if (!lastName) {
+      errors.last_name = "Enter your last name";
+    } else if (lastName.length < 3) {
+      errors.last_name = "Must be at least 3 characters";
+    } else if (lastName.length > 30) {
+      errors.last_name = "Must be less than 30 characters";
+    }
 
     if (!formData.password) {
       errors.password = "Enter your password";
@@ -193,15 +211,17 @@ export default function RegistrationForm() {
               <div
                 className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.5rem)] bg-white rounded-[50px] shadow-md transition-all duration-300"
                 style={{
-                  transform: `translateX(${activeTab === "company" ? "100%" : "0%"
-                    })`,
+                  transform: `translateX(${
+                    activeTab === "company" ? "100%" : "0%"
+                  })`,
                 }}
               ></div>
               <button
                 type="button"
                 onClick={() => setActiveTab("talent")}
-                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${activeTab === "talent" ? "text-[#163D5C]" : "text-gray-400"
-                  }`}
+                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${
+                  activeTab === "talent" ? "text-[#163D5C]" : "text-gray-400"
+                }`}
               >
                 <FaUser className="text-sm xs:text-base" />
                 <span className="truncate">Talent</span>
@@ -209,8 +229,9 @@ export default function RegistrationForm() {
               <Link
                 to="/company/signup"
                 onClick={() => setActiveTab("company")}
-                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${activeTab === "company" ? "text-[#163D5C]" : "text-gray-400"
-                  }`}
+                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${
+                  activeTab === "company" ? "text-[#163D5C]" : "text-gray-400"
+                }`}
               >
                 <FaBuilding className="text-sm xs:text-base" />
                 <span className="truncate">Company</span>
@@ -225,6 +246,9 @@ export default function RegistrationForm() {
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     First name *
+                    <span className="text-xs text-gray-400 font-normal ml-1">
+                      (3-30 chars)
+                    </span>
                   </label>
                   <div className="relative">
                     <FaUser className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -234,8 +258,9 @@ export default function RegistrationForm() {
                       value={formData.first_name}
                       onChange={handleChange}
                       placeholder="Enter name"
+                      maxLength={30}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "first_name"
+                        "first_name",
                       )}`}
                     />
                   </div>
@@ -249,6 +274,9 @@ export default function RegistrationForm() {
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Last name *
+                    <span className="text-xs text-gray-400 font-normal ml-1">
+                      (3-30 chars)
+                    </span>
                   </label>
                   <div className="relative">
                     <FaUser className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -258,8 +286,9 @@ export default function RegistrationForm() {
                       value={formData.last_name}
                       onChange={handleChange}
                       placeholder="Enter last name"
+                      maxLength={30} // 30 tadan ortiq yozib bo'lmaydi
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "last_name"
+                        "last_name",
                       )}`}
                     />
                   </div>
@@ -283,7 +312,7 @@ export default function RegistrationForm() {
                       onChange={handleChange}
                       placeholder="example@mail.com"
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "email"
+                        "email",
                       )}`}
                     />
                   </div>
@@ -309,7 +338,7 @@ export default function RegistrationForm() {
                       value={formData.password}
                       onChange={handleChange}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-10 xs:pr-12 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "password"
+                        "password",
                       )}`}
                     />
                     <button
@@ -339,8 +368,9 @@ export default function RegistrationForm() {
                     <div
                       className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.5rem)] bg-white rounded-[50px] shadow-sm transition-all duration-300"
                       style={{
-                        transform: `translateX(${formData.gender === "female" ? "100%" : "0%"
-                          })`,
+                        transform: `translateX(${
+                          formData.gender === "female" ? "100%" : "0%"
+                        })`,
                       }}
                     ></div>
                     <button
@@ -348,10 +378,11 @@ export default function RegistrationForm() {
                       onClick={() =>
                         setFormData({ ...formData, gender: "male" })
                       }
-                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${formData.gender === "male"
+                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${
+                        formData.gender === "male"
                           ? "text-[#163D5C]"
                           : "text-gray-400"
-                        }`}
+                      }`}
                     >
                       Male
                     </button>
@@ -360,10 +391,11 @@ export default function RegistrationForm() {
                       onClick={() =>
                         setFormData({ ...formData, gender: "female" })
                       }
-                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${formData.gender === "female"
+                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${
+                        formData.gender === "female"
                           ? "text-[#163D5C]"
                           : "text-gray-400"
-                        }`}
+                      }`}
                     >
                       Female
                     </button>
@@ -383,13 +415,13 @@ export default function RegistrationForm() {
                       onChange={handleChange}
                       max={
                         new Date(
-                          new Date().setFullYear(new Date().getFullYear() - 14)
+                          new Date().setFullYear(new Date().getFullYear() - 14),
                         )
                           .toISOString()
                           .split("T")[0]
                       }
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "date_of_birth"
+                        "date_of_birth",
                       )}`}
                     />
                   </div>
@@ -417,7 +449,7 @@ export default function RegistrationForm() {
                       }}
                       placeholder="Search city..."
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "location"
+                        "location",
                       )}`}
                       autoComplete="off"
                     />
@@ -427,7 +459,7 @@ export default function RegistrationForm() {
                       {UZBEKISTAN_CITIES.filter((c) =>
                         c
                           .toLowerCase()
-                          .includes(formData.location.toLowerCase())
+                          .includes(formData.location.toLowerCase()),
                       ).map((city) => (
                         <div
                           key={city}
@@ -461,7 +493,7 @@ export default function RegistrationForm() {
                       value={formData.phone}
                       onChange={handleChange}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "phone"
+                        "phone",
                       )}`}
                     />
                   </div>
