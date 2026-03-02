@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { companyApi } from "../../services/api";
-import { IoMdMail } from "react-icons/io";
-import { MdLock } from "react-icons/md";
+import { MdEmail } from "react-icons/md";
+import { IoMdLock } from "react-icons/io";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function SignIn() {
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -17,31 +17,39 @@ function SignIn() {
 
     useEffect(() => {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-        // Qat'iy tekshiruv: token borligi va u yaroqli ekanligi
         if (token && token !== "undefined" && token !== "null" && token.length > 10) {
             navigate("/company/dashboard", { replace: true });
         }
     }, [navigate]);
 
-    const handleChange = (e) => {
-        const { id, value, type, checked } = e.target;
-        if (id === "remember") {
-            setRememberMe(checked);
-        } else {
-            setFormData((p) => ({ ...p, [id]: value }));
-            setErrors((p) => ({ ...p, [id]: false }));
+    // Errorlarni tozalash (Talent logikasidagi kabi)
+    useEffect(() => {
+        if (errors.email || errors.password) {
+            setErrors({ email: false, password: false });
         }
+    }, [formData.email, formData.password]);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        let val = value;
+
+        // Company Login uchun maxsus shart: Password 16 belgi va space taqiqlangan
+        if (id === "password") {
+            val = value.replace(/\s/g, "").slice(0, 16);
+        }
+
+        setFormData((p) => ({ ...p, [id]: val }));
     };
 
     const validateForm = () => {
         const newErrors = {};
         if (!formData.email) {
-            newErrors.email = "Email kiriting";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = "Email formati noto'g'ri";
+            newErrors.email = "Fill in the email field";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = "Invalid email format";
         }
         if (!formData.password) {
-            newErrors.password = "Parol kiriting";
+            newErrors.password = "Fill in the password field";
         }
         return newErrors;
     };
@@ -49,15 +57,18 @@ function SignIn() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validateForm();
+
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            toast.error("Iltimos, maydonlarni to'g'ri to'ldiring");
+            setErrors({
+                email: !!validationErrors.email,
+                password: !!validationErrors.password,
+            });
+            toast.error(validationErrors.email || validationErrors.password);
             return;
         }
 
         setLoading(true);
         try {
-            // Login so'rovi
             const response = await companyApi.login({
                 email: formData.email.trim().toLowerCase(),
                 password: formData.password,
@@ -66,118 +77,145 @@ function SignIn() {
             const { token, company, message } = response.data;
 
             if (token) {
-                // DOIM localStorage ga saqlash
-                const storage = localStorage;
-
-                // Avval barcha eski qoldiqlarni tozalaymiz
+                // Tozalash va saqlash
                 localStorage.removeItem("token");
                 sessionStorage.removeItem("token");
-                localStorage.removeItem("user_info");
-                sessionStorage.removeItem("user_info");
+                localStorage.setItem("token", token);
+                localStorage.setItem("user_info", JSON.stringify(company));
 
-                // Yangi ma'lumotlarni yozamiz
-                storage.setItem("token", token);
-                storage.setItem("user_info", JSON.stringify(company));
+                toast.success(message || "Successfully logged in!");
 
-                toast.success(message || "Login muvaffaqiyatli!");
-
-                // 1 soniyadan keyin dashboardga o'tamiz
                 setTimeout(() => {
                     navigate("/company/dashboard", { replace: true });
                 }, 1000);
             }
         } catch (error) {
-            console.error("Login xatosi:", error.response);
-            const errorMessage = error.response?.data?.message || "Email yoki parol noto'g'ri";
-            toast.error(errorMessage);
+            console.error("Login xatosi:", error);
             setErrors({ email: true, password: true });
+            toast.error(error.response?.data?.message || "Wrong email or password");
         } finally {
             setLoading(false);
         }
     };
-    
-    <Toaster position="top-right" />
 
     return (
-        <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#F4F4F4] font-['Mulish'] p-4">
+        <>
+            <Toaster position="top-right" />
+            <div className="flex flex-col min-h-100">
+                {/* <Header /> */}
+                <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4 font-['Mulish']">
+                    <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">
+                        Login
+                    </h2>
 
-            <h1 className="text-[48px] md:text-[60px] font-bold text-[#404040] mb-8">Login</h1>
-
-            <div className="w-full max-w-[500px] bg-white rounded-[30px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 md:p-12">
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[18px] font-bold text-[#404040]" htmlFor="email">Email</label>
-                        <div className={`flex items-center bg-[#F9FAFB] border rounded-xl px-4 h-[60px] transition-all ${errors.email ? 'border-red-500' : 'border-[#E5E7EB] focus-within:border-[#163D5C]'}`}>
-                            <IoMdMail className="text-[#163D5C] text-2xl shrink-0" />
-                            <input
-                                className="w-full bg-transparent px-4 outline-none text-[#163D5C] placeholder:text-[#C7C7C7]"
-                                type="email"
-                                id="email"
-                                placeholder="Example@gmail.com"
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[18px] font-bold text-[#404040]" htmlFor="password">Password</label>
-                        <div className={`flex items-center bg-[#F9FAFB] border rounded-xl px-4 h-[60px] transition-all ${errors.password ? 'border-red-500' : 'border-[#E5E7EB] focus-within:border-[#163D5C]'}`}>
-                            <MdLock className="text-[#163D5C] text-2xl shrink-0" />
-                            <input
-                                className="w-full bg-transparent px-4 outline-none text-[#163D5C] placeholder:text-[#C7C7C7]"
-                                type={showPassword ? "text" : "password"}
-                                id="password"
-                                placeholder="Password"
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="text-[#C7C7C7] hover:text-[#163D5C]"
-                            >
-                                {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
-                            </button>
-                        </div>
-                        {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
-                    </div>
-
-                    <div className="flex items-center justify-between text-[14px]">
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                id="remember"
-                                className="w-4 h-4 accent-[#163D5C]"
-                                checked={rememberMe}
-                                onChange={handleChange}
-                            />
-                            <span className="text-[#404040] font-medium">Remember me</span>
-                        </label>
-                        <Link to="/company/forgot-password-1" className="text-[#163D5C] font-semibold underline">
-                            Forgot password?
-                        </Link>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full h-[56px] bg-[#163D5C] text-white rounded-xl font-bold text-[20px] shadow-lg hover:bg-opacity-90 transition-all active:scale-95 disabled:opacity-70"
+                    <form
+                        onSubmit={handleSubmit}
+                        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200"
                     >
-                        {loading ? "Signing in..." : "Sign in"}
-                    </button>
+                        {/* Email Field */}
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <MdEmail
+                                    className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"
+                                        }`}
+                                />
+                                <input
+                                    type="email"
+                                    id="email"
+                                    placeholder="admin@gmail.com"
+                                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.email
+                                        ? "border-red-500 focus:ring-red-300 bg-red-50"
+                                        : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                        }`}
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <p className="text-center text-[#343C44] text-[16px]">
-                        Have no account yet?{" "}
-                        <Link to="/company/signup" className="text-[#163D5C] font-bold hover:underline">
-                            Register
-                        </Link>
-                    </p>
-                </form>
+                        {/* Password Field */}
+                        <div className="mb-2">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <IoMdLock
+                                    className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"
+                                        }`}
+                                />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    placeholder="••••••••"
+                                    maxLength={16} // Company talabi saqlandi
+                                    className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.password
+                                        ? "border-red-500 focus:ring-red-300 bg-red-50"
+                                        : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                        }`}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Remember Me & Forgot Password */}
+                        <div className="flex items-center justify-between mb-6">
+                            <label className="flex items-center text-sm text-gray-600 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    className="w-4 h-4 mr-2 accent-[#163D5C]"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                />
+                                Remember me
+                            </label>
+                            <Link
+                                to="/company/forgot-password-1"
+                                className="text-sm text-[#163D5C] hover:underline font-medium"
+                            >
+                                Forgot password?
+                            </Link>
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-[#163D5C] hover:bg-[#0f2a40]"
+                                }`}
+                        >
+                            {loading ? "Signing In..." : "Sign In"}
+                        </button>
+
+                        {/* Register Link */}
+                        <p className="text-center text-sm text-gray-600 mt-6">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/company/signup"
+                                className="text-[#163D5C] font-bold hover:underline"
+                            >
+                                Register
+                            </Link>
+                        </p>
+                    </form>
+                </main>
+                {/* <Footer /> */}
             </div>
-        </div>
+        </>
     );
 }
 
