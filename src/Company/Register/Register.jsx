@@ -117,31 +117,41 @@ const SignUpPage = () => {
       }
     }
 
-// 2. PAROL VALIDATSIYASI
-const pass = formData.password;
+    const companyName = formData.company_name.trim();
+    if (companyName.length < 3) {
+      return toast.error(
+        "Kompaniya nomi kamida 3 ta harfdan iborat bo'lishi kerak!",
+      );
+    }
+    if (companyName.length > 30) {
+      return toast.error("Kompaniya nomi 30 ta harfdan oshmasligi kerak!");
+    }
 
-// 1. Umumiy uzunlikni tekshirish (kamida 6 ta belgi)
-if (pass.length < 6) {
-  const msg = "Parol uzunligi kamida 6 ta belgidan iborat bo'lishi kerak!";
-  setPasswordError(msg);
-  return toast.error(msg);
-}
+    // 2. PAROL VALIDATSIYASI
+    const pass = formData.password;
 
-// 2. Kamida 1 ta katta harf borligini tekshirish
-const hasUpperCase = /[A-Z]/.test(pass);
-if (!hasUpperCase) {
-  const msg = "Parolda kamida 1 ta katta harf bo'lishi shart!";
-  setPasswordError(msg);
-  return toast.error(msg);
-}
+    // 1. Umumiy uzunlikni tekshirish (kamida 6 ta belgi)
+    if (pass.length < 6) {
+      const msg = "Parol uzunligi kamida 6 ta belgidan iborat bo'lishi kerak!";
+      setPasswordError(msg);
+      return toast.error(msg);
+    }
 
-// 3. Kamida 1 ta raqam borligini tekshirish
-const hasDigit = /\d/.test(pass);
-if (!hasDigit) {
-  const msg = "Parolda kamida 1 ta raqam bo'lishi shart!";
-  setPasswordError(msg);
-  return toast.error(msg);
-}
+    // 2. Kamida 1 ta katta harf borligini tekshirish
+    const hasUpperCase = /[A-Z]/.test(pass);
+    if (!hasUpperCase) {
+      const msg = "Parolda kamida 1 ta katta harf bo'lishi shart!";
+      setPasswordError(msg);
+      return toast.error(msg);
+    }
+
+    // 3. Kamida 1 ta raqam borligini tekshirish
+    const hasDigit = /\d/.test(pass);
+    if (!hasDigit) {
+      const msg = "Parolda kamida 1 ta raqam bo'lishi shart!";
+      setPasswordError(msg);
+      return toast.error(msg);
+    }
 
     // Hammasi joyida bo'lsa
     setPasswordError("");
@@ -220,6 +230,7 @@ if (!hasDigit) {
                     onChange={handleChange}
                     className={inputStyle}
                     placeholder="TechCells"
+                    maxLength={30} // Foydalanuvchi 30 tadan ortiq yozolmaydi
                   />
                 </div>
               </div>
