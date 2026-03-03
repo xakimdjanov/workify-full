@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { talenApi } from "../../services/api";
-import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineBriefcase } from "react-icons/hi";
 import { PiMonitorBold } from "react-icons/pi";
 import { LuUser } from "react-icons/lu";
+import { toast } from "react-toastify";
 import {
   FaUser,
   FaMoneyBillWave,
@@ -51,7 +51,6 @@ const Talents = () => {
       } catch (err) {
         console.error("Talantlarni yuklashda xatolik:", err);
       } finally {
-        // Skeleton effektini ko'rish uchun biroz kechikish (ixtiyoriy)
         setTimeout(() => setIsLoading(false), 800);
       }
     };
@@ -190,14 +189,8 @@ const Talents = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`relative flex-1 min-w-[130px] py-3 rounded-[15px] font-bold text-[13px] md:text-[16px] transition-all z-10 whitespace-nowrap ${activeTab === tab ? "text-[#26282c]" : "text-[#C7C7C7]"}`}
+                    className={`relative flex-1 min-w-[130px] py-3 rounded-[15px] font-bold text-[13px] md:text-[16px] transition-all z-10 whitespace-nowrap ${activeTab === tab ? "bg-[#F8F9FA] shadow-sm text-[#26282c]" : "text-[#C7C7C7]"}`}
                   >
-                    {activeTab === tab && (
-                      <motion.div
-                        layoutId="tabBg"
-                        className="absolute inset-0 bg-[#F8F9FA] shadow-sm rounded-[15px] -z-10"
-                      />
-                    )}
                     {tab}
                   </button>
                 ),
@@ -221,291 +214,291 @@ const Talents = () => {
             </button>
           </div>
 
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-4 bg-white rounded-[25px] md:rounded-[30px] p-5 md:p-8 border border-gray-100 shadow-sm overflow-hidden"
-              >
-                {/* 1. Specialty Tab */}
-                {activeTab === "Specialty" && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      ...new Set(
-                        allTalents.map((t) => t.specialty).filter(Boolean),
-                      ),
-                    ].map((spec, i) => (
-                      <label
-                        key={i}
-                        className="flex items-center gap-3 cursor-pointer group"
+          {isOpen && (
+            <div className="mt-4 bg-white rounded-[25px] md:rounded-[30px] p-5 md:p-8 border border-gray-100 shadow-sm overflow-hidden">
+              {/* 1. Specialty Tab */}
+              {activeTab === "Specialty" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    ...new Set(
+                      allTalents.map((t) => t.specialty).filter(Boolean),
+                    ),
+                  ].map((spec, i) => (
+                    <label
+                      key={i}
+                      className="flex items-center gap-3 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedSpecs.includes(spec)}
+                        onChange={() =>
+                          setSelectedSpecs((prev) =>
+                            prev.includes(spec)
+                              ? prev.filter((s) => s !== spec)
+                              : [...prev, spec],
+                          )
+                        }
+                        className="w-5 h-5 rounded border-gray-300 text-[#8B39E5]"
+                      />
+                      <span
+                        className={`text-[14px] ${selectedSpecs.includes(spec) ? "text-[#8B39E5] font-bold" : "text-gray-600"}`}
                       >
+                        {spec}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {/* 2. Skills and Expertise Tab */}
+              {activeTab === "Skills and expertice" && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <p className="font-bold">Occupation</p>
+                      <div className="relative">
+                        <HiOutlineBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#163D5C]" />
                         <input
-                          type="checkbox"
-                          checked={selectedSpecs.includes(spec)}
-                          onChange={() =>
-                            setSelectedSpecs((prev) =>
-                              prev.includes(spec)
-                                ? prev.filter((s) => s !== spec)
-                                : [...prev, spec],
+                          type="text"
+                          value={occupation}
+                          onChange={(e) => setOccupation(e.target.value)}
+                          placeholder="e.g. Designer"
+                          className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none border border-transparent focus:border-[#8B39E5]"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-bold">Speciality</p>
+                      <div className="relative">
+                        <PiMonitorBold className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#163D5C]" />
+                        <input
+                          type="text"
+                          value={speciality}
+                          onChange={(e) => setSpeciality(e.target.value)}
+                          placeholder="e.g. UX/UI"
+                          className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none border border-transparent focus:border-[#8B39E5]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <p className="font-bold text-[#163D5C]">Languages</p>
+                    <div className="flex flex-wrap gap-2">
+                      {popularLanguages.map((lang) => (
+                        <button
+                          key={lang}
+                          onClick={() =>
+                            setSelectedLangs((prev) =>
+                              prev.includes(lang)
+                                ? prev.filter((l) => l !== lang)
+                                : [...prev, lang],
                             )
                           }
-                          className="w-5 h-5 rounded border-gray-300 text-[#8B39E5]"
-                        />
-                        <span
-                          className={`text-[14px] ${selectedSpecs.includes(spec) ? "text-[#8B39E5] font-bold" : "text-gray-600"}`}
+                          className={`px-4 py-2 rounded-xl font-bold text-sm border transition-all ${selectedLangs.includes(lang) ? "bg-[#8B39E5] text-white border-[#8B39E5]" : "bg-[#F8F9FA] text-gray-500 border-transparent hover:border-gray-300"}`}
                         >
-                          {spec}
-                        </span>
-                      </label>
-                    ))}
+                          {lang}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                )}
-
-                {/* 2. Skills and Expertise Tab */}
-                {activeTab === "Skills and expertice" && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <p className="font-bold">Occupation</p>
-                        <div className="relative">
-                          <HiOutlineBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#163D5C]" />
-                          <input
-                            type="text"
-                            value={occupation}
-                            onChange={(e) => setOccupation(e.target.value)}
-                            placeholder="e.g. Designer"
-                            className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none border border-transparent focus:border-[#8B39E5]"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="font-bold">Speciality</p>
-                        <div className="relative">
-                          <PiMonitorBold className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#163D5C]" />
-                          <input
-                            type="text"
-                            value={speciality}
-                            onChange={(e) => setSpeciality(e.target.value)}
-                            placeholder="e.g. UX/UI"
-                            className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none border border-transparent focus:border-[#8B39E5]"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <p className="font-bold text-[#163D5C]">Languages</p>
-                      <div className="flex flex-wrap gap-2">
-                        {popularLanguages.map((lang) => (
-                          <button
-                            key={lang}
-                            onClick={() =>
-                              setSelectedLangs((prev) =>
-                                prev.includes(lang)
-                                  ? prev.filter((l) => l !== lang)
-                                  : [...prev, lang],
-                              )
-                            }
-                            className={`px-4 py-2 rounded-xl font-bold text-sm border transition-all ${selectedLangs.includes(lang) ? "bg-[#8B39E5] text-white border-[#8B39E5]" : "bg-[#F8F9FA] text-gray-500 border-transparent hover:border-gray-300"}`}
-                          >
-                            {lang}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    {skillsRows.map((row) => (
-                      <div
-                        key={row.id}
-                        className="flex flex-col md:flex-row gap-4"
-                      >
-                        <div className="relative flex-1">
-                          <LuUser className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#163D5C]" />
-                          <input
-                            type="text"
-                            placeholder="Skill (e.g. Figma)"
-                            value={row.skill}
-                            onChange={(e) =>
-                              setSkillsRows(
-                                skillsRows.map((r) =>
-                                  r.id === row.id
-                                    ? { ...r, skill: e.target.value }
-                                    : r,
-                                ),
-                              )
-                            }
-                            className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
-                          />
-                        </div>
-                        <div className="relative flex-1">
-                          <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[#163D5C]" />
-                          <input
-                            type="number"
-                            placeholder="Min years experience"
-                            value={row.experience}
-                            onChange={(e) =>
-                              setSkillsRows(
-                                skillsRows.map((r) =>
-                                  r.id === row.id
-                                    ? { ...r, experience: e.target.value }
-                                    : r,
-                                ),
-                              )
-                            }
-                            className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                    <button
-                      onClick={() =>
-                        setSkillsRows([
-                          ...skillsRows,
-                          { id: Date.now(), skill: "", experience: "" },
-                        ])
-                      }
-                      className="flex items-center gap-2 bg-[#50C594]/10 text-[#50C594] px-6 py-2 rounded-xl font-bold"
+                  {skillsRows.map((row) => (
+                    <div
+                      key={row.id}
+                      className="flex flex-col md:flex-row gap-4"
                     >
-                      <FaPlus /> Add skill
-                    </button>
-                  </div>
-                )}
+                      <div className="relative flex-1">
+                        <LuUser className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-[#163D5C]" />
+                        <input
+                          type="text"
+                          placeholder="Skill (e.g. Figma)"
+                          value={row.skill}
+                          onChange={(e) =>
+                            setSkillsRows(
+                              skillsRows.map((r) =>
+                                r.id === row.id
+                                  ? { ...r, skill: e.target.value }
+                                  : r,
+                              ),
+                            )
+                          }
+                          className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
+                        />
+                      </div>
+                      <div className="relative flex-1">
+                        <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[#163D5C]" />
+                        <input
+                          type="number"
+                          placeholder="Min years experience"
+                          value={row.experience}
+                          onChange={(e) =>
+                            setSkillsRows(
+                              skillsRows.map((r) =>
+                                r.id === row.id
+                                  ? { ...r, experience: e.target.value }
+                                  : r,
+                              ),
+                            )
+                          }
+                          className="w-full pl-12 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() =>
+                      setSkillsRows([
+                        ...skillsRows,
+                        { id: Date.now(), skill: "", experience: "" },
+                      ])
+                    }
+                    className="flex items-center gap-2 bg-[#50C594]/10 text-[#50C594] px-6 py-2 rounded-xl font-bold"
+                  >
+                    <FaPlus /> Add skill
+                  </button>
+                </div>
+              )}
 
-                {/* 3. Preferences Tab (Full Content) */}
-                {activeTab === "Preferences" && (
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {/* Employment & Workplace */}
-                      <div className="space-y-6">
-                        <div className="space-y-3">
-                          <p className="font-bold text-[#163D5C]">
-                            Employment type
-                          </p>
-                          <div className="flex flex-wrap bg-[#F8F9FA] p-1.5 rounded-2xl gap-1">
-                            {[
-                              "fulltime",
-                              "parttime",
-                              "contract",
-                              "freelance",
-                            ].map((type) => (
-                              <button
-                                key={type}
-                                onClick={() =>
-                                  setWorkType(workType === type ? "" : type)
-                                }
-                                className={`flex-1 py-2 rounded-xl text-sm font-bold capitalize transition-all ${workType === type ? "bg-white shadow-md text-[#8B39E5]" : "text-gray-400"}`}
-                              >
-                                {type}
-                              </button>
-                            ))}
-                          </div>
+              {/* 3. Preferences Tab */}
+              {activeTab === "Preferences" && (
+                <div className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <p className="font-bold text-[#163D5C]">
+                          Employment type
+                        </p>
+                        <div className="flex flex-wrap bg-[#F8F9FA] p-1.5 rounded-2xl gap-1">
+                          {[
+                            "fulltime",
+                            "parttime",
+                            "contract",
+                            "freelance",
+                          ].map((type) => (
+                            <button
+                              key={type}
+                              onClick={() =>
+                                setWorkType(workType === type ? "" : type)
+                              }
+                              className={`flex-1 py-2 rounded-xl text-sm font-bold capitalize transition-all ${workType === type ? "bg-white shadow-md text-[#8B39E5]" : "text-gray-400"}`}
+                            >
+                              {type}
+                            </button>
+                          ))}
                         </div>
-                        <div className="space-y-3">
-                          <p className="font-bold text-[#163D5C]">
-                            Workplace type
-                          </p>
-                          <div className="flex bg-[#F8F9FA] p-1.5 rounded-2xl gap-1">
-                            {["Onsite", "Remote", "Hybrid"].map((type) => (
-                              <button
-                                key={type}
-                                onClick={() =>
-                                  setWorkplaceType(
-                                    workplaceType === type ? "" : type,
-                                  )
+                      </div>
+                      <div className="space-y-3">
+                        <p className="font-bold text-[#163D5C]">
+                          Workplace type
+                        </p>
+                        <div className="flex bg-[#F8F9FA] p-1.5 rounded-2xl gap-1">
+                          {["Onsite", "Remote", "Hybrid"].map((type) => (
+                            <button
+                              key={type}
+                              onClick={() =>
+                                setWorkplaceType(
+                                  workplaceType === type ? "" : type,
+                                )
+                              }
+                              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${workplaceType === type ? "bg-white shadow-md text-[#8B39E5]" : "text-gray-400"}`}
+                            >
+                              {type}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <p className="font-bold text-[#163D5C]">
+                          Expected Salary ($)
+                        </p>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="relative">
+                            <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
+                            <input
+                              type="number"
+                              placeholder="Min"
+                              value={salaryRange.min}
+                              onChange={(e) => {
+                                const val = e.target.value;
+
+                                // Agar foydalanuvchi 0 kiritsa, toast chiqaramiz
+                                if (val === "0") {
+                                  toast.warn("No such talents available", {
+                                    position: "top-right",
+                                    autoClose: 3000,
+                                  });
                                 }
-                                className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${workplaceType === type ? "bg-white shadow-md text-[#8B39E5]" : "text-gray-400"}`}
-                              >
-                                {type}
-                              </button>
-                            ))}
+
+                                setSalaryRange({
+                                  ...salaryRange,
+                                  min: val,
+                                });
+                              }}
+                              className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
+                            />
+                          </div>
+                          <div className="relative">
+                            <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
+                            <input
+                              type="number"
+                              placeholder="Max"
+                              value={salaryRange.max}
+                              onChange={(e) =>
+                                setSalaryRange({
+                                  ...salaryRange,
+                                  max: e.target.value,
+                                })
+                              }
+                              className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
+                            />
                           </div>
                         </div>
                       </div>
-
-                      {/* Salary & Location */}
-                      <div className="space-y-6">
-                        <div className="space-y-3">
-                          <p className="font-bold text-[#163D5C]">
-                            Expected Salary ($)
-                          </p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="relative">
-                              <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
-                              <input
-                                type="number"
-                                placeholder="Min"
-                                value={salaryRange.min}
-                                onChange={(e) =>
-                                  setSalaryRange({
-                                    ...salaryRange,
-                                    min: e.target.value,
-                                  })
-                                }
-                                className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
-                              />
-                            </div>
-                            <div className="relative">
-                              <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
-                              <input
-                                type="number"
-                                placeholder="Max"
-                                value={salaryRange.max}
-                                onChange={(e) =>
-                                  setSalaryRange({
-                                    ...salaryRange,
-                                    max: e.target.value,
-                                  })
-                                }
-                                className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
-                              />
-                            </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <p className="font-bold text-[#163D5C]">Country</p>
+                          <div className="relative">
+                            <FaEarthAmericas className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
+                            <input
+                              type="text"
+                              placeholder="Country"
+                              value={location.country}
+                              onChange={(e) =>
+                                setLocation({
+                                  ...location,
+                                  country: e.target.value,
+                                })
+                              }
+                              className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
+                            />
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <p className="font-bold text-[#163D5C]">Country</p>
-                            <div className="relative">
-                              <FaEarthAmericas className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
-                              <input
-                                type="text"
-                                placeholder="Country"
-                                value={location.country}
-                                onChange={(e) =>
-                                  setLocation({
-                                    ...location,
-                                    country: e.target.value,
-                                  })
-                                }
-                                className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <p className="font-bold text-[#163D5C]">City</p>
-                            <div className="relative">
-                              <FaCity className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
-                              <input
-                                type="text"
-                                placeholder="City"
-                                value={location.city}
-                                onChange={(e) =>
-                                  setLocation({
-                                    ...location,
-                                    city: e.target.value,
-                                  })
-                                }
-                                className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
-                              />
-                            </div>
+                        <div className="space-y-2">
+                          <p className="font-bold text-[#163D5C]">City</p>
+                          <div className="relative">
+                            <FaCity className="absolute left-4 top-1/2 -translate-y-1/2 text-[#163D5C]" />
+                            <input
+                              type="text"
+                              placeholder="City"
+                              value={location.city}
+                              onChange={(e) =>
+                                setLocation({
+                                  ...location,
+                                  city: e.target.value,
+                                })
+                              }
+                              className="w-full pl-11 pr-4 py-3 bg-[#F8F9FA] rounded-xl outline-none"
+                            />
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Results Info */}
@@ -549,7 +542,7 @@ const Talents = () => {
                     </span>
                   </div>
                   <button
-                    onClick={() => navigate(`/company/talents/${talent.id}`)}
+                    onClick={() => navigate(`/talents/${talent.id}`)}
                     className="w-[170px] py-2 border-2 border-[#1D3D54] text-[#1d3D54] rounded-[20px] font-bold hover:bg-[#1D3D54] hover:text-white transition-all mt-auto"
                   >
                     View profile

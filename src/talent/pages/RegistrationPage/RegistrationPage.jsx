@@ -11,6 +11,7 @@ import {
   FaBuilding,
   FaEye,
   FaEyeSlash,
+  FaChevronDown,
 } from "react-icons/fa";
 import Header from "../../../Company/Header/Header";
 import Footer from "../../../Company/Footer/Footer";
@@ -39,6 +40,9 @@ export default function RegistrationForm() {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Dropdown yo'nalishini aniqlash uchun state
+  const [isDropUp, setIsDropUp] = useState(false);
   const dropdownRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -51,6 +55,20 @@ export default function RegistrationForm() {
     location: "",
     phone: "+998",
   });
+
+  // Joyni tekshirish funksiyasi
+  const checkSpace = () => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      // Agar pastda 250px dan kam joy bo'lsa, tepaga ochiladi
+      if (spaceBelow < 250) {
+        setIsDropUp(true);
+      } else {
+        setIsDropUp(false);
+      }
+    }
+  };
 
   useEffect(() => {
     const savedData = localStorage.getItem("step1_data");
@@ -124,12 +142,6 @@ export default function RegistrationForm() {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.first_name.trim())
-      errors.first_name = "Enter your first name";
-    if (!formData.last_name.trim()) errors.last_name = "Enter your last name";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-      errors.email = "Invalid email address";
-
     const firstName = formData.first_name.trim();
     if (!firstName) {
       errors.first_name = "Enter your first name";
@@ -147,6 +159,9 @@ export default function RegistrationForm() {
     } else if (lastName.length > 30) {
       errors.last_name = "Must be less than 30 characters";
     }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      errors.email = "Invalid email address";
 
     if (!formData.password) {
       errors.password = "Enter your password";
@@ -176,9 +191,7 @@ export default function RegistrationForm() {
 
   const handleNext = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
@@ -207,6 +220,7 @@ export default function RegistrationForm() {
       <main className="flex-grow flex items-center justify-center px-3 xs:px-4 sm:px-6 py-6 sm:py-8 md:py-10">
         <div className="w-full max-w-4xl">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-5 xs:p-6 sm:p-8 md:p-10 lg:p-12">
+            {/* Tab Switcher */}
             <div className="relative bg-gray-100 rounded-[50px] border border-gray-200 grid grid-cols-2 p-1 mb-6 sm:mb-8 overflow-hidden">
               <div
                 className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.5rem)] bg-white rounded-[50px] shadow-md transition-all duration-300"
@@ -243,6 +257,7 @@ export default function RegistrationForm() {
               className="space-y-5 sm:space-y-6 md:space-y-8"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xs:gap-5 sm:gap-6">
+                {/* First Name */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     First name *
@@ -271,6 +286,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Last Name */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Last name *
@@ -286,7 +302,7 @@ export default function RegistrationForm() {
                       value={formData.last_name}
                       onChange={handleChange}
                       placeholder="Enter last name"
-                      maxLength={30} // 30 tadan ortiq yozib bo'lmaydi
+                      maxLength={30}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
                         "last_name",
                       )}`}
@@ -299,6 +315,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Email */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Email *
@@ -323,6 +340,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Password */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Password *{" "}
@@ -360,6 +378,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Gender */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Gender
@@ -402,6 +421,7 @@ export default function RegistrationForm() {
                   </div>
                 </div>
 
+                {/* Date of Birth */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Date of birth *
@@ -432,6 +452,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Location with DropUp */}
                 <div className="relative" ref={dropdownRef}>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Location *
@@ -442,20 +463,26 @@ export default function RegistrationForm() {
                       type="text"
                       name="location"
                       value={formData.location}
-                      onFocus={() => setShowDropdown(true)}
+                      onFocus={() => {
+                        checkSpace();
+                        setShowDropdown(true);
+                      }}
                       onChange={(e) => {
                         setFormData({ ...formData, location: e.target.value });
                         setShowDropdown(true);
                       }}
                       placeholder="Search city..."
-                      className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
+                      className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-10 xs:pr-12 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
                         "location",
                       )}`}
                       autoComplete="off"
                     />
+                    <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs" />
                   </div>
                   {showDropdown && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-xl max-h-40 xs:max-h-48 overflow-y-auto">
+                    <div
+                      className={`absolute z-50 w-full bg-white border rounded-lg shadow-xl max-h-40 xs:max-h-48 overflow-y-auto ${isDropUp ? "bottom-full mb-1" : "mt-1"}`}
+                    >
                       {UZBEKISTAN_CITIES.filter((c) =>
                         c
                           .toLowerCase()
@@ -481,6 +508,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Phone */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Phone *
@@ -505,7 +533,7 @@ export default function RegistrationForm() {
                 </div>
               </div>
 
-              {/* Buttons */}
+              {/* Action Buttons */}
               <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4 justify-center">
                 <button
                   type="button"
