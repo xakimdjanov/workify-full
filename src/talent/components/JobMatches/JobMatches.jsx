@@ -412,25 +412,28 @@ export default function JobMatches() {
         ? job.workplace_type === workplaceType
         : true;
 
-      const min = minSalary ? Number(minSalary) : null;
-      const matchSalary =
-        min !== null ? Number(job.salary_max ?? 0) >= min : true;
+      // YANGI MANTIQ SHU YERDA:
+      let matchSalary = true;
+      if (minSalary !== "") {
+        const min = Number(minSalary);
+        if (min === 0) {
+          matchSalary = false; // Agar 0 yozilsa, hech qaysi ish ko'rinmaydi
+        } else {
+          matchSalary = Number(job.salary_max ?? 0) >= min;
+        }
+      }
 
       const matchCity = city
         ? String(job.location || "")
             .toLowerCase()
             .includes(city.toLowerCase())
         : true;
-
       const q = searchQuery.trim().toLowerCase();
       const matchSearch = q
         ? String(job.occupation || "")
             .toLowerCase()
             .includes(q) ||
           String(job.company?.company_name || "")
-            .toLowerCase()
-            .includes(q) ||
-          String(job.specialty || "")
             .toLowerCase()
             .includes(q)
         : true;
@@ -440,7 +443,6 @@ export default function JobMatches() {
       );
     });
   }, [allJobs, employmentType, workplaceType, minSalary, city, searchQuery]);
-
   const handleLike = useCallback(
     (jobId) => {
       const current = getReaction(jobId);
