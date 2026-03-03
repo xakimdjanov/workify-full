@@ -343,7 +343,7 @@ const SignUpPage = () => {
                   />
                   <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs" />
                 </div>
-                {showCountryDropdown && (
+                {/* {showCountryDropdown && (
                   <div
                     className={`absolute z-50 w-full bg-white border border-gray-100 rounded-xl shadow-xl max-h-52 overflow-y-auto ${dropUpCountry ? "bottom-full mb-1" : "mt-1"}`}
                   >
@@ -368,7 +368,7 @@ const SignUpPage = () => {
                       </div>
                     ))}
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Industry */}

@@ -142,10 +142,7 @@ export const talenApi = {
 
 export const COUNTRIES = [
   "Uzbekistan",
-  "USA",
-  "Turkey",
-  "Kazakhstan",
-  "Russia",
+
 ];
 export const INDUSTRIES = [
   "Technology",
