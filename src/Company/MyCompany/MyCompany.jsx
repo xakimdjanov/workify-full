@@ -12,7 +12,7 @@ export const INDUSTRIES = ["Technology", "Finance", "Healthcare", "Education", "
 
 // --- SKELETON KOMPONENTI (DARK MODE MOSLASHTIRILDI) ---
 const CompanySkeleton = ({ isDark }) => (
-  <div className={`p-4 sm:p-6 lg:p-8 ${isDark ? 'bg-[#121212]' : 'bg-[#F9FAFB]'} min-h-screen animate-pulse`}>
+  <div className={`p-4 pb-20 sm:p-6 lg:p-8 ${isDark ? 'bg-[#121212]' : 'bg-[#F9FAFB]'} min-h-screen animate-pulse`}>
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 md:mt-0">
         <div className={`h-16 ${isDark ? 'bg-[#1E1E1E]' : 'bg-white'} rounded-2xl w-full md:flex-1 shadow-sm`}></div>
@@ -168,7 +168,7 @@ const MyCompany = () => {
   if (loading) return <CompanySkeleton isDark={isDark} />;
 
   return (
-    <div className={`p-4 sm:p-6 lg:p-8 min-h-screen font-sans transition-colors duration-300 ${isDark ? 'bg-[#121212]' : 'bg-[#F9FAFB]'}`}>
+    <div className={`p-4 pb-20 sm:p-6 lg:p-8 min-h-screen font-sans transition-colors duration-300 ${isDark ? 'bg-[#121212]' : 'bg-[#F9FAFB]'}`}>
       <ToastContainer position="top-right" autoClose={3000} theme={isDark ? "dark" : "colored"} />
 
       <div className="max-w-7xl mx-auto">
@@ -176,7 +176,7 @@ const MyCompany = () => {
           <h1 className={`text-xl sm:text-2xl font-bold px-6 py-4 rounded-2xl shadow-sm w-full md:flex-1 text-center md:text-left border transition-colors ${isDark ? 'bg-[#1E1E1E] text-white border-gray-800' : 'bg-white text-[#4B5563] border-gray-100'}`}>
             Company profile
           </h1>
-          <Link to="/company/post-job" className="bg-[#5CB85C] hover:bg-[#4cae4c] text-white w-full md:w-auto px-10 py-4 rounded-2xl font-bold shadow-md active:scale-95 transition-all">Post a Job</Link>
+          <Link to="/company/post-job" className="bg-[#5CB85C] text-center hover:bg-[#4cae4c] text-white w-full md:w-auto px-10 py-4 rounded-2xl font-bold shadow-md active:scale-95 transition-all">Post a Job</Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] xl:grid-cols-[380px_1fr] gap-8">

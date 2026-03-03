@@ -69,7 +69,7 @@ const MyJobs = () => {
     };
 
     return (
-        <div className={`p-4 sm:p-6 lg:p-8 min-h-screen font-sans text-left relative transition-colors duration-300 ${isDark ? 'bg-[#121212]' : 'bg-[#F9FAFB]'}`}>
+        <div className={`p-4 pb-10 sm:p-6 lg:p-8 min-h-screen font-sans text-left relative transition-colors duration-300 ${isDark ? 'bg-[#121212]' : 'bg-[#F9FAFB]'}`}>
             <ToastContainer position="top-right" autoClose={3000} theme={isDark ? "dark" : "colored"} />
 
             <div className="max-w-7xl mx-auto flex flex-col min-h-[85vh]">

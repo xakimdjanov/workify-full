@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import React, { useEffect } from "react"; // useEffect qo'shildi
+import { Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom"; // useLocation qo'shildi
 import { ToastContainer } from "react-toastify";
 import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,6 +25,8 @@ import MyJobs from "./Company/MyJobs/MyJobs.jsx";
 import JobDetailPageCompany from "./Company/JobDetail/JobDetailPage.jsx";
 import PostJob from "./Company/PostJob/PostJob.jsx";
 import Notification from "./Company/Notifications/Notification.jsx";
+import Contacts from "./Company/Contacts/Contacts.jsx";
+import Faaq from "./Company/Faq/Faq.jsx";
 
 // --- Talent Pages ---
 import MainLayout from "./talent/components/MainLayout.jsx";
@@ -49,11 +51,25 @@ import RoleSelection from "./Company/RoleSelect/RoleSelect.jsx";
 import Talent from "./Company/Talen/Talents.jsx";
 import TalentDetail from "./Company/Talen/TalentDetail.jsx";
 
+// --- Skrolni tepaga qaytaruvchi yordamchi komponent ---
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 // --- ProtectedRoute ---
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
 
-  if (!token) return <Navigate to="/roleSelection" replace />;
+  if (!token) {
+    return <Navigate to="/roleSelection" replace />;
+  }
 
   return children ? children : <Outlet />;
 };
@@ -63,15 +79,21 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-500 ${settings.darkMode ? "bg-[#121212]" : "bg-[#F8F9FA]"
-        }`}
+      className={`min-h-screen transition-colors duration-500 ${
+        settings.darkMode ? "bg-[#121212]" : "bg-[#F8F9FA]"
+      }`}
     >
       <ToastContainer position="top-right" autoClose={3000} />
       <Toaster position="top-right" />
 
+      {/* Sahifa o'zgarganda skrolni tepaga surish */}
+      <ScrollToTop />
+
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/faq" element={<Faaq />} />
 
         {/* 1. COMPANY SECTION - Faqat Sidebarli sahifalar */}
         <Route element={<Layout />}>
@@ -115,7 +137,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Optional Company protected pages */}
           <Route
             path="/company/my-jobs"
             element={
@@ -140,7 +161,14 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/company/talents/:id" element={<TalentDetail />} />
+          <Route
+            path="/talents/:id"
+            element={
+              <ProtectedRoute>
+                <TalentDetail />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/company/faq"
             element={
@@ -173,8 +201,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Notification shu yerga qo'shildi */}
           <Route
             path="/company/notification"
             element={
@@ -190,10 +216,22 @@ function App() {
         <Route path="/company/signup" element={<SignUpPage />} />
         <Route path="/company/signup/telegram" element={<TelegramVerify />} />
         <Route path="/company/signup/verify" element={<Verify />} />
-        <Route path="/company/forgot-password-1" element={<ForgotPassword1 />} />
-        <Route path="/company/forgot-password-2" element={<ForgotPassword2 />} />
-        <Route path="/company/forgot-password-3" element={<ForgotPassword3 />} />
-        <Route path="/company/forgot-password-4" element={<ForgotPassword4 />} />
+        <Route
+          path="/company/forgot-password-1"
+          element={<ForgotPassword1 />}
+        />
+        <Route
+          path="/company/forgot-password-2"
+          element={<ForgotPassword2 />}
+        />
+        <Route
+          path="/company/forgot-password-3"
+          element={<ForgotPassword3 />}
+        />
+        <Route
+          path="/company/forgot-password-4"
+          element={<ForgotPassword4 />}
+        />
         <Route path="/roleSelection" element={<RoleSelection />} />
 
         {/* 3. TALENT SECTION - Talent Headeri bilan */}
@@ -224,7 +262,6 @@ function App() {
             <Route path="/talent/profile" element={<ProfilePage />} />
             <Route path="/talent/alerts" element={<JobAlerts />} />
             <Route path="/talent/matches" element={<JobMatches />} />
-            {/* Talent sahifalarini ajratib qo'ydik */}
             <Route path="/talent/job-post/:id" element={<JobDetail />} />
             <Route path="/talent/job-details/:id" element={<CompanyDetail />} />
             <Route

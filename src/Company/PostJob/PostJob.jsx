@@ -238,7 +238,7 @@ const PostJob = () => {
     }`;
 
   return (
-    <div className={`max-w-5xl mx-auto my-6 px-4 transition-colors duration-300 ${isDark ? "bg-[#121212]" : "bg-[#FDFEFF]"
+    <div className={`max-w-5xl mx-auto pb-20 my-6 px-4 transition-colors duration-300 ${isDark ? "bg-[#121212]" : "bg-[#FDFEFF]"
       }`}>
       <ToastContainer position="top-right" autoClose={3000} />
 

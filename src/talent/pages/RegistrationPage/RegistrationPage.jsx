@@ -11,6 +11,7 @@ import {
   FaBuilding,
   FaEye,
   FaEyeSlash,
+  FaChevronDown,
 } from "react-icons/fa";
 import Header from "../../../Company/Header/Header";
 import Footer from "../../../Company/Footer/Footer";
@@ -39,6 +40,9 @@ export default function RegistrationForm() {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Dropdown yo'nalishini aniqlash uchun state
+  const [isDropUp, setIsDropUp] = useState(false);
   const dropdownRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -51,6 +55,20 @@ export default function RegistrationForm() {
     location: "",
     phone: "+998",
   });
+
+  // Joyni tekshirish funksiyasi
+  const checkSpace = () => {
+    if (dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      // Agar pastda 250px dan kam joy bo'lsa, tepaga ochiladi
+      if (spaceBelow < 250) {
+        setIsDropUp(true);
+      } else {
+        setIsDropUp(false);
+      }
+    }
+  };
 
   useEffect(() => {
     const savedData = localStorage.getItem("step1_data");
@@ -75,19 +93,19 @@ export default function RegistrationForm() {
     if (size <= 8)
       return `+${phoneNumber.slice(0, 3)} (${phoneNumber.slice(
         3,
-        5
+        5,
       )}) ${phoneNumber.slice(5, 8)}`;
     if (size <= 10)
       return `+${phoneNumber.slice(0, 3)} (${phoneNumber.slice(
         3,
-        5
+        5,
       )}) ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}`;
     return `+${phoneNumber.slice(0, 3)} (${phoneNumber.slice(
       3,
-      5
+      5,
     )}) ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
       8,
-      10
+      10,
     )}-${phoneNumber.slice(10, 12)}`;
   };
 
@@ -124,9 +142,24 @@ export default function RegistrationForm() {
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.first_name.trim())
+    const firstName = formData.first_name.trim();
+    if (!firstName) {
       errors.first_name = "Enter your first name";
-    if (!formData.last_name.trim()) errors.last_name = "Enter your last name";
+    } else if (firstName.length < 3) {
+      errors.first_name = "Must be at least 3 characters";
+    } else if (firstName.length > 30) {
+      errors.first_name = "Must be less than 30 characters";
+    }
+
+    const lastName = formData.last_name.trim();
+    if (!lastName) {
+      errors.last_name = "Enter your last name";
+    } else if (lastName.length < 3) {
+      errors.last_name = "Must be at least 3 characters";
+    } else if (lastName.length > 30) {
+      errors.last_name = "Must be less than 30 characters";
+    }
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       errors.email = "Invalid email address";
 
@@ -158,9 +191,7 @@ export default function RegistrationForm() {
 
   const handleNext = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
@@ -189,19 +220,22 @@ export default function RegistrationForm() {
       <main className="flex-grow flex items-center justify-center px-3 xs:px-4 sm:px-6 py-6 sm:py-8 md:py-10">
         <div className="w-full max-w-4xl">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-5 xs:p-6 sm:p-8 md:p-10 lg:p-12">
+            {/* Tab Switcher */}
             <div className="relative bg-gray-100 rounded-[50px] border border-gray-200 grid grid-cols-2 p-1 mb-6 sm:mb-8 overflow-hidden">
               <div
                 className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.5rem)] bg-white rounded-[50px] shadow-md transition-all duration-300"
                 style={{
-                  transform: `translateX(${activeTab === "company" ? "100%" : "0%"
-                    })`,
+                  transform: `translateX(${
+                    activeTab === "company" ? "100%" : "0%"
+                  })`,
                 }}
               ></div>
               <button
                 type="button"
                 onClick={() => setActiveTab("talent")}
-                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${activeTab === "talent" ? "text-[#163D5C]" : "text-gray-400"
-                  }`}
+                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${
+                  activeTab === "talent" ? "text-[#163D5C]" : "text-gray-400"
+                }`}
               >
                 <FaUser className="text-sm xs:text-base" />
                 <span className="truncate">Talent</span>
@@ -209,8 +243,9 @@ export default function RegistrationForm() {
               <Link
                 to="/company/signup"
                 onClick={() => setActiveTab("company")}
-                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${activeTab === "company" ? "text-[#163D5C]" : "text-gray-400"
-                  }`}
+                className={`flex items-center justify-center gap-1 xs:gap-2 px-3 xs:px-4 sm:px-6 py-2 xs:py-3 relative z-10 font-medium text-sm xs:text-base ${
+                  activeTab === "company" ? "text-[#163D5C]" : "text-gray-400"
+                }`}
               >
                 <FaBuilding className="text-sm xs:text-base" />
                 <span className="truncate">Company</span>
@@ -222,9 +257,13 @@ export default function RegistrationForm() {
               className="space-y-5 sm:space-y-6 md:space-y-8"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xs:gap-5 sm:gap-6">
+                {/* First Name */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     First name *
+                    <span className="text-xs text-gray-400 font-normal ml-1">
+                      (3-30 chars)
+                    </span>
                   </label>
                   <div className="relative">
                     <FaUser className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -234,8 +273,9 @@ export default function RegistrationForm() {
                       value={formData.first_name}
                       onChange={handleChange}
                       placeholder="Enter name"
+                      maxLength={30}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "first_name"
+                        "first_name",
                       )}`}
                     />
                   </div>
@@ -246,9 +286,13 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Last Name */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Last name *
+                    <span className="text-xs text-gray-400 font-normal ml-1">
+                      (3-30 chars)
+                    </span>
                   </label>
                   <div className="relative">
                     <FaUser className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -258,8 +302,9 @@ export default function RegistrationForm() {
                       value={formData.last_name}
                       onChange={handleChange}
                       placeholder="Enter last name"
+                      maxLength={30}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "last_name"
+                        "last_name",
                       )}`}
                     />
                   </div>
@@ -270,6 +315,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Email */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Email *
@@ -283,7 +329,7 @@ export default function RegistrationForm() {
                       onChange={handleChange}
                       placeholder="example@mail.com"
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "email"
+                        "email",
                       )}`}
                     />
                   </div>
@@ -294,6 +340,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Password */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Password *{" "}
@@ -309,7 +356,7 @@ export default function RegistrationForm() {
                       value={formData.password}
                       onChange={handleChange}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-10 xs:pr-12 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "password"
+                        "password",
                       )}`}
                     />
                     <button
@@ -331,6 +378,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Gender */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Gender
@@ -339,8 +387,9 @@ export default function RegistrationForm() {
                     <div
                       className="absolute top-1 bottom-1 left-1 w-[calc(50%-0.5rem)] bg-white rounded-[50px] shadow-sm transition-all duration-300"
                       style={{
-                        transform: `translateX(${formData.gender === "female" ? "100%" : "0%"
-                          })`,
+                        transform: `translateX(${
+                          formData.gender === "female" ? "100%" : "0%"
+                        })`,
                       }}
                     ></div>
                     <button
@@ -348,10 +397,11 @@ export default function RegistrationForm() {
                       onClick={() =>
                         setFormData({ ...formData, gender: "male" })
                       }
-                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${formData.gender === "male"
+                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${
+                        formData.gender === "male"
                           ? "text-[#163D5C]"
                           : "text-gray-400"
-                        }`}
+                      }`}
                     >
                       Male
                     </button>
@@ -360,16 +410,18 @@ export default function RegistrationForm() {
                       onClick={() =>
                         setFormData({ ...formData, gender: "female" })
                       }
-                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${formData.gender === "female"
+                      className={`relative z-10 py-1.5 xs:py-2 text-xs xs:text-sm font-medium ${
+                        formData.gender === "female"
                           ? "text-[#163D5C]"
                           : "text-gray-400"
-                        }`}
+                      }`}
                     >
                       Female
                     </button>
                   </div>
                 </div>
 
+                {/* Date of Birth */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Date of birth *
@@ -383,13 +435,13 @@ export default function RegistrationForm() {
                       onChange={handleChange}
                       max={
                         new Date(
-                          new Date().setFullYear(new Date().getFullYear() - 14)
+                          new Date().setFullYear(new Date().getFullYear() - 14),
                         )
                           .toISOString()
                           .split("T")[0]
                       }
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "date_of_birth"
+                        "date_of_birth",
                       )}`}
                     />
                   </div>
@@ -400,6 +452,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Location with DropUp */}
                 <div className="relative" ref={dropdownRef}>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Location *
@@ -410,24 +463,30 @@ export default function RegistrationForm() {
                       type="text"
                       name="location"
                       value={formData.location}
-                      onFocus={() => setShowDropdown(true)}
+                      onFocus={() => {
+                        checkSpace();
+                        setShowDropdown(true);
+                      }}
                       onChange={(e) => {
                         setFormData({ ...formData, location: e.target.value });
                         setShowDropdown(true);
                       }}
                       placeholder="Search city..."
-                      className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "location"
+                      className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-10 xs:pr-12 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
+                        "location",
                       )}`}
                       autoComplete="off"
                     />
+                    <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs" />
                   </div>
                   {showDropdown && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-xl max-h-40 xs:max-h-48 overflow-y-auto">
+                    <div
+                      className={`absolute z-50 w-full bg-white border rounded-lg shadow-xl max-h-40 xs:max-h-48 overflow-y-auto ${isDropUp ? "bottom-full mb-1" : "mt-1"}`}
+                    >
                       {UZBEKISTAN_CITIES.filter((c) =>
                         c
                           .toLowerCase()
-                          .includes(formData.location.toLowerCase())
+                          .includes(formData.location.toLowerCase()),
                       ).map((city) => (
                         <div
                           key={city}
@@ -449,6 +508,7 @@ export default function RegistrationForm() {
                   )}
                 </div>
 
+                {/* Phone */}
                 <div>
                   <label className="block text-gray-700 font-medium mb-2 text-sm xs:text-base">
                     Phone *
@@ -461,7 +521,7 @@ export default function RegistrationForm() {
                       value={formData.phone}
                       onChange={handleChange}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
-                        "phone"
+                        "phone",
                       )}`}
                     />
                   </div>
@@ -473,7 +533,7 @@ export default function RegistrationForm() {
                 </div>
               </div>
 
-              {/* Buttons */}
+              {/* Action Buttons */}
               <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4 justify-center">
                 <button
                   type="button"
