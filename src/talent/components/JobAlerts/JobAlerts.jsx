@@ -77,6 +77,7 @@ function makeJobBlob(job) {
     job?.specialty,
     job?.location,
     job?.skils,
+    job?.description,
     job?.company?.company_name,
     job?.company?.industry,
     job?.company?.city,

@@ -129,7 +129,7 @@ function Header() {
 
           {/* LOGO */}
           <Link to="/" className="text-[#343C44] font-[600] text-[26px] lg:text-[34px] font-sans tracking-tight shrink-0">
-            workify
+            Jobify
           </Link>
 
           {/* DESKTOP NAV */}
