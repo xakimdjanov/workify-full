@@ -234,8 +234,8 @@ const Contact = () => {
               {[
                 {
                   icon: <MdEmail />,
-                  text: "workifysupport777@mail.ru",
-                  href: "mailto:workifysupport777@mail.ru",
+                  text: "supportjobifu777@mail.ru",
+                  href: "mailto:jobifysupport777@mail.ru",
                 },
                 {
                   icon: <MdPhoneInTalk />,

@@ -12,12 +12,18 @@ function Footer() {
         setOpenSection(openSection === section ? null : section);
     };
 
-    // Sahifani yangilab o'tish va Post Job tekshiruvi
-    const handleLinkClick = (path, isPostJob = false) => {
-        if (isPostJob) {
+    // Sahifani yangilab o'tish va Auth tekshiruvi (Company yoki Talent uchun)
+    const handleLinkClick = (path, isAuthRequired = false, userType = "company") => {
+        if (isAuthRequired) {
             const token = localStorage.getItem("token"); // Auth tekshiruvi
             if (!token) {
                 toast.error("Akkauntga kirilmagan! Iltimos, tizimga kiring.");
+
+                setTimeout(() => {
+                    // Agar userType 'talent' bo'lsa talent loginiga, aks holda company loginiga
+                    const loginPath = userType === "talent" ? "/talent/signin" : "/company/signin";
+                    window.location.href = `${loginPath}?redirect=${encodeURIComponent(path)}`;
+                }, 1500);
                 return;
             }
         }
@@ -25,9 +31,10 @@ function Footer() {
         window.location.href = path;
     };
 
+    <ToastContainer position="top-right" autoClose={3000} />
+
     return (
         <footer className="w-full min-h-[497px] flex items-center justify-center bg-[#163D5C] py-8">
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="w-full px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto">
                 {/* TOP */}
                 <div className="w-full h-auto md:h-[252px] flex flex-col md:flex-row justify-between gap-8 md:gap-6 mb-8 md:mb-0">
@@ -35,7 +42,7 @@ function Footer() {
                     <div className="w-full md:w-[250px] h-auto flex flex-col justify-between md:justify-start md:gap-4 gap-4">
                         <div className="flex justify-between items-center md:items-start w-full">
                             <div>
-                                <p className="text-white text-[28px] md:text-[35px] font-bold">workify</p>
+                                <p className="text-white text-[28px] md:text-[35px] font-bold">Jobify</p>
                                 <p className="text-white text-[16px] md:text-[20px] mt-1 md:mt-2">Job posting platform</p>
                             </div>
                             <button
@@ -61,7 +68,9 @@ function Footer() {
                             onClick={() => toggleSection('general')}
                         >
                             <p className="text-white font-semibold text-[18px] md:text-[20px]">General</p>
-                            <IoIosArrowDown className={`text-white transition-transform duration-300 md:hidden ${openSection === 'general' ? 'rotate-180' : ''}`} />
+                            <span className="md:hidden">
+                                <IoIosArrowDown className={`text-white transition-transform duration-300 ${openSection === 'general' ? 'rotate-180' : ''}`} />
+                            </span>
                         </div>
                         <div className={`grid transition-all duration-300 ease-in-out md:block ${openSection === 'general' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 md:opacity-100'}`}>
                             <div className="flex flex-col gap-2 md:gap-[10px] pb-4 md:pb-0 overflow-hidden">
@@ -79,12 +88,14 @@ function Footer() {
                             onClick={() => toggleSection('company')}
                         >
                             <p className="text-white font-semibold text-[18px] md:text-[20px]">Company</p>
-                            <IoIosArrowDown className={`text-white transition-transform duration-300 md:hidden ${openSection === 'company' ? 'rotate-180' : ''}`} />
+                            <span className="md:hidden">
+                                <IoIosArrowDown className={`text-white transition-transform duration-300 ${openSection === 'company' ? 'rotate-180' : ''}`} />
+                            </span>
                         </div>
                         <div className={`grid transition-all duration-300 ease-in-out md:block ${openSection === 'company' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 md:opacity-100'}`}>
                             <div className="flex flex-col gap-2 md:gap-[10px] pb-4 md:pb-0 overflow-hidden">
-                                <span onClick={() => handleLinkClick("/company/post-job", true)} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Post a job</span>
-                                <span onClick={() => handleLinkClick("/talents")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Search talents</span>
+                                <span onClick={() => handleLinkClick("/company/post-job", true, "company")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Post a job</span>
+                                <span onClick={() => handleLinkClick("/company/talents", true, "company")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Search talents</span>
                                 <span onClick={() => handleLinkClick("/company/signin")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Company login</span>
                             </div>
                         </div>
@@ -97,11 +108,14 @@ function Footer() {
                             onClick={() => toggleSection('talents')}
                         >
                             <p className="text-white font-semibold text-[18px] md:text-[20px]">Talents</p>
-                            <IoIosArrowDown className={`text-white transition-transform duration-300 md:hidden ${openSection === 'talents' ? 'rotate-180' : ''}`} />
+                            <span className="md:hidden">
+                                <IoIosArrowDown className={`text-white transition-transform duration-300 ${openSection === 'talents' ? 'rotate-180' : ''}`} />
+                            </span>
                         </div>
                         <div className={`grid transition-all duration-300 ease-in-out md:block ${openSection === 'talents' ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 md:opacity-100'}`}>
                             <div className="flex flex-col gap-2 md:gap-[10px] pb-4 md:pb-0 overflow-hidden">
-                                <span onClick={() => handleLinkClick("/jobs")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Search jobs</span>
+                                {/* Search jobs endi talent authnini tekshiradi */}
+                                <span onClick={() => handleLinkClick("/talent/matches", true, "talent")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Search jobs</span>
                                 <span onClick={() => handleLinkClick("/talent/signin")} className="text-white hover:text-slate-400 text-[14px] font-medium cursor-pointer">Talent login</span>
                             </div>
                         </div>

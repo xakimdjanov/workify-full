@@ -10,7 +10,7 @@ import {
 
 // --- SKELETON KOMPONENTI (DARK MODE MOSLASHTIRILDI) ---
 const DashboardSkeleton = ({ isDark }) => (
-  <div className={`p-3 md:p-6 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FB]'} min-h-screen animate-pulse`}>
+  <div className={`p-3 pb-20 md:p-6 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FB]'} min-h-screen animate-pulse`}>
     <div className="flex flex-col sm:flex-row justify-between items-center mb-6 max-w-[1400px] mx-auto gap-4">
       <div className={`h-16 ${isDark ? 'bg-[#1E1E1E]' : 'bg-white'} rounded-lg w-full sm:flex-grow sm:max-w-[1047px] shadow-sm`}></div>
       <div className={`h-16 ${isDark ? 'bg-[#2D2D2D]' : 'bg-gray-200'} rounded-lg w-full sm:w-48 shadow-md`}></div>
@@ -127,15 +127,15 @@ const Dashboard = () => {
   if (loading) return <DashboardSkeleton isDark={isDark} />;
 
   return (
-    <div className={`p-2 sm:p-4 md:p-6 transition-colors duration-300 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FB]'} min-h-screen font-['Mulish']`}>
+    <div className={`p-2 pb-20 sm:p-4 md:p-6 transition-colors duration-300 ${isDark ? 'bg-[#121212]' : 'bg-[#F8F9FB]'} min-h-screen font-['Mulish']`}>
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 max-w-[1400px] mx-auto gap-4">
-        <div className={`px-6 py-4 rounded-lg shadow-sm border transition-colors w-full sm:flex-grow sm:max-w-[930px] ${isDark ? 'bg-[#1E1E1E] border-gray-800' : 'bg-white border-gray-100'}`}>
-          <h1 className={`text-[18px] md:text-[20px] font-bold ${isDark ? 'text-white' : 'text-[#202430]'}`}>Dashboard</h1>
+        <div className={`px-6 py-4  rounded-lg shadow-sm border transition-colors w-full sm:flex-grow sm:max-w-[930px] ${isDark ? 'bg-[#1E1E1E] border-gray-800' : 'bg-white border-gray-100'}`}>
+          <h1 className={`text-[18px] text-center md:text-[20px] font-bold ${isDark ? 'text-white' : 'text-[#202430]'}`}>Dashboard</h1>
         </div>
         <Link
           to="/company/post-job"
-          className="bg-[#50C594] text-white w-full sm:w-auto px-10 py-4 rounded-lg font-bold hover:opacity-90 active:scale-95 transition-all shadow-md">
+          className="bg-[#50C594] text-center text-white w-full sm:w-auto px-10 py-4 rounded-lg font-bold hover:opacity-90 active:scale-95 transition-all shadow-md">
           Post a Job
         </Link>
       </div>
