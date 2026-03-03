@@ -35,7 +35,7 @@ function Footer() {
                     <div className="w-full md:w-[250px] h-auto flex flex-col justify-between md:justify-start md:gap-4 gap-4">
                         <div className="flex justify-between items-center md:items-start w-full">
                             <div>
-                                <p className="text-white text-[28px] md:text-[35px] font-bold">workify</p>
+                                <p className="text-white text-[28px] md:text-[35px] font-bold">Jobify</p>
                                 <p className="text-white text-[16px] md:text-[20px] mt-1 md:mt-2">Job posting platform</p>
                             </div>
                             <button

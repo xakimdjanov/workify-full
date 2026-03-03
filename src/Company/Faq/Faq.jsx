@@ -29,7 +29,7 @@ const Faq = () => {
       {
         question: "How can I contact the support team?",
         answer:
-          "Our support team is available 24/7. You can reach out via the 'Contact Us' page, use the live chat widget in the bottom corner, or email us directly at support@workify.com.",
+          "Our support team is available 24/7. You can reach out via the 'Contact Us' page, use the live chat widget in the bottom corner, or email us directly at support@jobify.com.",
       },
     ],
     company: [

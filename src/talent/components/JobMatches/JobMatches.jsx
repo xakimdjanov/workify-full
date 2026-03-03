@@ -432,6 +432,9 @@ export default function JobMatches() {
             .includes(q) ||
           String(job.specialty || "")
             .toLowerCase()
+            .includes(q) ||
+          String(job.description || "")
+            .toLowerCase()
             .includes(q)
         : true;
 
