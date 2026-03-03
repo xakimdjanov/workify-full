@@ -355,6 +355,7 @@ export default function RegistrationForm() {
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={handleChange}
+                      maxLength={16}
                       className={`w-full pl-9 xs:pl-10 sm:pl-12 pr-10 xs:pr-12 py-2.5 xs:py-3 border rounded-lg focus:outline-none text-sm xs:text-base ${getInputErrorClass(
                         "password",
                       )}`}
