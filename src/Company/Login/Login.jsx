@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom"; // useLocation qo'shildi
 import { companyApi } from "../../services/api";
 import { MdEmail } from "react-icons/md";
 import { IoMdLock } from "react-icons/io";
@@ -14,15 +14,20 @@ function SignIn() {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation(); // URL parametrlarini olish uchun
+
+    // URL'dan redirect parametrini o'qib olamiz (masalan: ?redirect=/company/post-job)
+    const queryParams = new URLSearchParams(location.search);
+    const redirectPath = queryParams.get("redirect");
 
     useEffect(() => {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (token && token !== "undefined" && token !== "null" && token.length > 10) {
-            navigate("/company/dashboard", { replace: true });
+            // Agar allaqachon login bo'lgan bo'lsa va redirect bo'lsa, o'sha yoqqa, yo'qsa dashboardga
+            navigate(redirectPath || "/company/dashboard", { replace: true });
         }
-    }, [navigate]);
+    }, [navigate, redirectPath]);
 
-    // Errorlarni tozalash (Talent logikasidagi kabi)
     useEffect(() => {
         if (errors.email || errors.password) {
             setErrors({ email: false, password: false });
@@ -32,12 +37,9 @@ function SignIn() {
     const handleChange = (e) => {
         const { id, value } = e.target;
         let val = value;
-
-        // Company Login uchun maxsus shart: Password 16 belgi va space taqiqlangan
         if (id === "password") {
             val = value.replace(/\s/g, "").slice(0, 16);
         }
-
         setFormData((p) => ({ ...p, [id]: val }));
     };
 
@@ -77,7 +79,6 @@ function SignIn() {
             const { token, company, message } = response.data;
 
             if (token) {
-                // Tozalash va saqlash
                 localStorage.removeItem("token");
                 sessionStorage.removeItem("token");
                 localStorage.setItem("token", token);
@@ -86,7 +87,9 @@ function SignIn() {
                 toast.success(message || "Successfully logged in!");
 
                 setTimeout(() => {
-                    navigate("/company/dashboard", { replace: true });
+                    // ASOSIY O'ZGARISH: 
+                    // Agar redirectPath bo'lsa o'sha manzilga, bo'lmasa dashboardga o'tadi
+                    navigate(redirectPath || "/company/dashboard", { replace: true });
                 }, 1000);
             }
         } catch (error) {
@@ -98,38 +101,24 @@ function SignIn() {
         }
     };
 
+    <Toaster position="top-right" />
+
     return (
         <>
-            <Toaster position="top-right" />
             <div className="flex flex-col min-h-100">
-                {/* <Header /> */}
                 <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4 font-['Mulish']">
-                    <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">
-                        Login
-                    </h2>
-
-                    <form
-                        onSubmit={handleSubmit}
-                        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200"
-                    >
+                    <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">Login</h2>
+                    <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200">
                         {/* Email Field */}
                         <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                Email Address
-                            </label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                             <div className="relative">
-                                <MdEmail
-                                    className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"
-                                        }`}
-                                />
+                                <MdEmail className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"}`} />
                                 <input
                                     type="email"
                                     id="email"
                                     placeholder="admin@gmail.com"
-                                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.email
-                                        ? "border-red-500 focus:ring-red-300 bg-red-50"
-                                        : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                                        }`}
+                                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.email ? "border-red-500 focus:ring-red-300 bg-red-50" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}`}
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
@@ -139,81 +128,47 @@ function SignIn() {
 
                         {/* Password Field */}
                         <div className="mb-2">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                                Password
-                            </label>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                             <div className="relative">
-                                <IoMdLock
-                                    className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"
-                                        }`}
-                                />
+                                <IoMdLock className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"}`} />
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     id="password"
                                     placeholder="••••••••"
-                                    maxLength={16} // Company talabi saqlandi
-                                    className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.password
-                                        ? "border-red-500 focus:ring-red-300 bg-red-50"
-                                        : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                                        }`}
+                                    maxLength={16}
+                                    className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.password ? "border-red-500 focus:ring-red-300 bg-red-50" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}`}
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
                                 />
-                                <button
-                                    type="button"
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
+                                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" onClick={() => setShowPassword(!showPassword)}>
                                     {showPassword ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Remember Me & Forgot Password */}
                         <div className="flex items-center justify-between mb-6">
                             <label className="flex items-center text-sm text-gray-600 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    className="w-4 h-4 mr-2 accent-[#163D5C]"
-                                    checked={rememberMe}
-                                    onChange={(e) => setRememberMe(e.target.checked)}
-                                />
+                                <input type="checkbox" className="w-4 h-4 mr-2 accent-[#163D5C]" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
                                 Remember me
                             </label>
-                            <Link
-                                to="/company/forgot-password-1"
-                                className="text-sm text-[#163D5C] hover:underline font-medium"
-                            >
-                                Forgot password?
-                            </Link>
+                            <Link to="/company/forgot-password-1" className="text-sm text-[#163D5C] hover:underline font-medium">Forgot password?</Link>
                         </div>
 
-                        {/* Submit Button */}
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-[#163D5C] hover:bg-[#0f2a40]"
-                                }`}
+                            className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#163D5C] hover:bg-[#0f2a40]"}`}
                         >
                             {loading ? "Signing In..." : "Sign In"}
                         </button>
 
-                        {/* Register Link */}
                         <p className="text-center text-sm text-gray-600 mt-6">
                             Don't have an account?{" "}
-                            <Link
-                                to="/company/signup"
-                                className="text-[#163D5C] font-bold hover:underline"
-                            >
-                                Register
-                            </Link>
+                            <Link to="/company/signup" className="text-[#163D5C] font-bold hover:underline">Register</Link>
                         </p>
                     </form>
                 </main>
-                {/* <Footer /> */}
             </div>
         </>
     );

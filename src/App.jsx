@@ -79,9 +79,8 @@ function App() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-500 ${
-        settings.darkMode ? "bg-[#121212]" : "bg-[#F8F9FA]"
-      }`}
+      className={`min-h-screen transition-colors duration-500 ${settings.darkMode ? "bg-[#121212]" : "bg-[#F8F9FA]"
+        }`}
     >
       <ToastContainer position="top-right" autoClose={3000} />
       <Toaster position="top-right" />
@@ -92,8 +91,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/contacts" element={<Contacts />} />
-        <Route path="/faq" element={<Faaq />} />
+
 
         {/* 1. COMPANY SECTION - Faqat Sidebarli sahifalar */}
         <Route element={<Layout />}>
@@ -101,6 +99,8 @@ function App() {
           <Route path="/company/signup" element={<SignUpPage />} />
           <Route path="/company/signup/telegram" element={<TelegramVerify />} />
           <Route path="/company/signup/verify" element={<Verify />} />
+          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/faq" element={<Faaq />} />
           <Route
             path="/company/forgot-password-1"
             element={<ForgotPassword1 />}
