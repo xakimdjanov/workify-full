@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MdEmail } from "react-icons/md";
 import { IoMdLock } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom"; // useSearchParams qo'shildi
 import toast, { Toaster } from "react-hot-toast";
 import { talentApi } from "../../services/api";
 import Footer from "../../../Company/Footer/Footer";
@@ -20,7 +20,9 @@ const SignIn = () => {
     email: false,
     password: false,
   });
+
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); // URL'dagi parametrlarni olish
 
   useEffect(() => {
     if (errors.email || errors.password) {
@@ -32,8 +34,6 @@ const SignIn = () => {
     const { id, value } = e.target;
     let val = value;
 
-    // PASSWORD UCHUN MAXSUS FILTR:
-    // Bo'sh joylarni o'chiradi va faqat 16 tagacha belgi kiritishga yo'l qo'yadi
     if (id === "password") {
       val = value.replace(/\s/g, "").slice(0, 16);
     }
@@ -74,11 +74,13 @@ const SignIn = () => {
 
       if (token) {
         localStorage.setItem("token", token);
-
         toast.success("Successfully logged in!");
 
+        // URL'dan redirect parametrini tekshiramiz
+        const redirectTo = searchParams.get("redirect") || "/talent/dashboard";
+
         setTimeout(() => {
-          navigate("/talent/dashboard");
+          navigate(redirectTo); // Agar redirect bo'lsa o'sha yerga, bo'lmasa dashboardga
         }, 1000);
       }
     } catch (error) {
@@ -90,9 +92,10 @@ const SignIn = () => {
     }
   };
 
+  <Toaster position="top-right" />
+
   return (
     <>
-      <Toaster position="top-right" />
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4">
@@ -104,26 +107,18 @@ const SignIn = () => {
             onSubmit={handleSubmit}
             className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200"
           >
+            {/* Inputlar qismi o'zgarmadi... */}
             <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email Address
               </label>
               <div className="relative">
-                <MdEmail
-                  className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"
-                    }`}
-                />
+                <MdEmail className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"}`} />
                 <input
                   type="email"
                   id="email"
                   placeholder="admin@gmail.com"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.email
-                      ? "border-red-500 focus:ring-red-300 bg-red-50"
-                      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    }`}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.email ? "border-red-500 focus:ring-red-300 bg-red-50" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}`}
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -132,26 +127,17 @@ const SignIn = () => {
             </div>
 
             <div className="mb-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <div className="relative">
-                <IoMdLock
-                  className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"
-                    }`}
-                />
+                <IoMdLock className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"}`} />
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="••••••••"
                   maxLength={16}
-                  className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.password
-                      ? "border-red-500 focus:ring-red-300 bg-red-50"
-                      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    }`}
+                  className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 outline-none transition ${errors.password ? "border-red-500 focus:ring-red-300 bg-red-50" : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"}`}
                   value={formData.password}
                   onChange={handleChange}
                   required
@@ -161,11 +147,7 @@ const SignIn = () => {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <FaRegEyeSlash size={20} />
-                  ) : (
-                    <FaRegEye size={20} />
-                  )}
+                  {showPassword ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
                 </button>
               </div>
             </div>
@@ -180,11 +162,7 @@ const SignIn = () => {
                 />
                 Remember me
               </label>
-              <Link
-                to="/talent/forgot-password"
-                size="sm"
-                className="text-sm text-[#163D5C] hover:underline font-medium"
-              >
+              <Link to="/talent/forgot-password" intrinsic className="text-sm text-[#163D5C] hover:underline font-medium">
                 Forgot password?
               </Link>
             </div>
@@ -192,20 +170,14 @@ const SignIn = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-[#163D5C] hover:bg-[#0f2a40]"
-                }`}
+              className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#163D5C] hover:bg-[#0f2a40]"}`}
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>
 
             <p className="text-center text-sm text-gray-600 mt-6">
               Don't have an account?{" "}
-              <Link
-                to="/talent/registration/step-1"
-                className="text-[#163D5C] font-bold hover:underline"
-              >
+              <Link to="/talent/registration/step-1" className="text-[#163D5C] font-bold hover:underline">
                 Register
               </Link>
             </p>
