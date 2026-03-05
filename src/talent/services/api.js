@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://jobify-backend-production-6a97.up.railway.app/api-docs/";
+const API_URL = "https://jobify-backend-production-6a97.up.railway.app/api";
 
 const api = axios.create({
   baseURL: API_URL,
