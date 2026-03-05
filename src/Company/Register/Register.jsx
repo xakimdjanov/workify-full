@@ -34,7 +34,7 @@ const SignUpPage = () => {
     password: "",
     website: "",
     industry: "",
-    country: "",
+    country: "Uzbekistan",
     city: "",
   });
 
