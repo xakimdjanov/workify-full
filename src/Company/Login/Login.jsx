@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // useLocation qo'shildi
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { companyApi } from "../../services/api";
 import { MdEmail } from "react-icons/md";
 import { IoMdLock } from "react-icons/io";
@@ -7,6 +8,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 
 function SignIn() {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({ email: false, password: false });
@@ -14,16 +16,14 @@ function SignIn() {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
-    const location = useLocation(); // URL parametrlarini olish uchun
+    const location = useLocation();
 
-    // URL'dan redirect parametrini o'qib olamiz (masalan: ?redirect=/company/post-job)
     const queryParams = new URLSearchParams(location.search);
     const redirectPath = queryParams.get("redirect");
 
     useEffect(() => {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (token && token !== "undefined" && token !== "null" && token.length > 10) {
-            // Agar allaqachon login bo'lgan bo'lsa va redirect bo'lsa, o'sha yoqqa, yo'qsa dashboardga
             navigate(redirectPath || "/company/dashboard", { replace: true });
         }
     }, [navigate, redirectPath]);
@@ -46,12 +46,12 @@ function SignIn() {
     const validateForm = () => {
         const newErrors = {};
         if (!formData.email) {
-            newErrors.email = "Fill in the email field";
+            newErrors.email = t('login.email_required'); // login'ga o'zgardi
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = "Invalid email format";
+            newErrors.email = t('login.email_invalid'); // login'ga o'zgardi
         }
         if (!formData.password) {
-            newErrors.password = "Fill in the password field";
+            newErrors.password = t('login.password_required'); // login'ga o'zgardi
         }
         return newErrors;
     };
@@ -76,7 +76,7 @@ function SignIn() {
                 password: formData.password,
             });
 
-            const { token, company, message } = response.data;
+            const { token, company } = response.data;
 
             if (token) {
                 localStorage.removeItem("token");
@@ -84,34 +84,31 @@ function SignIn() {
                 localStorage.setItem("token", token);
                 localStorage.setItem("user_info", JSON.stringify(company));
 
-                toast.success(message || "Successfully logged in!");
+                toast.success(t('login.login_success')); // login'ga o'zgardi
 
                 setTimeout(() => {
-                    // ASOSIY O'ZGARISH: 
-                    // Agar redirectPath bo'lsa o'sha manzilga, bo'lmasa dashboardga o'tadi
                     navigate(redirectPath || "/company/dashboard", { replace: true });
                 }, 1000);
             }
         } catch (error) {
             console.error("Login xatosi:", error);
             setErrors({ email: true, password: true });
-            toast.error(error.response?.data?.message || "Wrong email or password");
+            toast.error(error.response?.data?.message || t('login.login_error')); // login'ga o'zgardi
         } finally {
             setLoading(false);
         }
     };
 
-    <Toaster position="top-right" />
-
     return (
         <>
+            <Toaster position="top-right" />
             <div className="flex flex-col min-h-100">
                 <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4 font-['Mulish']">
-                    <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">Login</h2>
+                    <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">{t('login.login_title')}</h2>
                     <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200">
                         {/* Email Field */}
                         <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{t('login.email_label')}</label>
                             <div className="relative">
                                 <MdEmail className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"}`} />
                                 <input
@@ -128,7 +125,7 @@ function SignIn() {
 
                         {/* Password Field */}
                         <div className="mb-2">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">{t('login.password_label')}</label>
                             <div className="relative">
                                 <IoMdLock className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"}`} />
                                 <input
@@ -150,9 +147,9 @@ function SignIn() {
                         <div className="flex items-center justify-between mb-6">
                             <label className="flex items-center text-sm text-gray-600 cursor-pointer">
                                 <input type="checkbox" className="w-4 h-4 mr-2 accent-[#163D5C]" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-                                Remember me
+                                {t('login.remember_me')}
                             </label>
-                            <Link to="/company/forgot-password-1" className="text-sm text-[#163D5C] hover:underline font-medium">Forgot password?</Link>
+                            <Link to="/company/forgot-password-1" className="text-sm text-[#163D5C] hover:underline font-medium">{t('login.forgot_password')}</Link>
                         </div>
 
                         <button
@@ -160,12 +157,12 @@ function SignIn() {
                             disabled={loading}
                             className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#163D5C] hover:bg-[#0f2a40]"}`}
                         >
-                            {loading ? "Signing In..." : "Sign In"}
+                            {loading ? t('login.signing_in') : t('login.sign_in_btn')}
                         </button>
 
                         <p className="text-center text-sm text-gray-600 mt-6">
-                            Don't have an account?{" "}
-                            <Link to="/company/signup" className="text-[#163D5C] font-bold hover:underline">Register</Link>
+                            {t('login.no_account')}{" "}
+                            <Link to="/company/signup" className="text-[#163D5C] font-bold hover:underline">{t('login.register_link')}</Link>
                         </p>
                     </form>
                 </main>

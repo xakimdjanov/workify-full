@@ -68,5 +68,29 @@
         "no_jobs": "Hozircha bo'sh ish o'rinlari mavjud emas.",
         "no_description": "Ma'lumot berilmagan.",
         "recently": "yaqinda"
+    },
+    "auth": {
+        "select_role": "Rolingizni tanlang",
+        "role_company": "Kompaniya",
+        "role_talent": "Talant"
+    },
+    "login": {
+        "select_role": "Ro'lingizni tanlang",
+        "role_company": "Kompaniya",
+        "role_talent": "Talant",
+        "login_title": "Kirish",
+        "email_label": "Email manzili",
+        "password_label": "Parol",
+        "remember_me": "Eslab qolish",
+        "forgot_password": "Parolni unutdingizmi?",
+        "sign_in_btn": "Kirish",
+        "signing_in": "Kirilmoqda...",
+        "no_account": "Akkauntingiz yo'qmi?",
+        "register_link": "Ro'yxatdan o'tish",
+        "email_required": "Email maydonini to'ldiring",
+        "email_invalid": "Email formati noto'g'ri",
+        "password_required": "Parol maydonini to'ldiring",
+        "login_success": "Muvaffaqiyatli kirdingiz!",
+        "login_error": "Email yoki parol xato"
     }
 }
