@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import toast, { Toaster } from "react-hot-toast";
 import { talentApi } from "../../services/api";
 import verifyImg from "../../assets/verify.png";
@@ -7,6 +8,7 @@ import Header from "../../../Company/Header/Header";
 import Footer from "../../../Company/Footer/Footer";
 
 export default function VerifyAccount() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState(new Array(6).fill(""));
@@ -65,7 +67,7 @@ export default function VerifyAccount() {
   const handleConnectTelegram = () => {
     const botUsername = "Workify1_bot";
     window.open(`https://t.me/${botUsername}?start=${email}`, "_blank");
-    talentApi.sendVerifyCode(email).catch(() => {});
+    talentApi.sendVerifyCode(email).catch(() => { });
   };
 
   const handleNextClick = () => {
@@ -79,15 +81,15 @@ export default function VerifyAccount() {
   const handleVerify = async () => {
     const finalCode = code.join("");
     if (finalCode.length < 6)
-      return toast.error("Please enter the 6-digit code.");
+      return toast.error(t("account_verification.error_empty"));
 
     setLoading(true);
     try {
       await talentApi.checkVerifyCode(email, finalCode);
-      toast.success("Account verified successfully!");
+      toast.success(t("account_verification.success"));
       setTimeout(() => navigate("/talent/signin"), 1500);
     } catch (error) {
-      toast.error("Invalid code or expired. Please try again.");
+      toast.error(t("account_verification.error_invalid"));
     } finally {
       setLoading(false);
     }
@@ -101,8 +103,7 @@ export default function VerifyAccount() {
 
         <div className="max-w-2xl w-full text-center space-y-8">
           <h1 className="text-2xl md:text-3xl font-bold text-[#163D5C] px-4">
-            Start our Telegram bot to be notified when we find a job that fits
-            you perfectly!
+            {t("account_verification.title")}
           </h1>
 
           <div className="min-h-[400px] flex flex-col items-center justify-center space-y-8 transition-all duration-500">
@@ -112,7 +113,7 @@ export default function VerifyAccount() {
                   onClick={handleConnectTelegram}
                   className="bg-[#61C491] hover:bg-[#52a37a] text-white px-10 py-3 rounded-xl text-xl font-medium transition-all shadow-md active:scale-95"
                 >
-                  Click here!
+                  {t("account_verification.click_here")}
                 </button>
 
                 <div className="relative flex justify-center py-4">
@@ -126,7 +127,7 @@ export default function VerifyAccount() {
             ) : (
               <div className="space-y-6 animate-slide-up">
                 <p className="text-gray-500 font-medium">
-                  Enter the 6-digit code sent to your Telegram
+                  {t("account_verification.enter_code")}
                 </p>
                 <div
                   className="flex gap-2 md:gap-4 justify-center"
@@ -150,7 +151,7 @@ export default function VerifyAccount() {
                   onClick={() => setShowOtp(false)}
                   className="text-sm text-gray-400 hover:text-[#163D5C] underline"
                 >
-                  Resend code or change method
+                  {t("account_verification.resend")}
                 </button>
               </div>
             )}
@@ -161,14 +162,14 @@ export default function VerifyAccount() {
               onClick={() => (showOtp ? setShowOtp(false) : navigate(-1))}
               className="px-12 py-3 border-2 border-[#163D5C] text-[#163D5C] rounded-xl font-bold hover:bg-gray-50 transition-all w-40"
             >
-              Back
+              {t("account_verification.back")}
             </button>
             <button
               onClick={handleNextClick}
               disabled={loading}
               className="px-12 py-3 bg-[#163D5C] text-white rounded-xl font-bold hover:bg-[#1a4d73] transition-all w-40 shadow-lg disabled:opacity-70"
             >
-              {loading ? "..." : "Next"}
+              {loading ? "..." : t("account_verification.next")}
             </button>
           </div>
         </div>

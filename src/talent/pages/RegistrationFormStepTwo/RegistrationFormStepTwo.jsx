@@ -10,10 +10,12 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import Header from "../../../Company/Header/Header";
 import Footer from "../../../Company/Footer/Footer";
 
 export default function RegistrationFormStepTwo() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [occupation, setOccupation] = useState("");
@@ -28,62 +30,20 @@ export default function RegistrationFormStepTwo() {
   const [showLangDropdown, setShowLangDropdown] = useState([false]);
   const [showLevelDropdown, setShowLevelDropdown] = useState([false]);
 
-  const occupations = [
-    "Designer",
-    "Programmer",
-    "Businessman",
-    "Manager",
-    "Doctor",
-    "Teacher",
-  ];
-  const specialtyMap = {
-    Manager: [
-      "Product Manager",
-      "Project Manager",
-      "Operations Manager",
-      "Sales Manager",
-      "HR Manager",
-    ],
-    Programmer: [
-      "Frontend Developer",
-      "Backend Developer",
-      "Fullstack Developer",
-      "Mobile Developer",
-      "DevOps",
-    ],
-    Designer: [
-      "UX/UI Designer",
-      "Graphic Designer",
-      "Motion Designer",
-      "3D Artist",
-    ],
-  };
-  const skilsList = [
-    "Figma",
-    "Photoshop",
-    "React",
-    "Node.js",
-    "Python",
-    "Marketing",
-    "Illustrator",
-  ];
-  const expList = ["1 year", "2 years", "3 years", "4 years", "5+ years"];
-  const levels = ["Beginner", "Intermediate", "Advanced", "Native"];
-  const popularLanguages = [
-    "Uzbek",
-    "English",
-    "Russian",
-    "German",
-    "Turkish",
-    "French",
-    "Chinese",
-  ];
+  // JSON dan ma'lumotlarni olish
+  const occupations = t('step2.occupations_list', { returnObjects: true });
+  const specialtyMap = t('step2.specialty_map', { returnObjects: true });
+  const skilsList = t('step2.skills_list', { returnObjects: true });
+  const expList = t('step2.exp_list', { returnObjects: true });
+  const levels = t('step2.levels_list', { returnObjects: true });
+  const popularLanguages = t('step2.languages_list', { returnObjects: true });
 
   const getFiltered = (list, query) => {
+    if (!Array.isArray(list)) return [t('step2.other')];
     const filtered = list.filter((item) =>
       item.toLowerCase().includes(query.toLowerCase())
     );
-    return filtered.length > 0 ? filtered : ["Other"];
+    return filtered.length > 0 ? filtered : [t('step2.other')];
   };
 
   useEffect(() => {
@@ -107,7 +67,7 @@ export default function RegistrationFormStepTwo() {
       setShowSkillDropdown([...showSkillDropdown, false]);
       setShowExpDropdown([...showExpDropdown, false]);
     } else {
-      toast.error("Maximum 5 skills allowed");
+      toast.error(t('step2.err_max_skills'));
     }
   };
 
@@ -117,32 +77,26 @@ export default function RegistrationFormStepTwo() {
       setShowLangDropdown([...showLangDropdown, false]);
       setShowLevelDropdown([...showLevelDropdown, false]);
     } else {
-      toast.error("Maximum 3 languages allowed");
+      toast.error(t('step2.err_max_langs'));
     }
   };
 
   const handleNext = () => {
-    if (!occupation) return toast.error("Please select an occupation");
-    if (!specialty) return toast.error("Please select a specialty");
-    if (!skils[0].skill) return toast.error("Please enter at least one skill");
-    if (!languages[0].language)
-      return toast.error("Please enter at least one language");
+    if (!occupation) return toast.error(t('step2.err_select_occ'));
+    if (!specialty) return toast.error(t('step2.err_select_spec'));
+    if (!skils[0].skill) return toast.error(t('step2.err_select_skill'));
+    if (!languages[0].language) return toast.error(t('step2.err_select_lang'));
 
     const step2Data = { occupation, specialty, skils, language: languages };
     localStorage.setItem("talent_step2", JSON.stringify(step2Data));
-    toast.success("Saved successfully!");
+    toast.success(t('step2.success_msg'));
     setTimeout(() => navigate("/talent/registration/step-3"), 1000);
   };
 
   const handleBack = () => {
-    const step2Data = {
-      occupation,
-      specialty,
-      skils,
-      language: languages,
-    };
+    const step2Data = { occupation, specialty, skils, language: languages };
     localStorage.setItem("talent_step2", JSON.stringify(step2Data));
-    toast.success("Returned to previous step!");
+    toast.success(t('step2.back_msg'));
     setTimeout(() => navigate("/talent/registration/step-1"), 1000);
   };
 
@@ -155,7 +109,7 @@ export default function RegistrationFormStepTwo() {
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-5 xs:p-6 sm:p-8 md:p-10 lg:p-12">
             <div className="flex flex-col items-center mb-8 sm:mb-10">
               <h2 className="text-xl xs:text-2xl sm:text-3xl font-extrabold text-[#163D5C] mb-4 sm:mb-6 text-center">
-                Professional Details
+                {t('step2.title')}
               </h2>
               <div className="flex items-center gap-2 sm:gap-3 w-full max-w-xs sm:max-w-md">
                 <div className="w-3 h-3 rounded-full bg-[#163D5C] flex-shrink-0"></div>
@@ -170,7 +124,7 @@ export default function RegistrationFormStepTwo() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 xs:gap-5 sm:gap-6">
                 <div className="relative">
                   <label className="block text-xs xs:text-sm font-semibold text-gray-700 mb-2">
-                    Occupation *
+                    {t('step2.occ_label')} *
                   </label>
                   <div className="relative">
                     <FaBriefcase className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -182,11 +136,9 @@ export default function RegistrationFormStepTwo() {
                         setShowOccupationDropdown(true);
                       }}
                       onFocus={() => setShowOccupationDropdown(true)}
-                      onBlur={() =>
-                        setTimeout(() => setShowOccupationDropdown(false), 200)
-                      }
+                      onBlur={() => setTimeout(() => setShowOccupationDropdown(false), 200)}
                       className="w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl outline-none focus:ring-2 focus:ring-[#163D5C] text-sm xs:text-base"
-                      placeholder="Search occupation"
+                      placeholder={t('step2.occ_placeholder')}
                     />
                     {showOccupationDropdown && (
                       <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg sm:rounded-xl shadow-xl max-h-36 xs:max-h-48 overflow-y-auto">
@@ -206,7 +158,7 @@ export default function RegistrationFormStepTwo() {
 
                 <div className="relative">
                   <label className="block text-xs xs:text-sm font-semibold text-gray-700 mb-2">
-                    Specialty *
+                    {t('step2.spec_label')} *
                   </label>
                   <div className="relative">
                     <FaSuitcase className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -218,19 +170,14 @@ export default function RegistrationFormStepTwo() {
                         setShowSpecialtyDropdown(true);
                       }}
                       onFocus={() => setShowSpecialtyDropdown(true)}
-                      onBlur={() =>
-                        setTimeout(() => setShowSpecialtyDropdown(false), 200)
-                      }
+                      onBlur={() => setTimeout(() => setShowSpecialtyDropdown(false), 200)}
                       className="w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl outline-none focus:ring-2 focus:ring-[#163D5C] text-sm xs:text-base"
-                      placeholder="Search specialty"
+                      placeholder={t('step2.spec_placeholder')}
                     />
                     {showSpecialtyDropdown && (
                       <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg sm:rounded-xl shadow-xl max-h-36 xs:max-h-48 overflow-y-auto">
                         {getFiltered(
-                          specialtyMap[occupation] || [
-                            "Generalist",
-                            "Specialist",
-                          ],
+                          specialtyMap[occupation] || [t('step2.spec_default_1'), t('step2.spec_default_2')],
                           specialty
                         ).map((item, i) => (
                           <div
@@ -249,16 +196,13 @@ export default function RegistrationFormStepTwo() {
 
               <div className="space-y-3 sm:space-y-4">
                 <h3 className="text-base xs:text-lg font-bold text-gray-800">
-                  Skills & Experience
+                  {t('step2.skills_title')}
                 </h3>
                 {skils.map((s, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-3 xs:gap-4 items-end"
-                  >
+                  <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-3 xs:gap-4 items-end">
                     <div className="relative">
                       <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">
-                        Skill {index === 0 ? "*" : ""}
+                        {t('step2.skill_label')} {index === 0 ? "*" : ""}
                       </label>
                       <div className="relative">
                         <FaIdCard className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -275,15 +219,13 @@ export default function RegistrationFormStepTwo() {
                             arr[index] = true;
                             setShowSkillDropdown(arr);
                           }}
-                          onBlur={() =>
-                            setTimeout(() => {
-                              let arr = [...showSkillDropdown];
-                              arr[index] = false;
-                              setShowSkillDropdown(arr);
-                            }, 200)
-                          }
+                          onBlur={() => setTimeout(() => {
+                            let arr = [...showSkillDropdown];
+                            arr[index] = false;
+                            setShowSkillDropdown(arr);
+                          }, 200)}
                           className="w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl outline-none text-sm xs:text-base"
-                          placeholder="Type skill"
+                          placeholder={t('step2.skill_placeholder')}
                         />
                         {showSkillDropdown[index] && (
                           <div className="absolute z-40 w-full mt-1 bg-white border rounded-lg sm:rounded-xl shadow-lg max-h-28 xs:max-h-32 overflow-y-auto">
@@ -308,7 +250,7 @@ export default function RegistrationFormStepTwo() {
                     <div className="relative flex items-end gap-2">
                       <div className="flex-1 relative">
                         <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">
-                          Experience
+                          {t('step2.exp_label')}
                         </label>
                         <div className="relative">
                           <FaLightbulb className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -321,15 +263,13 @@ export default function RegistrationFormStepTwo() {
                               arr[index] = true;
                               setShowExpDropdown(arr);
                             }}
-                            onBlur={() =>
-                              setTimeout(() => {
-                                let arr = [...showExpDropdown];
-                                arr[index] = false;
-                                setShowExpDropdown(arr);
-                              }, 200)
-                            }
+                            onBlur={() => setTimeout(() => {
+                              let arr = [...showExpDropdown];
+                              arr[index] = false;
+                              setShowExpDropdown(arr);
+                            }, 200)}
                             className="w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl cursor-pointer text-sm xs:text-base"
-                            placeholder="Select"
+                            placeholder={t('step2.select')}
                           />
                           {showExpDropdown[index] && (
                             <div className="absolute z-40 w-full mt-1 bg-white border rounded-lg sm:rounded-xl shadow-lg">
@@ -352,11 +292,8 @@ export default function RegistrationFormStepTwo() {
                       </div>
                       {index > 0 && (
                         <button
-                          onClick={() =>
-                            setskils(skils.filter((_, i) => i !== index))
-                          }
+                          onClick={() => setskils(skils.filter((_, i) => i !== index))}
                           className="p-2 xs:p-3 text-red-500 hover:bg-red-50 rounded-lg sm:rounded-xl mb-[2px]"
-                          aria-label="Remove skill"
                         >
                           <FaTimes className="text-sm xs:text-base" />
                         </button>
@@ -371,7 +308,7 @@ export default function RegistrationFormStepTwo() {
                       onClick={addSkill}
                       className="text-xs xs:text-sm font-bold text-white bg-[#4AD395] px-4 xs:px-6 py-1.5 xs:py-2 rounded-full hover:bg-[#3bc07f] transition-colors"
                     >
-                      + Add Skill
+                      + {t('step2.btn_add_skill')}
                     </button>
                   </div>
                 )}
@@ -379,16 +316,13 @@ export default function RegistrationFormStepTwo() {
 
               <div className="space-y-3 sm:space-y-4 pt-4 sm:pt-6 border-t border-gray-100">
                 <h3 className="text-base xs:text-lg font-bold text-gray-800">
-                  Languages
+                  {t('step2.lang_title')}
                 </h3>
                 {languages.map((l, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-3 xs:gap-4 items-end"
-                  >
+                  <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-3 xs:gap-4 items-end">
                     <div className="relative">
                       <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">
-                        Language {index === 0 ? "*" : ""}
+                        {t('step2.lang_label')} {index === 0 ? "*" : ""}
                       </label>
                       <div className="relative">
                         <FaLanguage className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-base xs:text-lg" />
@@ -408,33 +342,29 @@ export default function RegistrationFormStepTwo() {
                             arr[index] = true;
                             setShowLangDropdown(arr);
                           }}
-                          onBlur={() =>
-                            setTimeout(() => {
-                              let arr = [...showLangDropdown];
-                              arr[index] = false;
-                              setShowLangDropdown(arr);
-                            }, 200)
-                          }
+                          onBlur={() => setTimeout(() => {
+                            let arr = [...showLangDropdown];
+                            arr[index] = false;
+                            setShowLangDropdown(arr);
+                          }, 200)}
                           className="w-full pl-10 xs:pl-11 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl outline-none text-sm xs:text-base"
-                          placeholder="Search language"
+                          placeholder={t('step2.lang_placeholder')}
                         />
                         {showLangDropdown[index] && (
                           <div className="absolute z-40 w-full mt-1 bg-white border rounded-lg sm:rounded-xl shadow-lg max-h-28 xs:max-h-32 overflow-y-auto">
-                            {getFiltered(popularLanguages, l.language).map(
-                              (item, i) => (
-                                <div
-                                  key={i}
-                                  onMouseDown={() => {
-                                    const updated = [...languages];
-                                    updated[index].language = item;
-                                    setLanguages(updated);
-                                  }}
-                                  className="px-3 xs:px-4 py-2 hover:bg-gray-100 cursor-pointer text-xs xs:text-sm"
-                                >
-                                  {item}
-                                </div>
-                              )
-                            )}
+                            {getFiltered(popularLanguages, l.language).map((item, i) => (
+                              <div
+                                key={i}
+                                onMouseDown={() => {
+                                  const updated = [...languages];
+                                  updated[index].language = item;
+                                  setLanguages(updated);
+                                }}
+                                className="px-3 xs:px-4 py-2 hover:bg-gray-100 cursor-pointer text-xs xs:text-sm"
+                              >
+                                {item}
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
@@ -443,7 +373,7 @@ export default function RegistrationFormStepTwo() {
                     <div className="relative flex items-end gap-2">
                       <div className="flex-1 relative">
                         <label className="block text-xs font-semibold text-gray-500 mb-1 ml-1">
-                          Level
+                          {t('step2.level_label')}
                         </label>
                         <div className="relative">
                           <FaChartBar className="absolute left-3 xs:left-4 top-1/2 -translate-y-1/2 text-[#163D5C] text-sm xs:text-base" />
@@ -456,15 +386,13 @@ export default function RegistrationFormStepTwo() {
                               arr[index] = true;
                               setShowLevelDropdown(arr);
                             }}
-                            onBlur={() =>
-                              setTimeout(() => {
-                                let arr = [...showLevelDropdown];
-                                arr[index] = false;
-                                setShowLevelDropdown(arr);
-                              }, 200)
-                            }
+                            onBlur={() => setTimeout(() => {
+                              let arr = [...showLevelDropdown];
+                              arr[index] = false;
+                              setShowLevelDropdown(arr);
+                            }, 200)}
                             className="w-full pl-9 xs:pl-10 sm:pl-12 pr-3 xs:pr-4 py-2.5 xs:py-3 bg-gray-50 border border-gray-200 rounded-lg sm:rounded-xl cursor-pointer text-sm xs:text-base"
-                            placeholder="Select Level"
+                            placeholder={t('step2.level_placeholder')}
                           />
                           {showLevelDropdown[index] && (
                             <div className="absolute z-40 w-full mt-1 bg-white border rounded-lg sm:rounded-xl shadow-lg">
@@ -487,13 +415,8 @@ export default function RegistrationFormStepTwo() {
                       </div>
                       {index > 0 && (
                         <button
-                          onClick={() =>
-                            setLanguages(
-                              languages.filter((_, i) => i !== index)
-                            )
-                          }
+                          onClick={() => setLanguages(languages.filter((_, i) => i !== index))}
                           className="p-2 xs:p-3 text-red-500 hover:bg-red-50 rounded-lg sm:rounded-xl mb-[2px]"
-                          aria-label="Remove language"
                         >
                           <FaTimes className="text-sm xs:text-base" />
                         </button>
@@ -508,25 +431,24 @@ export default function RegistrationFormStepTwo() {
                       onClick={addLanguage}
                       className="text-xs xs:text-sm font-bold text-white bg-[#4AD395] px-4 xs:px-6 py-1.5 xs:py-2 rounded-full hover:bg-[#3bc07f] transition-colors"
                     >
-                      + Add Language
+                      + {t('step2.btn_add_lang')}
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Navigation Buttons */}
               <div className="flex gap-3 sm:gap-4 pt-6 sm:pt-8 md:pt-10">
-                <button 
+                <button
                   onClick={handleBack}
                   className="flex-1 py-3 xs:py-4 border-2 border-[#163D5C] text-[#163D5C] rounded-xl sm:rounded-2xl font-bold hover:bg-gray-50 transition-all text-sm xs:text-base"
                 >
-                  Previous Step
+                  {t('step2.btn_prev')}
                 </button>
                 <button
                   onClick={handleNext}
                   className="flex-1 py-3 xs:py-4 bg-[#163D5C] text-white rounded-xl sm:rounded-2xl font-bold hover:bg-[#1a4d73] shadow-lg transition-all text-sm xs:text-base"
                 >
-                  Next Step
+                  {t('step2.btn_next')}
                 </button>
               </div>
             </div>
