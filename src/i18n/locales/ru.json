@@ -68,5 +68,29 @@
         "no_jobs": "На данный момент вакансий нет.",
         "no_description": "Информация отсутствует.",
         "recently": "недавно"
+    },
+    "auth": {
+        "select_role": "Выберите свою роль",
+        "role_company": "Компания",
+        "role_talent": "Талант"
+    },
+    "login": {
+        "select_role": "Выберите свою роль",
+        "role_company": "Компания",
+        "role_talent": "Талант",
+        "login_title": "Вход",
+        "email_label": "Электронная почта",
+        "password_label": "Пароль",
+        "remember_me": "Запомнить меня",
+        "forgot_password": "Забыли пароль?",
+        "sign_in_btn": "Войти",
+        "signing_in": "Вход...",
+        "no_account": "Нет аккаунта?",
+        "register_link": "Регистрация",
+        "email_required": "Заполните поле email",
+        "email_invalid": "Неверный формат email",
+        "password_required": "Заполните поле пароля",
+        "login_success": "Вы успешно вошли!",
+        "login_error": "Неверный email или пароль"
     }
 }

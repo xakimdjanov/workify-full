@@ -68,5 +68,29 @@
         "no_jobs": "No job openings available at the moment.",
         "no_description": "No description provided.",
         "recently": "recently"
+    },
+    "auth": {
+        "select_role": "Select your role",
+        "role_company": "Company",
+        "role_talent": "Talent"
+    },
+    "login": {
+        "select_role": "Select your role",
+        "role_company": "Company",
+        "role_talent": "Talent",
+        "login_title": "Login",
+        "email_label": "Email Address",
+        "password_label": "Password",
+        "remember_me": "Remember me",
+        "forgot_password": "Forgot password?",
+        "sign_in_btn": "Sign In",
+        "signing_in": "Signing In...",
+        "no_account": "Don't have an account?",
+        "register_link": "Register",
+        "email_required": "Fill in the email field",
+        "email_invalid": "Invalid email format",
+        "password_required": "Fill in the password field",
+        "login_success": "Successfully logged in!",
+        "login_error": "Wrong email or password"
     }
 }
