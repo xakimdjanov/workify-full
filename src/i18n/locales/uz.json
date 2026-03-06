@@ -1,0 +1,24 @@
+{
+    "nav": {
+        "talents": "Talantlar",
+        "jobs": "Ishlar",
+        "dashboard": "Boshqaruv",
+        "profile": "Profilim",
+        "logout": "Chiqish",
+        "signin": "Kirish",
+        "join": "Ro'yxatdan o'tish",
+        "menu": "Menyu"
+    },
+    "user": {
+        "company": "Kompaniya",
+        "talent": "Mutaxassis",
+        "verified_company": "Tasdiqlangan kompaniya"
+    },
+    "logout_modal": {
+        "title": "Chiqish",
+        "question": "Haqiqatan ham tizimdan chiqmoqchimisiz?",
+        "no": "Yo'q",
+        "yes": "Ha"
+    },
+    "language": "Tilni tanlang"
+}
