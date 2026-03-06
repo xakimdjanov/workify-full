@@ -20,5 +20,30 @@
         "no": "Yo'q",
         "yes": "Ha"
     },
-    "language": "Tilni tanlang"
+    "language": "Tilni tanlang",
+    "home": {
+        "hero_title_1": "Intiluvchan iste'dodlar",
+        "hero_title_2": "va ajoyib ish beruvchilarni toping",
+        "hero_desc": "Eng yaxshi nomzodni topish doim qiyin. Bizga nima qidirayotganingizni ayting va eng yaxshilar orasidan birini tanlang.",
+        "feature1_title": "Professional rekruter",
+        "feature1_desc": "Eng yaxshi nomzodni topish doim qiyin.",
+        "feature2_title": "O'zingiz xohlagan ishni tezda toping",
+        "feature2_desc": "Karyerangizni Workify-da boshlang.",
+        "feature3_title": "Barcha professionallar yordamga muhtoj",
+        "feature3_desc": "Rekruter sifatida iste'dodlarni yollash uchun turli ko'nikmalar kerak.",
+        "feature4_title": "Ish qidirish uzoq va zerikarli bo'lishi mumkin",
+        "feature4_desc": "Kuchli raqobat bo'lganda yaxshi ish topish qiyin kechishi mumkin."
+    },
+    "footer": {
+        "brand_desc": "E'lonlar joylash platformasi",
+        "contacts_btn": "Kontaktlar",
+        "general_title": "Asosiy",
+        "post_job": "Ish e'lon qilish",
+        "search_talents": "Talantlarni izlash",
+        "company_login": "Kompaniya kirishi",
+        "search_jobs": "Ish izlash",
+        "talent_login": "Talant kirishi",
+        "rights": "Barcha huquqlar himoyalangan",
+        "auth_error": "Akkauntga kirilmagan! Iltimos, tizimga kiring."
+    }
 }
