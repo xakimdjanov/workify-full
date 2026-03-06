@@ -92,5 +92,73 @@
         "password_required": "Fill in the password field",
         "login_success": "Successfully logged in!",
         "login_error": "Wrong email or password"
+    },
+    "signup": {
+        "company_name": "Company Name",
+        "phone": "Phone Number",
+        "email": "Email",
+        "password": "Password",
+        "pass_hint": "min. 6, uppercase, digit",
+        "website": "Website",
+        "optional": "Optional",
+        "country": "Country",
+        "city": "City/Region",
+        "industry": "Industry",
+        "select_country": "Select country",
+        "select_city": "Select city",
+        "select_industry": "Select industry",
+        "search": "Search...",
+        "back": "Back",
+        "next": "Next",
+        "is_required": "is required!",
+        "error_name_short": "Company name must be at least 3 characters!",
+        "error_pass_short": "Password must be at least 6 characters!"
+    },
+    "industries": {
+        "technology": "Technology",
+        "finance": "Finance",
+        "healthcare": "Healthcare",
+        "education": "Education",
+        "manufacturing": "Manufacturing",
+        "retail": "Retail",
+        "other": "Other"
+    },
+    "cities": {
+        "andijon_viloyati": "Andijan Region",
+        "buxoro_viloyati": "Bukhara Region",
+        "farg'ona_viloyati": "Fergana Region",
+        "jizzax_viloyati": "Jizzakh Region",
+        "xorazm_viloyati": "Khorezm Region",
+        "namangan_viloyati": "Namangan Region",
+        "navoiy_viloyati": "Navoi Region",
+        "qashqadaryo_viloyati": "Kashkadarya Region",
+        "samarqand_viloyati": "Samarkand Region",
+        "sirdaryo_viloyati": "Syrdarya Region",
+        "surxondaryo_viloyati": "Surkhandarya Region",
+        "toshkent_viloyati": "Tashkent Region",
+        "toshkent_shahar": "Tashkent City",
+        "qoraqalpog'iston_respublikasi": "Republic of Karakalpakstan"
+    },
+    "telegram": {
+        "description": "Start our Telegram bot to be notified when we find the best talent for you!",
+        "click_btn": "Click here!",
+        "back": "Back",
+        "next": "Next",
+        "success_msg": "Details saved successfully!",
+        "error_connection": "Connection error",
+        "no_data": "No data found to save. Please go back."
+    },
+    "verify": {
+        "title": "Verification",
+        "sent_to": "Sent to:",
+        "remaining": "remaining",
+        "back": "Back",
+        "verify_btn": "Verify",
+        "checking": "Checking...",
+        "error_no_email": "No email provided for verification",
+        "error_expired": "Code expired!",
+        "error_incomplete": "Enter full 6-digit code",
+        "success": "Verification successful!",
+        "error_failed": "Verification failed"
     }
 }

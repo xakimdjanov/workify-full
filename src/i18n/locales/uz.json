@@ -92,5 +92,73 @@
         "password_required": "Parol maydonini to'ldiring",
         "login_success": "Muvaffaqiyatli kirdingiz!",
         "login_error": "Email yoki parol xato"
+    },
+    "signup": {
+        "company_name": "Kompaniya nomi",
+        "phone": "Telefon raqami",
+        "email": "Email",
+        "password": "Parol",
+        "pass_hint": "kamida 6 ta belgi, katta harf va raqam",
+        "website": "Veb-sayt",
+        "optional": "Ixtiyoriy",
+        "country": "Davlat",
+        "city": "Shahar/Viloyat",
+        "industry": "Sohangiz",
+        "select_country": "Davlatni tanlang",
+        "select_city": "Shaharni tanlang",
+        "select_industry": "Sohani tanlang",
+        "search": "Qidirish...",
+        "back": "Orqaga",
+        "next": "Keyingisi",
+        "is_required": "to'ldirilishi shart!",
+        "error_name_short": "Kompaniya nomi kamida 3 ta harfdan iborat bo'lishi kerak!",
+        "error_pass_short": "Parol uzunligi kamida 6 ta belgidan iborat bo'lishi kerak!"
+    },
+    "industries": {
+        "technology": "Texnologiya",
+        "finance": "Moliya",
+        "healthcare": "Sog'liqni saqlash",
+        "education": "Ta'lim",
+        "manufacturing": "Ishlab chiqarish",
+        "retail": "Chakana savdo",
+        "other": "Boshqa"
+    },
+    "cities": {
+        "andijon_viloyati": "Andijon viloyati",
+        "buxoro_viloyati": "Buxoro viloyati",
+        "farg'ona_viloyati": "Farg'ona viloyati",
+        "jizzax_viloyati": "Jizzax viloyati",
+        "xorazm_viloyati": "Xorazm viloyati",
+        "namangan_viloyati": "Namangan viloyati",
+        "navoiy_viloyati": "Navoiy viloyati",
+        "qashqadaryo_viloyati": "Qashqadaryo viloyati",
+        "samarqand_viloyati": "Samarqand viloyati",
+        "sirdaryo_viloyati": "Sirdaryo viloyati",
+        "surxondaryo_viloyati": "Surxondaryo viloyati",
+        "toshkent_viloyati": "Toshkent viloyati",
+        "toshkent_shahar": "Toshkent shahri",
+        "qoraqalpog'iston_respublikasi": "Qoraqalpog'iston Respublikasi"
+    },
+    "telegram": {
+        "description": "Sizga mos talantlarni topganimizda xabar berishimiz uchun Telegram botimizni ishga tushiring!",
+        "click_btn": "Shu yerni bosing!",
+        "back": "Orqaga",
+        "next": "Keyingisi",
+        "success_msg": "Ma'lumotlar muvaffaqiyatli saqlandi!",
+        "error_connection": "Ulanishda xatolik",
+        "no_data": "Saqlash uchun ma'lumot topilmadi. Orqaga qayting."
+    },
+    "verify": {
+        "title": "Tasdiqlash",
+        "sent_to": "Yuborildi:",
+        "remaining": "vaqt qoldi",
+        "back": "Orqaga",
+        "verify_btn": "Tasdiqlash",
+        "checking": "Tekshirilmoqda...",
+        "error_no_email": "Tasdiqlash uchun email topilmadi",
+        "error_expired": "Kod muddati tugadi!",
+        "error_incomplete": "6 xonali kodni to'liq kiriting",
+        "success": "Muvaffaqiyatli tasdiqlandi!",
+        "error_failed": "Tasdiqlashda xatolik"
     }
 }

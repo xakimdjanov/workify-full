@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next"; // i18n qo'shildi
 import LoadingSpinner from "../common/LoadingSpinner";
 import { companyApi } from "../../services/api";
 
 const Verify = () => {
+  const { t } = useTranslation(); // t funksiyasi
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Kodni massiv ko'rinishida saqlash boshqarishni osonlashtiradi
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [countdown, setCountdown] = useState(300);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,10 +18,10 @@ const Verify = () => {
 
   useEffect(() => {
     if (!email) {
-      toast.error("No email provided for verification");
+      toast.error(t('verify.error_no_email'));
       navigate("/company/signup");
     }
-  }, [email, navigate]);
+  }, [email, navigate, t]);
 
   useEffect(() => {
     let timer;
@@ -36,15 +37,13 @@ const Verify = () => {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Har bir input o'zgarganda ishlaydi
   const handleChange = (index, value) => {
-    const val = value.replace(/\D/g, ""); // Faqat raqam
+    const val = value.replace(/\D/g, "");
     if (val.length <= 1) {
       const newCode = [...code];
       newCode[index] = val;
       setCode(newCode);
 
-      // Keyingi inputga o'tish
       if (val && index < 5) {
         document.getElementById(`code-input-${index + 1}`).focus();
       }
@@ -68,24 +67,23 @@ const Verify = () => {
 
   const handleVerify = async (e) => {
     e.preventDefault();
-    const fullCode = code.join(""); // Massivni stringga aylantiramiz
+    const fullCode = code.join("");
 
-    if (countdown === 0) return toast.error("Code expired!");
-    if (fullCode.length !== 6) return toast.error("Enter full 6-digit code");
+    if (countdown === 0) return toast.error(t('verify.error_expired'));
+    if (fullCode.length !== 6) return toast.error(t('verify.error_incomplete'));
 
     try {
       setIsLoading(true);
-      // API ga yuborish
       const response = await companyApi.verifyCode(email, fullCode);
 
-      toast.success("Verification successful!");
+      toast.success(t('verify.success'));
       if (response.token) localStorage.setItem("authToken", response.token);
       localStorage.setItem("companyEmail", email);
 
       setTimeout(() => navigate("/company/signin"), 1500);
     } catch (err) {
-      toast.error(err.message || "Verification failed");
-      setCode(["", "", "", "", "", ""]); // Xato bo'lsa tozalash
+      toast.error(err.message || t('verify.error_failed'));
+      setCode(["", "", "", "", "", ""]);
       document.getElementById("code-input-0").focus();
     } finally {
       setIsLoading(false);
@@ -97,17 +95,17 @@ const Verify = () => {
       <ToastContainer />
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
         <h2 className="text-2xl font-bold text-[#163D5C] mb-2 text-center">
-          Verification
+          {t('verify.title')}
         </h2>
         <p className="text-gray-500 text-sm text-center mb-8">
-          Sent to: <b>{email}</b>
+          {t('verify.sent_to')} <b>{email}</b>
         </p>
 
         <div className="text-center mb-6">
           <div
             className={`inline-block px-4 py-2 rounded-full text-xs font-bold ${countdown > 60 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}
           >
-            {formatTime(countdown)} remaining
+            {formatTime(countdown)} {t('verify.remaining')}
           </div>
         </div>
 
@@ -133,16 +131,16 @@ const Verify = () => {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="flex-1 py-4 border border-gray-200 rounded-2xl font-bold text-gray-500"
+              className="flex-1 py-4 border border-gray-200 rounded-2xl font-bold text-gray-500 hover:bg-gray-50 transition-colors"
             >
-              Back
+              {t('verify.back')}
             </button>
             <button
               type="submit"
               disabled={isLoading || countdown === 0}
-              className="flex-1 py-4 bg-[#163D5C] text-white rounded-2xl font-bold shadow-lg disabled:opacity-50"
+              className="flex-1 py-4 bg-[#163D5C] text-white rounded-2xl font-bold shadow-lg disabled:opacity-50 hover:opacity-90 transition-opacity"
             >
-              {isLoading ? "Checking..." : "Verify"}
+              {isLoading ? t('verify.checking') : t('verify.verify_btn')}
             </button>
           </div>
         </form>

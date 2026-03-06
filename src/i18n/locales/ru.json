@@ -92,5 +92,73 @@
         "password_required": "Заполните поле пароля",
         "login_success": "Вы успешно вошли!",
         "login_error": "Неверный email или пароль"
+    },
+    "signup": {
+        "company_name": "Название компании",
+        "phone": "Номер телефона",
+        "email": "Email",
+        "password": "Пароль",
+        "pass_hint": "мин. 6, заглавная буква, цифра",
+        "website": "Веб-сайт",
+        "optional": "Необязательно",
+        "country": "Страна",
+        "city": "Город/Область",
+        "industry": "Отрасль",
+        "select_country": "Выберите страну",
+        "select_city": "Выберите город",
+        "select_industry": "Выберите отрасль",
+        "search": "Поиск...",
+        "back": "Назад",
+        "next": "Далее",
+        "is_required": "обязательно для заполнения!",
+        "error_name_short": "Название компании должно быть не менее 3 символов!",
+        "error_pass_short": "Длина пароля должна быть не менее 6 символов!"
+    },
+    "industries": {
+        "technology": "Технологии",
+        "finance": "Финансы",
+        "healthcare": "Здравоохранение",
+        "education": "Образование",
+        "manufacturing": "Производство",
+        "retail": "Розничная торговля",
+        "other": "Другое"
+    },
+    "cities": {
+        "andijon_viloyati": "Андижанская область",
+        "buxoro_viloyati": "Бухарская область",
+        "farg'ona_viloyati": "Ферганская область",
+        "jizzax_viloyati": "Джизакская область",
+        "xorazm_viloyati": "Хорезмская область",
+        "namangan_viloyati": "Наманганская область",
+        "navoiy_viloyati": "Навоийская область",
+        "qashqadaryo_viloyati": "Кашкадарьинская область",
+        "samarqand_viloyati": "Самаркандская область",
+        "sirdaryo_viloyati": "Сырдарьинская область",
+        "surxondaryo_viloyati": "Сурхандарьинская область",
+        "toshkent_viloyati": "Ташкентская область",
+        "toshkent_shahar": "город Ташкент",
+        "qoraqalpog'iston_respublikasi": "Республика Каракалпакстан"
+    },
+    "telegram": {
+        "description": "Запустите нашего Telegram-бота, чтобы получать уведомления, когда мы найдем для вас лучших талантов!",
+        "click_btn": "Нажмите сюда!",
+        "back": "Назад",
+        "next": "Далее",
+        "success_msg": "Данные успешно сохранены!",
+        "error_connection": "Ошибка соединения",
+        "no_data": "Данные для сохранения не найдены. Пожалуйста, вернитесь назад."
+    },
+    "verify": {
+        "title": "Подтверждение",
+        "sent_to": "Отправлено на:",
+        "remaining": "осталось",
+        "back": "Назад",
+        "verify_btn": "Подтвердить",
+        "checking": "Проверка...",
+        "error_no_email": "Email для подтверждения не найден",
+        "error_expired": "Срок действия кода истек!",
+        "error_incomplete": "Введите полный 6-значный код",
+        "success": "Подтверждение прошло успешно!",
+        "error_failed": "Ошибка подтверждения"
     }
 }
