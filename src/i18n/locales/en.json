@@ -20,5 +20,30 @@
         "no": "No",
         "yes": "Yes"
     },
-    "language": "Select Language"
+    "language": "Select Language",
+    "home": {
+        "hero_title_1": "Find aspiring talents",
+        "hero_title_2": "and great employers",
+        "hero_desc": "Finding the best candidate is always hard. Tell us what you are looking for and choose one from among the best.",
+        "feature1_title": "Professional recruiter",
+        "feature1_desc": "Finding the best candidate is always hard.",
+        "feature2_title": "Find the right job you want fast",
+        "feature2_desc": "Launch your career on Workify.",
+        "feature3_title": "All professionals need some help",
+        "feature3_desc": "As a pro recruiter, you need various skills to hire a great talent.",
+        "feature4_title": "Searching a job may be long and boring",
+        "feature4_desc": "Landing a good gig can be hard, when you have a strong competition."
+    },
+    "footer": {
+        "brand_desc": "Job posting platform",
+        "contacts_btn": "Contacts",
+        "general_title": "General",
+        "post_job": "Post a job",
+        "search_talents": "Search talents",
+        "company_login": "Company login",
+        "search_jobs": "Search jobs",
+        "talent_login": "Talent login",
+        "rights": "All rights reserved",
+        "auth_error": "Not logged in! Please sign in to your account."
+    }
 }
