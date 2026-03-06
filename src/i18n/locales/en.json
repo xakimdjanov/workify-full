@@ -45,5 +45,28 @@
         "talent_login": "Talent login",
         "rights": "All rights reserved",
         "auth_error": "Not logged in! Please sign in to your account."
+    },
+    "talents": {
+        "talents_count_text": "talents",
+        "fetch_error": "Error occurred while loading data",
+        "skills_title": "Skills",
+        "view_profile_btn": "View profile",
+        "show_more": "...more",
+        "show_less": "show less",
+        "no_skills": "No skills specified",
+        "no_data": "No talents available at the moment.",
+        "default_about": "Experience and passion in building great products..."
+    },
+    "jobs": {
+        "jobs_count_text": "jobs",
+        "fetch_error": "Error occurred while loading data",
+        "reviews_count": "1K reviews",
+        "now_hiring": "Now hiring",
+        "required_skills": "Required skills",
+        "quick_apply": "Quick apply",
+        "view_post": "View job post",
+        "no_jobs": "No job openings available at the moment.",
+        "no_description": "No description provided.",
+        "recently": "recently"
     }
 }
