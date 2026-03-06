@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { MdEmail } from "react-icons/md";
 import { IoMdLock } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { Link, useNavigate, useSearchParams } from "react-router-dom"; // useSearchParams qo'shildi
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { useTranslation } from "react-i18next"; // i18n qo'shildi
 import { talentApi } from "../../services/api";
 import Footer from "../../../Company/Footer/Footer";
 import Header from "../../../Company/Header/Header";
 
 const SignIn = () => {
+  const { t } = useTranslation(); // t funksiyasi
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -22,7 +24,7 @@ const SignIn = () => {
   });
 
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // URL'dagi parametrlarni olish
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (errors.email || errors.password) {
@@ -44,12 +46,12 @@ const SignIn = () => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email) {
-      newErrors.email = "Fill in the email field";
+      newErrors.email = t('signin.err_email_empty');
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t('signin.err_email_invalid');
     }
     if (!formData.password) {
-      newErrors.password = "Fill in the password field";
+      newErrors.password = t('signin.err_pass_empty');
     }
     return newErrors;
   };
@@ -74,43 +76,40 @@ const SignIn = () => {
 
       if (token) {
         localStorage.setItem("token", token);
-        toast.success("Successfully logged in!");
+        toast.success(t('signin.success'));
 
-        // URL'dan redirect parametrini tekshiramiz
         const redirectTo = searchParams.get("redirect") || "/talent/dashboard";
 
         setTimeout(() => {
-          navigate(redirectTo); // Agar redirect bo'lsa o'sha yerga, bo'lmasa dashboardga
+          navigate(redirectTo);
         }, 1000);
       }
     } catch (error) {
       console.error("Login Error:", error);
       setErrors({ email: true, password: true });
-      toast.error(error.response?.data?.message || "Wrong email or password");
+      toast.error(error.response?.data?.message || t('signin.err_server'));
     } finally {
       setLoading(false);
     }
   };
 
-  <Toaster position="top-right" />
-
   return (
     <>
+      <Toaster position="top-right" />
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4">
           <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">
-            Login
+            {t('signin.title')}
           </h2>
 
           <form
             onSubmit={handleSubmit}
             className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200"
           >
-            {/* Inputlar qismi o'zgarmadi... */}
             <div className="mb-4">
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+                {t('signin.email_label')}
               </label>
               <div className="relative">
                 <MdEmail className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.email ? "text-red-500" : "text-gray-400"}`} />
@@ -128,7 +127,7 @@ const SignIn = () => {
 
             <div className="mb-2">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {t('signin.password_label')}
               </label>
               <div className="relative">
                 <IoMdLock className={`absolute left-3 top-1/2 -translate-y-1/2 text-xl ${errors.password ? "text-red-500" : "text-gray-400"}`} />
@@ -160,10 +159,10 @@ const SignIn = () => {
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                 />
-                Remember me
+                {t('signin.remember_me')}
               </label>
-              <Link to="/talent/forgot-password" intrinsic className="text-sm text-[#163D5C] hover:underline font-medium">
-                Forgot password?
+              <Link to="/talent/forgot-password" intrinsic="true" className="text-sm text-[#163D5C] hover:underline font-medium">
+                {t('signin.forgot_password')}
               </Link>
             </div>
 
@@ -172,13 +171,13 @@ const SignIn = () => {
               disabled={loading}
               className={`w-full py-2 rounded-lg text-white font-semibold transition ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#163D5C] hover:bg-[#0f2a40]"}`}
             >
-              {loading ? "Signing In..." : "Sign In"}
+              {loading ? t('signin.btn_loading') : t('signin.btn_text')}
             </button>
 
             <p className="text-center text-sm text-gray-600 mt-6">
-              Don't have an account?{" "}
+              {t('signin.no_account')}{" "}
               <Link to="/talent/registration/step-1" className="text-[#163D5C] font-bold hover:underline">
-                Register
+                {t('signin.register_link')}
               </Link>
             </p>
           </form>
