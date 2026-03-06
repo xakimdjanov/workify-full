@@ -45,5 +45,28 @@
         "talent_login": "Talant kirishi",
         "rights": "Barcha huquqlar himoyalangan",
         "auth_error": "Akkauntga kirilmagan! Iltimos, tizimga kiring."
+    },
+    "talents": {
+        "talents_count_text": "talantlar",
+        "fetch_error": "Ma'lumotlarni yuklashda xatolik yuz berdi",
+        "skills_title": "Ko'nikmalar",
+        "view_profile_btn": "Profilni ko'rish",
+        "show_more": "...ko'proq",
+        "show_less": "yopish",
+        "no_skills": "Ko'nikmalar ko'rsatilmagan",
+        "no_data": "Hozircha talantlar mavjud emas.",
+        "default_about": "Ajoyib mahsulotlar yaratishda tajriba va ishtiyoq..."
+    },
+    "jobs": {
+        "jobs_count_text": "ish o'rinlari",
+        "fetch_error": "Ma'lumotlarni yuklashda xatolik yuz berdi",
+        "reviews_count": "1K sharhlar",
+        "now_hiring": "Hozir qabul",
+        "required_skills": "Talab qilingan ko'nikmalar",
+        "quick_apply": "Tezkor topshirish",
+        "view_post": "E'lonni ko'rish",
+        "no_jobs": "Hozircha bo'sh ish o'rinlari mavjud emas.",
+        "no_description": "Ma'lumot berilmagan.",
+        "recently": "yaqinda"
     }
 }

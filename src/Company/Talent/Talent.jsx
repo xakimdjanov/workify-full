@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // 1. Hook import qilindi
 import { talentApi } from '../../services/api';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import toast from 'react-hot-toast';
 
 function Talents() {
+    const { t } = useTranslation(); // 2. t funksiyasi olindi
     const [talents, setTalents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,36 +21,27 @@ function Talents() {
                 setTalents(response.data || []);
             } catch (err) {
                 console.error('API Error:', err);
-                setError("Ma'lumotlarni yuklashda xatolik yuz berdi");
+                setError(t('talents.fetch_error')); // 3. Xatolik matni tarjimaga ulandi
             } finally {
                 setLoading(false);
             }
         };
         fetchTalents();
-    }, []);
+    }, [t]);
 
-    // --- TUZATILGAN FUNKSIYA ---
     const handleViewProfile = (talentId) => {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
 
         if (!token) {
-            // 1. Toast xabarini chiqarish
-            toast.error("Profilni ko'rish uchun ro'yxatdan o'ting!", {
+            toast.error(t('footer.auth_error'), { // 4. Toast xabari tarjimaga ulandi
                 duration: 4000,
                 position: 'top-center',
             });
-
-            // 2. Login sahifasiga yo'naltirish (sizning loyihangizga qarab pathni to'g'rilang)
-            // Masalan: navigate('/company/signin') yoki navigate('/roleSelection')
             navigate('/roleSelection');
-
             return;
         }
-
-        // Token bo'lsa profilga o'tadi
         navigate(`/talents/${talentId}`);
     };
-    // ---------------------------
 
     const toggleExpand = (id) => {
         setExpandedAbout(prev => ({ ...prev, [id]: !prev[id] }));
@@ -113,7 +106,7 @@ function Talents() {
                             {loading ? "..." : formatCount(talents.length)}
                         </span>
                         <span className="text-[20px] md:text-[25px] font-medium text-[#404040] lowercase">
-                            talents
+                            {t('talents.talents_count_text')}
                         </span>
                     </div>
                     <div className="h-[1.5px] w-full bg-[#e5e7eb]"></div>
@@ -126,7 +119,7 @@ function Talents() {
                         talents.map((talent) => {
                             const skills = parseSkills(talent.skils);
                             const isExpanded = expandedAbout[talent.id];
-                            const aboutText = talent.about || "Experience and passion in building great products...";
+                            const aboutText = talent.about || t('talents.default_about');
 
                             return (
                                 <div key={talent.id} className="bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
@@ -175,8 +168,7 @@ function Talents() {
 
                                         <div className="mt-6">
                                             <div
-                                                className={`text-[#484f57] text-[15px] md:text-[18px] leading-relaxed transition-all duration-300 ${isExpanded ? 'max-h-[150px] overflow-y-auto pr-2' : 'line-clamp-2'
-                                                    }`}
+                                                className={`text-[#484f57] text-[15px] md:text-[18px] leading-relaxed transition-all duration-300 ${isExpanded ? 'max-h-[150px] overflow-y-auto pr-2' : 'line-clamp-2'}`}
                                             >
                                                 {aboutText}
                                             </div>
@@ -185,7 +177,7 @@ function Talents() {
                                                     onClick={() => toggleExpand(talent.id)}
                                                     className="text-[#1D3D54] font-bold text-sm mt-1 hover:underline cursor-pointer"
                                                 >
-                                                    {isExpanded ? "show less" : "...more"}
+                                                    {isExpanded ? t('talents.show_less') : t('talents.show_more')}
                                                 </button>
                                             )}
                                         </div>
@@ -196,7 +188,9 @@ function Talents() {
                                     <div className="p-5 md:p-8">
                                         <div className="flex flex-col space-y-6">
                                             <div>
-                                                <h4 className="text-[#6e7074] text-[14px] md:text-[22px] font-semibold mb-4">Skills</h4>
+                                                <h4 className="text-[#6e7074] text-[14px] md:text-[22px] font-semibold mb-4">
+                                                    {t('talents.skills_title')}
+                                                </h4>
                                                 <div className="flex flex-wrap gap-2 md:gap-2.5">
                                                     {skills.length > 0 ? (
                                                         skills.map((s, idx) => (
@@ -205,7 +199,7 @@ function Talents() {
                                                             </span>
                                                         ))
                                                     ) : (
-                                                        <span className="text-gray-400 text-xs italic">No skills specified</span>
+                                                        <span className="text-gray-400 text-xs italic">{t('talents.no_skills')}</span>
                                                     )}
                                                 </div>
                                             </div>
@@ -215,7 +209,7 @@ function Talents() {
                                                     onClick={() => handleViewProfile(talent.id)}
                                                     className="px-6 md:px-[60px] py-3 bg-[#1D3D54] text-white font-[650] rounded-lg text-center"
                                                 >
-                                                    View profile
+                                                    {t('talents.view_profile_btn')}
                                                 </button>
                                             </div>
                                         </div>
@@ -228,7 +222,7 @@ function Talents() {
 
                 {talents.length === 0 && !loading && (
                     <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300 mt-5">
-                        <p className="text-gray-400 font-medium">Hozircha talentlar mavjud emas.</p>
+                        <p className="text-gray-400 font-medium">{t('talents.no_data')}</p>
                     </div>
                 )}
             </div>
