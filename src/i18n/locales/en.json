@@ -1,0 +1,24 @@
+{
+    "nav": {
+        "talents": "Talents",
+        "jobs": "Jobs",
+        "dashboard": "Dashboard",
+        "profile": "My Profile",
+        "logout": "Logout",
+        "signin": "Sign in",
+        "join": "Join Now",
+        "menu": "Menu"
+    },
+    "user": {
+        "company": "Company",
+        "talent": "Talent",
+        "verified_company": "Verified Company"
+    },
+    "logout_modal": {
+        "title": "Logout",
+        "question": "Do you really want to logout?",
+        "no": "No",
+        "yes": "Yes"
+    },
+    "language": "Select Language"
+}
