@@ -46,16 +46,45 @@
         "rights": "Все права защищены",
         "auth_error": "Вы не вошли в систему! Пожалуйста, войдите в свой аккаунт."
     },
+    "location_list": {
+        "Tashkent": "Ташкент",
+        "Namangan": "Наманган",
+        "Andijan": "Андижан",
+        "Samarkand": "Самарканд",
+        "Bukhara": "Бухара",
+        "Fergana": "Фергана",
+        "Uzbekistan": "Узбекистан"
+    },
+    "specialties": {
+        "Designer": "Дизайнер",
+        "Developer": "Разработчик",
+        "Frontend Developer": "Frontend разработчик",
+        "Backend Developer": "Backend разработчик",
+        "Mobile Developer": "Mobil разработчик",
+        "Manager": "Менеджер",
+        "Graphic Designer": "Графический дизайнер"
+    },
     "talents": {
-        "talents_count_text": "талантов",
-        "fetch_error": "Произошла ошибка при загрузке данных",
+        "talents_count_text": "специалистов найдено",
+        "fetch_error": "Ошибка при загрузке данных",
+        "default_about": "Информация не указана",
+        "show_more": "Показать больше",
+        "show_less": "Показать меньше",
         "skills_title": "Навыки",
-        "view_profile_btn": "Посмотреть профиль",
-        "show_more": "...еще",
-        "show_less": "скрыть",
         "no_skills": "Навыки не указаны",
-        "no_data": "На данный момент талантов нет.",
-        "default_about": "Опыт и страсть к созданию отличных продуктов..."
+        "view_profile_btn": "Посмотреть профиль",
+        "no_data": "Специалисты не найдены",
+        "work_type": {
+            "fulltime": "Полная занятость",
+            "parttime": "Частичная занятость",
+            "contract": "Контракт",
+            "freelance": "Фриланс"
+        },
+        "workplace_options": {
+            "Remote": "Удаленно",
+            "Onsite": "В офисе",
+            "Hybrid": "Гибрид"
+        }
     },
     "jobs": {
         "jobs_count_text": "вакансий",

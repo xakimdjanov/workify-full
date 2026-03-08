@@ -46,16 +46,45 @@
         "rights": "All rights reserved",
         "auth_error": "Not logged in! Please sign in to your account."
     },
+    "location_list": {
+        "Tashkent": "Tashkent",
+        "Namangan": "Namangan",
+        "Andijan": "Andijan",
+        "Samarkand": "Samarkand",
+        "Bukhara": "Bukhara",
+        "Fergana": "Fergana",
+        "Uzbekistan": "Uzbekistan"
+    },
+    "specialties": {
+        "Designer": "Designer",
+        "Developer": "Developer",
+        "Frontend Developer": "Frontend Developer",
+        "Backend Developer": "Backend Developer",
+        "Mobile Developer": "Mobile Developer",
+        "Manager": "Manager",
+        "Graphic Designer": "Graphic Designer"
+    },
     "talents": {
-        "talents_count_text": "talents",
-        "fetch_error": "Error occurred while loading data",
+        "talents_count_text": "talents found",
+        "fetch_error": "Error fetching data",
+        "default_about": "No information provided",
+        "show_more": "Show more",
+        "show_less": "Show less",
         "skills_title": "Skills",
-        "view_profile_btn": "View profile",
-        "show_more": "...more",
-        "show_less": "show less",
-        "no_skills": "No skills specified",
-        "no_data": "No talents available at the moment.",
-        "default_about": "Experience and passion in building great products..."
+        "no_skills": "No skills listed",
+        "view_profile_btn": "View Profile",
+        "no_data": "No talents found",
+        "work_type": {
+            "fulltime": "Full-time",
+            "parttime": "Part-time",
+            "contract": "Contract",
+            "freelance": "Freelance"
+        },
+        "workplace_options": {
+            "Remote": "Remote",
+            "Onsite": "Onsite",
+            "Hybrid": "Hybrid"
+        }
     },
     "jobs": {
         "jobs_count_text": "jobs",
