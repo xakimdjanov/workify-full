@@ -46,16 +46,45 @@
         "rights": "Barcha huquqlar himoyalangan",
         "auth_error": "Akkauntga kirilmagan! Iltimos, tizimga kiring."
     },
+    "location_list": {
+        "Tashkent": "Toshkent",
+        "Namangan": "Namangan",
+        "Andijan": "Andijon",
+        "Samarkand": "Samarqand",
+        "Bukhara": "Buxoro",
+        "Fergana": "Farg'ona",
+        "Uzbekistan": "O'zbekiston"
+    },
+    "specialties": {
+        "Designer": "Dizayner",
+        "Developer": "Dasturchi",
+        "Frontend Developer": "Frontend dasturchi",
+        "Backend Developer": "Backend dasturchi",
+        "Mobile Developer": "Mobil dasturchi",
+        "Manager": "Menejer",
+        "Graphic Designer": "Grafik dizayner"
+    },
     "talents": {
-        "talents_count_text": "talantlar",
-        "fetch_error": "Ma'lumotlarni yuklashda xatolik yuz berdi",
+        "talents_count_text": "mutaxassis topildi",
+        "fetch_error": "Ma'lumot yuklashda xatolik",
+        "default_about": "Ma'lumot ko'rsatilmagan",
+        "show_more": "Batafsil",
+        "show_less": "Qisqartirish",
         "skills_title": "Ko'nikmalar",
-        "view_profile_btn": "Profilni ko'rish",
-        "show_more": "...ko'proq",
-        "show_less": "yopish",
         "no_skills": "Ko'nikmalar ko'rsatilmagan",
-        "no_data": "Hozircha talantlar mavjud emas.",
-        "default_about": "Ajoyib mahsulotlar yaratishda tajriba va ishtiyoq..."
+        "view_profile_btn": "Profilni ko'rish",
+        "no_data": "Mutaxassislar topilmadi",
+        "work_type": {
+            "fulltime": "To'liq bandlik",
+            "parttime": "Yarim bandlik",
+            "contract": "Shartnoma",
+            "freelance": "Frilans"
+        },
+        "workplace_options": {
+            "Remote": "Masofaviy",
+            "Onsite": "Ofisda",
+            "Hybrid": "Gibrid"
+        }
     },
     "jobs": {
         "jobs_count_text": "ish o'rinlari",
