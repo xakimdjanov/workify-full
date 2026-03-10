@@ -167,7 +167,7 @@ export default function ForgotPassword() {
               </p>
               <button
                 onClick={() =>
-                  window.open("https://t.me/Workify1_bot", "_blank")
+                  window.open("https://t.me/@jobify1_bot", "_blank")
                 }
                 className="bg-[#61C491] text-white px-8 py-2 rounded-lg font-semibold hover:bg-[#4fb17f] transition-colors"
               >

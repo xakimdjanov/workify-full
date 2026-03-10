@@ -747,6 +747,6 @@ const TalentDetail = () => {
   );
 };
 
-// Saqlashdan keyin git yangilanmagani uchun ! 
+// Qayta push qilgach ochiraman !
 
 export default TalentDetail;
