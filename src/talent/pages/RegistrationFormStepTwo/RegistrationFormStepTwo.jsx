@@ -66,11 +66,7 @@ export default function RegistrationFormStepTwo() {
 
     "Businessman",
 
-    "Manager",
-
-    "Doctor",
-
-    "Teacher",
+    "Manager"
 
   ];
 
@@ -119,21 +115,76 @@ export default function RegistrationFormStepTwo() {
   };
 
   const skilsList = [
-
-    "Figma",
-
-    "Photoshop",
-
+    // Frontend
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "TypeScript",
     "React",
+    "Vue.js",
+    "Next.js",
+    "Angular",
+    "Tailwind CSS",
+    "SASS/SCSS",
+    "Redux Toolkit",
+    "Zustand",
+    "React Query",
 
+    // Backend
     "Node.js",
-
+    "Express.js",
+    "NestJS",
     "Python",
+    "Django",
+    "FastAPI",
+    "PHP",
+    "Laravel",
+    "Go",
+    "Java",
+    "Spring Boot",
+    "C#",
+    ".NET Core",
 
-    "Marketing",
+    // Database & Infrastructure
+    "PostgreSQL",
+    "MongoDB",
+    "MySQL",
+    "Redis",
+    "Firebase",
+    "Docker",
+    "Kubernetes",
+    "AWS",
+    "Google Cloud",
 
+    // Mobile & Desktop
+    "React Native",
+    "Flutter",
+    "Dart",
+    "Electron",
+
+    // Design & Tools
+    "Figma",
+    "Adobe XD",
+    "Photoshop",
     "Illustrator",
 
+    // DevOps & Others
+    "Git",
+    "GitHub",
+    "CI/CD",
+    "GraphQL",
+    "REST API",
+    "Unit Testing",
+    "Linux",
+
+    // Project Manager
+    "Scrum",
+    "Agile",
+    "Jira",
+    "ClickUp",
+    "Trello",
+    "Asana",
+    "Sprint Planning",
   ];
 
   const expList = ["1 year", "2 years", "3 years", "4 years", "5+ years"];
