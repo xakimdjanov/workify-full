@@ -33,17 +33,13 @@ const Sidebar = () => {
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (!token) return;
-
       const decoded = jwtDecode(token);
-      const currentCompanyId = decoded.company_id || decoded.id; // Tokeningizdagi nomga qarang
-
+      const currentCompanyId = decoded.company_id || decoded.id;
       const res = await notificationApi.getAll();
       if (res.data && Array.isArray(res.data)) {
-        // FILTER QO'SHILDI: Faqat shu kompaniyaga tegishli va o'qilmaganlar
         const unread = res.data.filter(n =>
           Number(n.company_id) === Number(currentCompanyId) && !n.is_read
         ).length;
-
         setUnreadCount(unread);
       }
     } catch (error) {
@@ -54,7 +50,6 @@ const Sidebar = () => {
   const updateUserData = () => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     const userInfoRaw = localStorage.getItem('user_info') || sessionStorage.getItem('user_info');
-
     if (token && userInfoRaw) {
       try {
         const userInfo = JSON.parse(userInfoRaw);
@@ -73,15 +68,12 @@ const Sidebar = () => {
   useEffect(() => {
     updateUserData();
     checkNotifications();
-
     const handleUpdate = () => {
       updateUserData();
-      checkNotifications(); // Refreshsiz countni yangilash
+      checkNotifications();
     };
-
     window.addEventListener('userInfoUpdated', handleUpdate);
     window.addEventListener('storage', updateUserData);
-
     return () => {
       window.removeEventListener('userInfoUpdated', handleUpdate);
       window.removeEventListener('storage', updateUserData);
@@ -96,34 +88,35 @@ const Sidebar = () => {
   };
 
   const navItems = [
-    { name: 'Dashboard', path: '/company/dashboard', icon: <IoStatsChart size={22} />, mobile: true },
-    { name: 'My company', path: '/company/my-company', icon: <FaChartPie size={22} />, mobile: true },
-    { name: 'My jobs', path: '/company/my-jobs', icon: <MdWork size={22} />, mobile: true },
-    { name: 'Talents', path: '/company/talents', icon: <BsPersonCircle size={22} />, mobile: true },
+    { name: 'Dashboard', path: '/company/dashboard', icon: <IoStatsChart className="text-[18px] sm:text-[22px]" />, mobile: true },
+    { name: 'Company', path: '/company/my-company', icon: <FaChartPie className="text-[18px] sm:text-[22px]" />, mobile: true },
+    { name: 'Jobs', path: '/company/my-jobs', icon: <MdWork className="text-[18px] sm:text-[22px]" />, mobile: true },
+    { name: 'Talents', path: '/company/talents', icon: <BsPersonCircle className="text-[18px] sm:text-[22px]" />, mobile: true },
     {
       name: 'Notifications',
       path: '/company/notification',
       icon: (
         <div className="relative">
-          <IoNotifications size={22} />
+          <IoNotifications className="text-[18px] sm:text-[22px]" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-0.5 w-3 h-3 bg-red-600 rounded-full border-2 border-white animate-glow-fast"></span>
+            <span className="absolute -top-1 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-600 rounded-full border border-white animate-glow-fast"></span>
           )}
         </div>
       ),
       mobile: true
     },
+    { name: 'Settings', path: '/company/settings', icon: <IoMdSettings className="text-[18px] sm:text-[22px]" />, mobile: true },
     { name: 'FAQ', path: '/company/faq', icon: <MdQuestionAnswer size={22} />, mobile: false },
     { name: 'Contacts', path: '/company/contacts', icon: <MdContactPhone size={22} />, mobile: false },
-    { name: 'Settings', path: '/company/settings', icon: <IoMdSettings size={22} />, mobile: true }
   ];
 
   return (
     <>
-      <div className={`fixed bottom-0 left-0 w-full h-[75px] border-t flex flex-row items-center justify-around px-2 z-[100] transition-colors duration-300
+      <div className={`fixed bottom-0 left-0 w-full h-[65px] sm:h-[75px] border-t flex flex-row items-center justify-around px-1 sm:px-2 z-[100] transition-colors duration-300
                       md:relative md:flex-col md:w-[280px] md:h-screen md:border-r md:border-t-0 md:py-8 md:px-5 md:justify-start
                       ${isDark ? 'bg-[#1E1E1E] border-gray-800' : 'bg-white border-gray-100'}`}>
 
+        {/* Desktop Profile Header */}
         <div className="hidden md:flex items-center gap-4 mb-10 px-1 w-full text-left">
           <div className={`w-12 h-12 rounded-full overflow-hidden border flex-shrink-0 transition-colors ${isDark ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-gray-100'}`}>
             <img
@@ -143,13 +136,14 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <nav className="flex flex-row md:flex-col gap-1 md:gap-2 w-full justify-around md:justify-start">
+        {/* Navigation */}
+        <nav className="flex flex-row md:flex-col w-full justify-between md:justify-start md:gap-2">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) => `
-                flex flex-col md:flex-row items-center gap-1 md:gap-4 px-2 md:px-4 py-2 md:py-3 rounded-xl transition-all duration-300
+                flex flex-col md:flex-row items-center gap-0.5 sm:gap-1 md:gap-4 px-1 sm:px-4 py-2 md:py-3 rounded-xl transition-all duration-300 flex-1 md:flex-none
                 ${!item.mobile ? "hidden md:flex" : "flex"} 
                 ${isActive
                   ? (isDark ? "text-[#5CB85C] md:bg-[#5CB85C] md:text-white" : "text-[#163D5C] md:bg-[#163D5C] md:text-white")
@@ -157,7 +151,16 @@ const Sidebar = () => {
               `}
             >
               <span className="shrink-0">{item.icon}</span>
-              <span className="text-[10px] md:text-[16px] font-semibold">{item.name}</span>
+              <span className="text-[9px] sm:text-[10px] md:text-[16px] font-semibold text-center whitespace-nowrap">
+                {item.name === 'Notifications' ? (
+                  <>
+                    <span className="md:hidden">Notif</span>
+                    <span className="hidden md:inline">Notifications</span>
+                  </>
+                ) : (
+                  item.name
+                )}
+              </span>
             </NavLink>
           ))}
 
@@ -172,6 +175,7 @@ const Sidebar = () => {
         </nav>
       </div>
 
+      {/* Logout Modal */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] px-4">
           <div className={`p-8 rounded-3xl shadow-2xl max-w-sm w-full animate-in fade-in zoom-in duration-200 font-sans transition-colors
