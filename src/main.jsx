@@ -6,8 +6,6 @@ import { ThemeProvider } from "./talent/Context/ThemeContext";
 import { JobReactionsProvider } from "./talent/Context/JobReactionsContext";
 import { FormProvider } from "./Company/context/FormContext";
 
-// i18n sozlamalarini import qilamiz
-import "./i18n/i18n";
 
 import "./index.css";
 
