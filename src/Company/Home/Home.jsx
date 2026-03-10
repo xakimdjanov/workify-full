@@ -140,7 +140,7 @@ function Home() {
 
                         <div className="text-base text-[#AAAAAA] font-normal pt-[10px]">
 
-                            Launch your career on Workify.
+                            Launch your career on Jobify.
 
                         </div>
 
