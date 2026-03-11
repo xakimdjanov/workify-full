@@ -29,6 +29,79 @@ const spinnerStyle = `
   }
 `;
 
+const skillList = [
+  // Frontend
+  "HTML5",
+  "CSS3",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Vue.js",
+  "Next.js",
+  "Angular",
+  "Tailwind CSS",
+  "SASS/SCSS",
+  "Redux Toolkit",
+  "Zustand",
+  "React Query",
+
+  // Backend
+  "Node.js",
+  "Express.js",
+  "NestJS",
+  "Python",
+  "Django",
+  "FastAPI",
+  "PHP",
+  "Laravel",
+  "Go",
+  "Java",
+  "Spring Boot",
+  "C#",
+  ".NET Core",
+
+  // Database & Infrastructure
+  "PostgreSQL",
+  "MongoDB",
+  "MySQL",
+  "Redis",
+  "Firebase",
+  "Docker",
+  "Kubernetes",
+  "AWS",
+  "Google Cloud",
+
+  // Mobile & Desktop
+  "React Native",
+  "Flutter",
+  "Dart",
+  "Electron",
+
+  // Design & Tools
+  "Figma",
+  "Adobe XD",
+  "Photoshop",
+  "Illustrator",
+
+  // DevOps & Others
+  "Git",
+  "GitHub",
+  "CI/CD",
+  "GraphQL",
+  "REST API",
+  "Unit Testing",
+  "Linux",
+
+  // Project Manager
+  "Scrum",
+  "Agile",
+  "Jira",
+  "ClickUp",
+  "Trello",
+  "Asana",
+  "Sprint Planning",
+];
+
 const ProfilePage = () => {
   const { settings } = useTheme();
   const isDark = settings.darkMode;
@@ -38,6 +111,7 @@ const ProfilePage = () => {
   const [saveLoading, setSaveLoading] = useState(false);
   const [imgUploading, setImgUploading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
+  const [showSkillDropdown, setShowSkillDropdown] = useState([]);
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -74,23 +148,23 @@ const ProfilePage = () => {
   }, []);
 
   const handleImageChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  setImgUploading(true);
-  try {
-    const fd = new FormData();
-    fd.append("image", file);
+    setImgUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
 
-    await talentApi.update(user.id, fd);
+      await talentApi.update(user.id, fd);
 
-    window.location.reload();
-  } catch (err) {
-    alert("Rasmni saqlashda xatolik yuz berdi");
-  } finally {
-    setImgUploading(false);
-  }
-};
+      window.location.reload();
+    } catch (err) {
+      alert("Rasmni saqlashda xatolik yuz berdi");
+    } finally {
+      setImgUploading(false);
+    }
+  };
 
 
   const handleUpdate = async (e) => {
@@ -402,11 +476,10 @@ const ProfilePage = () => {
                 type="button"
                 onClick={() => navigate("/talent/reactions")}
                 className={`w-full px-8 py-4 rounded-2xl font-black transition-all border shadow-sm flex items-center justify-center gap-3
-      ${
-        isDark
-          ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
-          : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
-      }`}
+      ${isDark
+                    ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
+                    : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
+                  }`}
               >
                 <span className="text-green-500">
                   <FiCheckCircle size={18} />
@@ -550,28 +623,56 @@ const ProfilePage = () => {
 
                       {formData.skils?.map((s, i) => (
                         <div key={i} className="flex gap-2 mb-2">
-                          <input
-                            placeholder="Skill"
-                            value={s.skill}
-                            onChange={(e) =>
-                              updateSkill(i, "skill", e.target.value)
-                            }
-                            className={`flex-1 p-3 rounded-xl border outline-none transition ${
-                              isDark
+                          <div className="relative flex-1">
+                            <input
+                              placeholder="Skill"
+                              value={s.skill}
+                              onChange={(e) => updateSkill(i, "skill", e.target.value)}
+                              onFocus={() => {
+                                let arr = [...showSkillDropdown];
+                                arr[i] = true;
+                                setShowSkillDropdown(arr);
+                              }}
+                              onBlur={() =>
+                                setTimeout(() => {
+                                  let arr = [...showSkillDropdown];
+                                  arr[i] = false;
+                                  setShowSkillDropdown(arr);
+                                }, 200)
+                              }
+                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
                                 ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                                 : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                            }`}
-                          />
+                                }`}
+                            />
+
+                            {showSkillDropdown[i] && (
+                              <div className="absolute z-40 w-full mt-1 bg-white border rounded-xl shadow-lg max-h-40 overflow-y-auto">
+                                {skillList
+                                  .filter((item) =>
+                                    item.toLowerCase().includes((s.skill || "").toLowerCase())
+                                  )
+                                  .map((item, idx) => (
+                                    <div
+                                      key={idx}
+                                      onMouseDown={() => updateSkill(i, "skill", item)}
+                                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                    >
+                                      {item}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
                           <select
                             value={s.experience_years || ""}
                             onChange={(e) =>
                               updateSkill(i, "experience_years", e.target.value)
                             }
-                            className={`w-32 p-3 rounded-xl border outline-none transition ${
-                              isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                            }`}
+                            className={`w-32 p-3 rounded-xl border outline-none transition ${isDark
+                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                           >
                             <option value="" disabled>
                               Years
@@ -618,11 +719,10 @@ const ProfilePage = () => {
                             onChange={(e) =>
                               updateLanguage(i, "language", e.target.value)
                             }
-                            className={`flex-1 p-3 rounded-xl border outline-none transition ${
-                              isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                            }`}
+                            className={`flex-1 p-3 rounded-xl border outline-none transition ${isDark
+                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                           />
 
                           <select
@@ -630,11 +730,10 @@ const ProfilePage = () => {
                             onChange={(e) =>
                               updateLanguage(i, "level", e.target.value)
                             }
-                            className={`w-40 p-3 rounded-xl border outline-none transition ${
-                              isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                            }`}
+                            className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
+                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                           >
                             <option value="Beginner">Beginner</option>
                             <option value="Intermediate">Intermediate</option>
