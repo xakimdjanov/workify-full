@@ -17,19 +17,19 @@ import { talentApi, companyApi } from "../../services/api";
 const Setting = () => {
   const { settings, toggleSwitch } = useTheme();
   const navigate = useNavigate();
-  
-  // Modallar holati
+
+  // Modal states
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isFirstModalOpen, setIsFirstModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  
-  // Ma'lumotlar holati
+
+  // Data states
   const [confirmText, setConfirmText] = useState("");
   const [userData, setUserData] = useState({ id: "", type: "" });
 
   const REQUIRED_TEXT = "delete account";
 
-  // Foydalanuvchi ma'lumotlarini yuklash
+  // Load user data
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userTypeFromStorage = localStorage.getItem("userType");
@@ -66,48 +66,44 @@ const Setting = () => {
         await talentApi.delete(userData.id);
       }
 
-      toast.success("Hisobingiz o'chirildi");
+      toast.success("Your account has been deleted");
       localStorage.clear();
       sessionStorage.clear();
 
       setTimeout(() => {
-        navigate('/home'); 
-        window.location.reload(); 
+        navigate('/home');
+        window.location.reload();
       }, 1500);
 
     } catch (err) {
       console.error("Delete error:", err);
-      toast.error(err.response?.data?.message || "O'chirishda xatolik yuz berdi");
+      toast.error(err.response?.data?.message || "An error occurred during deletion");
     }
   };
 
   const CustomToggle = ({ isOn, onToggle }) => (
     <div
       onClick={onToggle}
-      className={`relative w-[46px] h-[24px] md:w-[50px] md:h-[26px] flex items-center rounded-full cursor-pointer transition-colors duration-500 ${
-        isOn ? "bg-[#55B985]" : "bg-gray-300"
-      }`}
+      className={`relative w-[46px] h-[24px] md:w-[50px] md:h-[26px] flex items-center rounded-full cursor-pointer transition-colors duration-500 ${isOn ? "bg-[#55B985]" : "bg-gray-300"
+        }`}
     >
       <div
-        className={`absolute bg-white w-[18px] h-[18px] md:w-[20px] md:h-[20px] rounded-full shadow-sm transition-all duration-500 ${
-          isOn ? "translate-x-[24px]" : "translate-x-[4px]"
-        }`}
+        className={`absolute bg-white w-[18px] h-[18px] md:w-[20px] md:h-[20px] rounded-full shadow-sm transition-all duration-500 ${isOn ? "translate-x-[24px]" : "translate-x-[4px]"
+          }`}
       />
     </div>
   );
 
   return (
     <div
-      className={`min-h-full p-4 sm:p-6 md:p-8 pb-[100px] md:pb-8 font-sans transition-colors duration-500 ${
-        settings.darkMode ? "bg-[#121212] text-white" : "bg-[#F8F9FA] text-gray-800"
-      }`}
+      className={`min-h-full p-4 sm:p-6 md:p-8 pb-[100px] md:pb-8 font-sans transition-colors duration-500 ${settings.darkMode ? "bg-[#121212] text-white" : "bg-[#F8F9FA] text-gray-800"
+        }`}
     >
       <Toaster position="top-right" />
       <div className="max-w-[900px] mx-auto relative">
         <div
-          className={`${
-            settings.darkMode ? "bg-[#1E1E1E] border-gray-700" : "bg-white border-gray-100"
-          } p-3 md:p-4 rounded-xl shadow-sm mb-6 border transition-colors`}
+          className={`${settings.darkMode ? "bg-[#1E1E1E] border-gray-700" : "bg-white border-gray-100"
+            } p-3 md:p-4 rounded-xl shadow-sm mb-6 border transition-colors`}
         >
           <h1 className={`text-xl md:text-2xl font-semibold ${settings.darkMode ? "text-gray-200" : "text-gray-800"} ml-1`}>
             Settings
@@ -129,7 +125,7 @@ const Setting = () => {
               CustomToggle={CustomToggle}
               isDark={settings.darkMode}
             />
-            <SettingItem
+            <item
               icon={<TbBrandTelegram />}
               title="Telegram"
               desc="Get notifications on Telegram"
@@ -195,7 +191,7 @@ const Setting = () => {
         <div className="mt-12 bg-red-500/5 border border-red-500/20 p-6 rounded-[26px]">
           <h2 className="text-red-500 font-bold mb-4 uppercase tracking-widest text-sm">Danger Zone</h2>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm opacity-70 text-center md:text-left">Hisobingizni o'chirish qaytarib bo'lmas jarayondir.</p>
+            <p className="text-sm opacity-70 text-center md:text-left">Deleting your account is an irreversible process.</p>
             <button onClick={() => setIsFirstModalOpen(true)} className="px-8 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-all w-full md:w-auto shadow-lg shadow-red-500/20">
               Delete Account
             </button>
@@ -205,7 +201,7 @@ const Setting = () => {
         {/* LOGOUT MODAL */}
         {showLogoutModal && (
           <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className={`${settings.darkMode ? "bg-[#1E1E1E] border-gray-700" : "bg-white"} w-full max-w-sm rounded-[24px] p-6 shadow-2xl border animate-in zoom-in duration-200`}>
+            <div className={`${settings.darkMode ? "bg-[#1E1E1E] border-gray-700" : "bg-white"} w-full max-sm rounded-[24px] p-6 shadow-2xl border animate-in zoom-in duration-200`}>
               <h3 className={`text-xl font-bold mb-2 text-center ${settings.darkMode ? "text-white" : "text-gray-900"}`}>Log Out?</h3>
               <p className={`text-center mb-6 ${settings.darkMode ? "text-gray-400" : "text-gray-500"}`}>Are you sure you want to log out of your account?</p>
               <div className="flex gap-3">
@@ -223,24 +219,24 @@ const Setting = () => {
               <h2 className={`text-2xl font-black mb-4 ${settings.darkMode ? "text-white" : "text-black"}`}>Verification</h2>
               <div className="space-y-5">
                 <p className={`text-sm opacity-70 ${settings.darkMode ? "text-gray-300" : "text-gray-600"}`}>
-                  Hisobni o'chirishni tasdiqlash uchun pastdagi maydonga <span className="text-red-500 font-bold italic">"{REQUIRED_TEXT}"</span> so'zini yozing:
+                  To confirm account deletion, type the word <span className="text-red-500 font-bold italic">"{REQUIRED_TEXT}"</span> in the field below:
                 </p>
                 <input
                   type="text"
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value.toLowerCase())}
                   className={`w-full p-4 rounded-2xl border-2 outline-none transition-all ${confirmText === REQUIRED_TEXT ? "border-green-500" : "border-red-500/30"} ${settings.darkMode ? "bg-black text-white" : "bg-gray-50 text-black"}`}
-                  placeholder="Yozing..."
+                  placeholder="Type here..."
                 />
               </div>
               <div className="mt-8 flex gap-3">
-                <button onClick={() => { setIsFirstModalOpen(false); setConfirmText(""); }} className="flex-1 py-4 font-bold opacity-50">Bekor qilish</button>
+                <button onClick={() => { setIsFirstModalOpen(false); setConfirmText(""); }} className="flex-1 py-4 font-bold opacity-50">Cancel</button>
                 <button
                   disabled={confirmText !== REQUIRED_TEXT}
                   onClick={() => { setIsFirstModalOpen(false); setIsConfirmModalOpen(true); }}
                   className={`flex-1 py-4 rounded-2xl font-black transition-all ${confirmText === REQUIRED_TEXT ? "bg-red-600 text-white shadow-lg" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
                 >
-                  Davom etish
+                  Continue
                 </button>
               </div>
             </div>
@@ -252,13 +248,13 @@ const Setting = () => {
           <div className="fixed inset-0 z-[1000] bg-black/90 flex items-center justify-center p-4">
             <div className="bg-white p-8 rounded-[35px] text-center max-w-sm">
               <TbAlertTriangle className="text-5xl text-red-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-black text-black mb-2">Ishonchingiz komilmi?</h2>
+              <h2 className="text-2xl font-black text-black mb-2">Are you sure?</h2>
               <p className="text-sm text-gray-500 mb-8">
-                Siz hozir {userData.type} profilini (ID: {userData.id}) butunlay o'chiryapsiz.
+                You are about to permanently delete the {userData.type} profile (ID: {userData.id}).
               </p>
               <div className="flex flex-col gap-3">
-                <button onClick={handleFinalDelete} className="w-full py-4 bg-red-600 text-white rounded-2xl font-black shadow-xl">Ha, butunlay o'chirish</button>
-                <button onClick={() => setIsConfirmModalOpen(false)} className="w-full py-4 text-gray-500 font-bold hover:text-black">Yo'q, bekor qilish</button>
+                <button onClick={handleFinalDelete} className="w-full py-4 bg-red-600 text-white rounded-2xl font-black shadow-xl">Yes, delete permanently</button>
+                <button onClick={() => setIsConfirmModalOpen(false)} className="w-full py-4 text-gray-500 font-bold hover:text-black">No, cancel</button>
               </div>
             </div>
           </div>
