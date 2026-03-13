@@ -22,6 +22,8 @@ function Jobs() {
 
     const [expandedJobs, setExpandedJobs] = useState({});
 
+    const isAuthenticated = localStorage.getItem("token");
+
 
 
     useEffect(() => {
@@ -411,12 +413,12 @@ function Jobs() {
 
 
                                             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-
-                                                <button className="px-6 md:px-[60px] py-3 bg-[#1D3D54] text-white text-[16px] md:text-[20px] font-[650] rounded-lg hover:bg-[#152c3d]">
-
+                                                <Link
+                                                    to={isAuthenticated ? `/talent/job-post/${job.id}` : "/talent/signin"}
+                                                    className="px-6 md:px-[60px] py-3 bg-[#1D3D54] text-white text-[16px] md:text-[20px] font-[650] rounded-lg hover:bg-[#152c3d]"
+                                                >
                                                     Quick apply
-
-                                                </button>
+                                                </Link>
 
                                                 <Link to={`/talent/jobs/${job.id}`} className="px-6 md:px-[30px] py-3 border-2 border-[#1D3D54] text-[#1D3D54] text-[16px] md:text-[20px] font-[650] rounded-lg text-center whitespace-nowrap">
 
