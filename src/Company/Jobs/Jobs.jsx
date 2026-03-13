@@ -420,7 +420,7 @@ function Jobs() {
                                                     Quick apply
                                                 </Link>
 
-                                                <Link to={`/talent/jobs/${job.id}`} className="px-6 md:px-[30px] py-3 border-2 border-[#1D3D54] text-[#1D3D54] text-[16px] md:text-[20px] font-[650] rounded-lg text-center whitespace-nowrap">
+                                                <Link to={`/talent/job-detail-page/${job.id}`} className="px-6 md:px-[30px] py-3 border-2 border-[#1D3D54] text-[#1D3D54] text-[16px] md:text-[20px] font-[650] rounded-lg text-center whitespace-nowrap">
 
                                                     View job post
 
