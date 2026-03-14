@@ -166,7 +166,7 @@ function App() {
             }
           />
           <Route
-            path="/talents/:id"
+            path="/company/talents/:id"
             element={
               <ProtectedRoute>
                 <TalentDetail />
@@ -215,6 +215,14 @@ function App() {
           />
         </Route>
 
+
+
+
+
+
+
+
+
         {/* 2. AUTH SECTION - Bular sidebarsiz chiqadi */}
         <Route path="/company/signin" element={<SignInCompany />} />
         <Route path="/company/signup" element={<SignUpPage />} />
@@ -237,6 +245,16 @@ function App() {
           element={<ForgotPassword4 />}
         />
         <Route path="/roleSelection" element={<RoleSelection />} />
+
+
+
+
+
+
+
+
+
+
 
         {/* 3. TALENT SECTION - Talent Headeri bilan */}
         <Route path="/talent/signin" element={<SignInTalent />} />

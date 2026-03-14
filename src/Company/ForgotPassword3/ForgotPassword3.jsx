@@ -95,7 +95,7 @@ const ForgotPasswordCombined = () => {
                     </div>
                     <h2 className="text-2xl md:text-3xl font-extrabold text-[#1e3a5a]">Verification</h2>
                     <p className="text-gray-400 mt-2 text-sm text-center">
-                        Kodni olish uchun <span className="text-[#24A1DE] font-bold">@Workify1_bot</span> botini tekshiring.
+                        Kodni olish uchun <span className="text-[#24A1DE] font-bold">@Jobify</span> botini tekshiring.
                     </p>
                 </div>
 
@@ -154,7 +154,7 @@ const ForgotPasswordCombined = () => {
                         Kodni olmadingizmi?
                         <button
                             type="button"
-                            onClick={() => window.open("https://t.me/Workify1_bot", "_blank")}
+                            onClick={() => window.open("https://t.me/jobify1_bot", "_blank")}
                             className="ml-2 text-[#24A1DE] font-bold hover:underline cursor-pointer"
                         >
                             Botni tekshirish

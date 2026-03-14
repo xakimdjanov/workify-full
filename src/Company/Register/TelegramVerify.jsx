@@ -20,10 +20,6 @@ const TelegramVerify = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-
-
-  // SignUpPage'dan kelgan ma'lumotlar
-
   const { allData } = location.state || {};
 
 
@@ -31,8 +27,7 @@ const TelegramVerify = () => {
   const handleTelegramClick = async () => {
 
     // 1. Botni yangi oynada ochish
-
-    window.open("https://t.me/Workify1_bot", "_blank");
+    window.open("https://t.me/jobify1_bot", "_blank");
 
 
 
@@ -77,9 +72,8 @@ const TelegramVerify = () => {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center border border-gray-100">
 
         <p className="text-gray-500 text-sm mb-8 font-bold leading-relaxed">
-
-          Start our Telegram bot to be notified when we find the best talent for you!
-
+          Start our Telegram bot to be notified when we find the best talent for
+          you!
         </p>
 
 
@@ -127,9 +121,9 @@ const TelegramVerify = () => {
           </button>
 
           <button
-
-            onClick={() => navigate("/company/signup/verify", { state: { ...allData } })}
-
+            onClick={() =>
+              navigate("/company/signup/verify", { state: { ...allData } })
+            }
             className="flex-1 py-3 bg-[#163D5C] text-white rounded-xl font-bold hover:opacity-90"
 
           >
@@ -147,7 +141,5 @@ const TelegramVerify = () => {
   );
 
 };
-
-
 
 export default TelegramVerify;
