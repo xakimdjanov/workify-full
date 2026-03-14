@@ -6,7 +6,7 @@ import { IoMdLock } from "react-icons/io";
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-import { Link, useNavigate, useSearchParams } from "react-router-dom"; // useSearchParams qo'shildi
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import toast, { Toaster } from "react-hot-toast";
 
@@ -19,7 +19,6 @@ import Header from "../../../Company/Header/Header";
 const SignIn = () => {
   const [formData, setFormData] = useState({
     email: "",
-
     password: "",
   });
 
@@ -31,13 +30,12 @@ const SignIn = () => {
 
   const [errors, setErrors] = useState({
     email: false,
-
     password: false,
   });
 
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams(); // URL'dagi parametrlarni olish
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     if (errors.email || errors.password) {
@@ -73,7 +71,7 @@ const SignIn = () => {
     return newErrors;
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validationErrors = validateForm();
@@ -92,15 +90,15 @@ const handleSubmit = async (e) => {
     try {
       const res = await talentApi.login(formData);
 
-      // Serverdan kelgan ma'lumotlarni destructing qilamiz
       const { token, user } = res.data;
 
       if (token) {
-        // Tokenni saqlash
+        // --- ASOSIY O'ZGARISH ---
+        // Tokenni saqlashdan oldin eski sessiya qoldiqlarini tozalaymiz
+        sessionStorage.removeItem("hasSeenSkillModal");
+
         localStorage.setItem("token", token);
-        
-        // Foydalanuvchi ma'lumotlarini obyekt ko'rinishida saqlash
-        // LocalStorage faqat string saqlaydi, shuning uchun stringify qilamiz
+
         localStorage.setItem("user", JSON.stringify(user));
 
         toast.success("Successfully logged in!");
@@ -120,10 +118,9 @@ const handleSubmit = async (e) => {
     }
   };
 
-  <Toaster position="top-right" />;
-
   return (
     <>
+      <Toaster position="top-right" />
       <div className="flex flex-col min-h-screen">
         <Header />
 
@@ -136,8 +133,6 @@ const handleSubmit = async (e) => {
             onSubmit={handleSubmit}
             className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm border border-gray-200"
           >
-            {/* Inputlar qismi o'zgarmadi... */}
-
             <div className="mb-4">
               <label
                 htmlFor="email"
@@ -214,7 +209,6 @@ const handleSubmit = async (e) => {
 
               <Link
                 to="/talent/forgot-password"
-                intrinsic
                 className="text-sm text-[#163D5C] hover:underline font-medium"
               >
                 Forgot password?
