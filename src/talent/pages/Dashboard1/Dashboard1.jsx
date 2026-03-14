@@ -143,11 +143,10 @@ const Dashboard1 = () => {
         <div
           className={`w-full lg:max-w-[350px] mx-auto lg:mx-0 
           h-[250px] xs:h-[280px] sm:h-[350px] rounded-xl flex flex-col items-center justify-center px-3 xs:px-4
-          ${
-            isDark
+          ${isDark
               ? "bg-gradient-to-b from-[#0F172A] to-[#1E293B]"
               : "bg-gradient-to-b from-[#163D5C] to-[#6D89CF]"
-          }`}
+            }`}
         >
           <h1 className="text-white text-base xs:text-lg sm:text-xl font-bold text-center">
             Profile completed
@@ -165,33 +164,37 @@ const Dashboard1 = () => {
         </div>
       </div>
 
-      {/* --- MODAL (KATTAROQ VA YANGILANGAN DIZAYN) --- */}
+      {/* --- MODAL (ENHANCED DESIGN) --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center px-4">
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-md" 
-            onClick={() => setIsModalOpen(false)} 
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            onClick={() => setIsModalOpen(false)}
           />
 
           <div className={`${isDark ? "bg-[#1E293B] text-white" : "bg-white text-[#1E293B]"} 
-            relative w-full max-w-[450px] rounded-[40px] p-10 shadow-2xl text-center animate-in zoom-in-95 fade-in duration-300`}
+      relative w-full max-w-[450px] rounded-[40px] p-10 shadow-2xl text-center animate-in zoom-in-95 fade-in duration-300`}
           >
-            <div className={`mx-auto mb-8 flex items-center justify-center w-24 h-24 rounded-full ${isDark ? "bg-blue-500/20" : "bg-blue-50"}`}>
-              <FiEdit3 className="text-blue-500 text-4xl" />
+            <div className={`mx-auto mb-8 flex items-center justify-center w-24 h-24 rounded-full ${isDark ? "bg-emerald-500/20" : "bg-emerald-50"}`}>
+              <FiPlus className="text-[#4AD395] text-4xl" />
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-extrabold mb-4 italic">Ko'nikmalarni qo'shing!</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold mb-4 italic">Boost Your Profile!</h2>
+
             <p className={`text-base sm:text-lg mb-10 leading-relaxed ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-              Sizning profilingizda ko'nikmalar kam ko'rinmoqda. 
-              Kamida 6 ta ko'nikma qo'shish orqali ish beruvchilar e'tiborini torting!
+              It looks like you only added a few skills during registration.
+              To attract top companies and stand out from the crowd, we recommend adding more of your expertise!
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className={`flex-1 py-4 rounded-2xl font-semibold text-lg transition-all ${isDark ? "bg-slate-800 hover:bg-slate-700" : "bg-slate-100 hover:bg-slate-200 text-slate-600"}`}
+                className={`flex-1 py-4 rounded-2xl font-semibold text-lg transition-all ${isDark
+                    ? "bg-slate-800 hover:bg-slate-700 text-slate-300"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-600"
+                  }`}
               >
-                Keyinroq
+                Maybe Later
               </button>
               <button
                 onClick={() => {
@@ -200,7 +203,7 @@ const Dashboard1 = () => {
                 }}
                 className="flex-1 py-4 bg-[#4AD395] hover:bg-[#3ebe84] text-white rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/30 transition-all transform hover:scale-[1.02]"
               >
-                Qo'shish
+                Add Skills
               </button>
             </div>
           </div>
