@@ -581,22 +581,40 @@ const TalentDetail = () => {
                 >
                   Skills & Expertise
                 </h3>
-                <div className="flex flex-wrap gap-2">
+
+                <div className="flex flex-wrap gap-3">
                   {skillsArray.length > 0 ? (
-                    skillsArray.map((skill, i) => (
-                      <span
-                        key={i}
-                        className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${
-                          isDark
-                            ? "bg-[#163D5C]/10 text-[#163D5C] border-[#163D5C]/30"
-                            : "bg-green-50 text-blue-950 border-green-100"
-                        }`}
-                      >
-                        {typeof skill === "object"
-                          ? skill.skill || skill.name
-                          : skill}
-                      </span>
-                    ))
+                    skillsArray.map((skillObj, i) => {
+                      // Agar skill obyekt bo'lsa (sizning holatingizda shunday)
+                      const name =
+                        typeof skillObj === "object"
+                          ? skillObj.skill || skillObj.name
+                          : skillObj;
+                      const years =
+                        typeof skillObj === "object"
+                          ? skillObj.experience_years
+                          : null;
+
+                      return (
+                        <span
+                          key={i}
+                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all flex flex-col items-start ${
+                            isDark
+                              ? "bg-[#163D5C]/10 text-[#163D5C] border-[#163D5C]/30"
+                              : "bg-green-50 text-blue-950 border-green-100"
+                          }`}
+                        >
+                          <span>{name}</span>
+                          {years && (
+                            <span
+                              className={`text-[10px] opacity-70 font-medium ${isDark ? "text-gray-400" : "text-gray-500"}`}
+                            >
+                              {years}
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })
                   ) : (
                     <p className="text-gray-400 italic">No skills specified</p>
                   )}

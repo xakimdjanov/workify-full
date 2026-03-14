@@ -63,7 +63,7 @@ export default function VerifyAccount() {
   };
 
   const handleConnectTelegram = () => {
-    const botUsername = "@jobify1_bot";
+    const botUsername = "jobify1_bot";
     window.open(`https://t.me/${botUsername}?start=${email}`, "_blank");
     talentApi.sendVerifyCode(email).catch(() => {});
   };

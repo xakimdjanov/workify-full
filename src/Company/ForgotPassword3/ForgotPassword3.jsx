@@ -154,7 +154,7 @@ const ForgotPasswordCombined = () => {
                         Kodni olmadingizmi?
                         <button
                             type="button"
-                            onClick={() => window.open("https://t.me/@jobify1_bot", "_blank")}
+                            onClick={() => window.open("https://t.me/jobify1_bot", "_blank")}
                             className="ml-2 text-[#24A1DE] font-bold hover:underline cursor-pointer"
                         >
                             Botni tekshirish

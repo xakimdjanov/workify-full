@@ -154,8 +154,8 @@ const Talents = () => {
   ]);
 
   const inputClass = `w-full py-3 bg-transparent rounded-xl outline-none border transition-all ${isDark
-      ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-      : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+      ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+      : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
     }`;
 
   const SkeletonCard = () => (
@@ -205,7 +205,7 @@ const Talents = () => {
           </h1>
           <button
             onClick={() => navigate("/company/post-job")}
-            className="bg-[#5CB85C] hover:bg-[#4cae4c] text-white w-full md:w-auto px-10 py-5 rounded-2xl font-bold shadow-md active:scale-95 transition-all text-lg"
+            className="bg-[#163D5C] hover:bg-[#1a3851] text-white w-full md:w-auto px-10 py-5 rounded-2xl font-bold shadow-md active:scale-95 transition-all text-lg"
           >
             Post a Job
           </button>
@@ -283,11 +283,11 @@ const Talents = () => {
                               : [...prev, spec]
                           )
                         }
-                        className="w-5 h-5 rounded border-gray-300 accent-[#5CB85C]"
+                        className="w-5 h-5 rounded border-gray-300 accent-[#163D5C]"
                       />
                       <span
                         className={`text-[14px] ${selectedSpecs.includes(spec)
-                            ? "text-[#5CB85C] font-bold"
+                            ? "text-[#163D5C] font-bold"
                             : isDark
                               ? "text-gray-400"
                               : "text-gray-600"
@@ -310,7 +310,7 @@ const Talents = () => {
                       </p>
                       <div className="relative">
                         <HiOutlineBriefcase
-                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-xl ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-xl ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         />
                         <input
@@ -319,8 +319,8 @@ const Talents = () => {
                           onChange={(e) => setOccupation(e.target.value)}
                           placeholder="e.g. Designer"
                           className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                              : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                              : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                             }`}
                         />
                       </div>
@@ -331,7 +331,7 @@ const Talents = () => {
                       </p>
                       <div className="relative">
                         <PiMonitorBold
-                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-xl ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-xl ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         />
                         <input
@@ -340,8 +340,8 @@ const Talents = () => {
                           onChange={(e) => setSpeciality(e.target.value)}
                           placeholder="e.g. UX/UI"
                           className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                              : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                              : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                             }`}
                         />
                       </div>
@@ -350,7 +350,7 @@ const Talents = () => {
 
                   <div className="space-y-3">
                     <p
-                      className={`font-bold ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                      className={`font-bold ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                         }`}
                     >
                       Languages
@@ -367,9 +367,9 @@ const Talents = () => {
                             )
                           }
                           className={`px-4 py-2 rounded-xl font-bold text-sm border transition-all ${selectedLangs.includes(lang)
-                              ? "bg-[#5CB85C] text-white border-[#5CB85C]"
+                              ? "bg-[#163D5C] text-white border-[#163D5C]"
                               : isDark
-                                ? "bg-[#2A2A2A] text-gray-400 border-gray-700 hover:border-[#5CB85C]"
+                                ? "bg-[#2A2A2A] text-gray-400 border-gray-700 hover:border-[#163D5C]"
                                 : "bg-[#F8F9FA] text-gray-500 border-transparent hover:border-gray-300"
                             }`}
                         >
@@ -386,7 +386,7 @@ const Talents = () => {
                     >
                       <div className="relative flex-1">
                         <LuUser
-                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-xl ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-xl ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         />
                         <input
@@ -403,14 +403,14 @@ const Talents = () => {
                             )
                           }
                           className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                              : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                              : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                             }`}
                         />
                       </div>
                       <div className="relative flex-1">
                         <FaUser
-                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         />
                         <input
@@ -427,8 +427,8 @@ const Talents = () => {
                             )
                           }
                           className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                              : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                              ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                              : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                             }`}
                         />
                       </div>
@@ -443,7 +443,7 @@ const Talents = () => {
                       ])
                     }
                     className={`flex items-center gap-2 px-6 py-2 rounded-xl font-bold transition-colors ${isDark
-                        ? "bg-[#5CB85C]/10 text-[#5CB85C] hover:bg-[#5CB85C]/20"
+                        ? "bg-[#163D5C]/10 text-[#163D5C] hover:bg-[#163D5C]/20"
                         : "bg-[#50C594]/10 text-[#50C594] hover:bg-[#50C594]/20"
                       }`}
                   >
@@ -460,7 +460,7 @@ const Talents = () => {
                     <div className="space-y-6">
                       <div className="space-y-3">
                         <p
-                          className={`font-bold ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`font-bold ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         >
                           Employment type
@@ -478,8 +478,8 @@ const Talents = () => {
                                 }
                                 className={`flex-1 py-2 rounded-xl text-sm font-bold capitalize transition-all ${workType === type
                                     ? isDark
-                                      ? "bg-[#1E1E1E] shadow-md text-[#5CB85C]"
-                                      : "bg-white shadow-md text-[#5CB85C]"
+                                      ? "bg-[#1E1E1E] shadow-md text-[#163D5C]"
+                                      : "bg-white shadow-md text-[#163D5C]"
                                     : isDark
                                       ? "text-gray-500"
                                       : "text-gray-400"
@@ -493,7 +493,7 @@ const Talents = () => {
                       </div>
                       <div className="space-y-3">
                         <p
-                          className={`font-bold ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`font-bold ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         >
                           Workplace type
@@ -512,8 +512,8 @@ const Talents = () => {
                               }
                               className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${workplaceType === type
                                   ? isDark
-                                    ? "bg-[#1E1E1E] shadow-md text-[#5CB85C]"
-                                    : "bg-white shadow-md text-[#5CB85C]"
+                                    ? "bg-[#1E1E1E] shadow-md text-[#163D5C]"
+                                    : "bg-white shadow-md text-[#163D5C]"
                                   : isDark
                                     ? "text-gray-500"
                                     : "text-gray-400"
@@ -530,7 +530,7 @@ const Talents = () => {
                     <div className="space-y-6">
                       <div className="space-y-3">
                         <p
-                          className={`font-bold ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                          className={`font-bold ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                             }`}
                         >
                           Expected Salary ($)
@@ -538,7 +538,7 @@ const Talents = () => {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="relative">
                             <FaMoneyBillWave
-                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                                 }`}
                             />
                             <input
@@ -556,14 +556,14 @@ const Talents = () => {
                                 setSalaryRange({ ...salaryRange, min: val });
                               }}
                               className={`w-full pl-11 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                                  : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                                  : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                                 }`}
                             />
                           </div>
                           <div className="relative">
                             <FaMoneyBillWave
-                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                                 }`}
                             />
                             <input
@@ -577,8 +577,8 @@ const Talents = () => {
                                 })
                               }
                               className={`w-full pl-11 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                                  : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                                  : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                                 }`}
                             />
                           </div>
@@ -587,14 +587,14 @@ const Talents = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <p
-                            className={`font-bold ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                            className={`font-bold ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                               }`}
                           >
                             Country
                           </p>
                           <div className="relative">
                             <FaEarthAmericas
-                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                                 }`}
                             />
                             <input
@@ -608,22 +608,22 @@ const Talents = () => {
                                 })
                               }
                               className={`w-full pl-11 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                                  : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                                  : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                                 }`}
                             />
                           </div>
                         </div>
                         <div className="space-y-2">
                           <p
-                            className={`font-bold ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                            className={`font-bold ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                               }`}
                           >
                             City
                           </p>
                           <div className="relative">
                             <FaCity
-                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#5CB85C]" : "text-[#163D5C]"
+                              className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-[#163D5C]" : "text-[#163D5C]"
                                 }`}
                             />
                             <input
@@ -637,8 +637,8 @@ const Talents = () => {
                                 })
                               }
                               className={`w-full pl-11 pr-4 py-3 rounded-xl outline-none border transition-all ${isDark
-                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#5CB85C]"
-                                  : "bg-[#F8F9FA] border-transparent focus:border-[#5CB85C]"
+                                  ? "bg-[#2A2A2A] border-gray-700 text-white placeholder-gray-500 focus:border-[#163D5C]"
+                                  : "bg-[#F8F9FA] border-transparent focus:border-[#163D5C]"
                                 }`}
                             />
                           </div>
@@ -675,7 +675,7 @@ const Talents = () => {
               <div
                 key={talent.id}
                 className={`${isDark
-                    ? "bg-[#1E1E1E] border-gray-800 hover:shadow-[#5CB85C]/20"
+                    ? "bg-[#1E1E1E] border-gray-800 hover:shadow-[#163D5C]/20"
                     : "bg-white border-gray-100"
                   } rounded-[40px] border p-6 text-center w-full max-w-[280px] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center`}
               >
@@ -723,8 +723,8 @@ const Talents = () => {
                     navigate(`/company/talents/${talent.id}`)
                   }
                   className={`w-[170px] py-2 border-2 rounded-[20px] font-bold transition-all mt-auto ${isDark
-                      ? "border-[#5CB85C] text-[#5CB85C] hover:bg-[#5CB85C] hover:text-white"
-                      : "border-[#5CB85C] text-[#5CB85C] hover:bg-[#5CB85C] hover:text-white"
+                      ? "border-[#163D5C] text-[#163D5C] hover:bg-[#163D5C] hover:text-white"
+                      : "border-[#163D5C] text-[#163D5C] hover:bg-[#163D5C] hover:text-white"
                     }`}
                 >
                   View profile
@@ -748,7 +748,7 @@ const Talents = () => {
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 text-[#5CB85C] font-bold hover:underline"
+              className="mt-4 text-[#163D5C] font-bold hover:underline"
             >
               Clear all filters
             </button>

@@ -7,7 +7,7 @@ const ForgotPassword2 = () => {
     const email = location.state?.email || "";
 
     const handleOpenBot = () => {
-        window.open("https://t.me/@jobify1_bot", "_blank");
+        window.open("https://t.me/jobify1_bot", "_blank");
     };
 
     // NEXT tugmasi uchun funksiya

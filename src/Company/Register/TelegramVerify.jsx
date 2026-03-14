@@ -15,7 +15,7 @@ const TelegramVerify = () => {
 
   const handleTelegramClick = async () => {
     // 1. Botni yangi oynada ochish
-    window.open("https://t.me/@jobify1_bot", "_blank");
+    window.open("https://t.me/jobify1_bot", "_blank");
 
     // 2. Bazaga yuborish
     if (allData) {

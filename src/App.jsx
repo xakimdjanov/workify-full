@@ -162,7 +162,7 @@ function App() {
             }
           />
           <Route
-            path="/talents/:id"
+            path="/company/talents/:id"
             element={
               <ProtectedRoute>
                 <TalentDetail />
