@@ -64,6 +64,7 @@ const ProfilePage = () => {
   const [imgUploading, setImgUploading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [showSkillDropdown, setShowSkillDropdown] = useState([]);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState([]);
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef(null);
 
@@ -639,9 +640,7 @@ const ProfilePage = () => {
                     </div>
 
                     {/* LANGUAGES */}
-                    <div
-                      className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}
-                    >
+                    <div className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}>
                       <div className="flex justify-between mb-4">
                         <h4 className="font-bold">Languages</h4>
                         <button
@@ -655,26 +654,56 @@ const ProfilePage = () => {
 
                       {formData.language?.map((l, i) => (
                         <div key={i} className="flex gap-2 mb-2">
-                          <input
-                            placeholder="Language"
-                            value={l.language}
-                            onChange={(e) =>
-                              updateLanguage(i, "language", e.target.value)
-                            }
-                            className={`flex-1 p-3 rounded-xl border outline-none transition ${isDark
-                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
-                          />
+                          <div className="relative flex-1">
+                            <input
+                              placeholder="Language"
+                              value={l.language || ""}
+                              onChange={(e) => updateLanguage(i, "language", e.target.value)}
+                              onFocus={() => {
+                                let arr = [...showLanguageDropdown];
+                                arr[i] = true;
+                                setShowLanguageDropdown(arr);
+                              }}
+                              onBlur={() =>
+                                setTimeout(() => {
+                                  let arr = [...showLanguageDropdown];
+                                  arr[i] = false;
+                                  setShowLanguageDropdown(arr);
+                                }, 200)
+                              }
+                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
+                                  ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                  : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                                }`}
+                            />
+
+                            {showLanguageDropdown[i] && (
+                              <div className={`absolute z-40 w-full mt-1 border rounded-xl shadow-lg max-h-40 overflow-y-auto ${isDark ? "bg-[#1E1E1E] border-gray-700" : "bg-white border-gray-100"
+                                }`}>
+                                {popularLanguages
+                                  .filter((item) =>
+                                    item.toLowerCase().includes((l.language || "").toLowerCase())
+                                  )
+                                  .map((item, idx) => (
+                                    <div
+                                      key={idx}
+                                      onMouseDown={() => updateLanguage(i, "language", item)}
+                                      className={`px-4 py-2 cursor-pointer text-sm ${isDark ? "hover:bg-gray-800 text-gray-300" : "hover:bg-gray-100 text-gray-700"
+                                        }`}
+                                    >
+                                      {item}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
 
                           <select
-                            value={l.level}
-                            onChange={(e) =>
-                              updateLanguage(i, "level", e.target.value)
-                            }
+                            value={l.level || "Beginner"}
+                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
                             className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
-                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
                               }`}
                           >
                             <option value="Beginner">Beginner</option>
