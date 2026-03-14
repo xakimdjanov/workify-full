@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // To'g'rilandi
+import { useNavigate } from "react-router-dom";
 import { talentApi } from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -29,17 +29,77 @@ const spinnerStyle = `
   }
 `;
 
-// SkillList o'zgarishsiz qoldi...
 const skillList = [
-  "HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Vue.js", "Next.js",
-  "Angular", "Tailwind CSS", "SASS/SCSS", "Redux Toolkit", "Zustand", "React Query",
-  "Node.js", "Express.js", "NestJS", "Python", "Django", "FastAPI", "PHP",
-  "Laravel", "Go", "Java", "Spring Boot", "C#", ".NET Core",
-  "PostgreSQL", "MongoDB", "MySQL", "Redis", "Firebase", "Docker", "Kubernetes", "AWS", "Google Cloud",
-  "React Native", "Flutter", "Dart", "Electron",
-  "Figma", "Adobe XD", "Photoshop", "Illustrator",
-  "Git", "GitHub", "CI/CD", "GraphQL", "REST API", "Unit Testing", "Linux",
-  "Scrum", "Agile", "Jira", "ClickUp", "Trello", "Asana", "Sprint Planning",
+  // Frontend
+  "HTML5",
+  "CSS3",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Vue.js",
+  "Next.js",
+  "Angular",
+  "Tailwind CSS",
+  "SASS/SCSS",
+  "Redux Toolkit",
+  "Zustand",
+  "React Query",
+
+  // Backend
+  "Node.js",
+  "Express.js",
+  "NestJS",
+  "Python",
+  "Django",
+  "FastAPI",
+  "PHP",
+  "Laravel",
+  "Go",
+  "Java",
+  "Spring Boot",
+  "C#",
+  ".NET Core",
+
+  // Database & Infrastructure
+  "PostgreSQL",
+  "MongoDB",
+  "MySQL",
+  "Redis",
+  "Firebase",
+  "Docker",
+  "Kubernetes",
+  "AWS",
+  "Google Cloud",
+
+  // Mobile & Desktop
+  "React Native",
+  "Flutter",
+  "Dart",
+  "Electron",
+
+  // Design & Tools
+  "Figma",
+  "Adobe XD",
+  "Photoshop",
+  "Illustrator",
+
+  // DevOps & Others
+  "Git",
+  "GitHub",
+  "CI/CD",
+  "GraphQL",
+  "REST API",
+  "Unit Testing",
+  "Linux",
+
+  // Project Manager
+  "Scrum",
+  "Agile",
+  "Jira",
+  "ClickUp",
+  "Trello",
+  "Asana",
+  "Sprint Planning",
 ];
 
 const ProfilePage = () => {
@@ -54,9 +114,7 @@ const ProfilePage = () => {
   const [showSkillDropdown, setShowSkillDropdown] = useState([]);
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef(null);
-
   const navigate = useNavigate();
-  const location = useLocation(); // Dashboarddan kelgan stateni o'qish uchun
 
   const fetchProfile = async () => {
     try {
@@ -87,15 +145,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchProfile();
-
-    // DASHBOARDDAN KELGAN SIGNALNI TEKSHIRISH
-    if (location.state && location.state.openModal === "skils") {
-      setActiveModal("skils"); // Skills tahrirlash oynasini ochish
-
-      // History stateni tozalash (sahifa refresh bo'lganda qayta ochilmasligi uchun)
-      window.history.replaceState({}, document.title);
-    }
-  }, [location]); // location o'zgarganda ishga tushadi
+  }, []);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -107,6 +157,7 @@ const ProfilePage = () => {
       fd.append("image", file);
 
       await talentApi.update(user.id, fd);
+
       window.location.reload();
     } catch (err) {
       alert("Rasmni saqlashda xatolik yuz berdi");
@@ -115,6 +166,7 @@ const ProfilePage = () => {
     }
   };
 
+
   const handleUpdate = async (e) => {
     if (e) e.preventDefault();
     setSaveLoading(true);
@@ -122,9 +174,20 @@ const ProfilePage = () => {
     try {
       const fd = new FormData();
       const fields = [
-        "first_name", "last_name", "gender", "date_of_birth", "country",
-        "city", "location", "phone", "occupation", "specialty",
-        "work_type", "workplace_type", "minimum_salary", "about",
+        "first_name",
+        "last_name",
+        "gender",
+        "date_of_birth",
+        "country",
+        "city",
+        "location",
+        "phone",
+        "occupation",
+        "specialty",
+        "work_type",
+        "workplace_type",
+        "minimum_salary",
+        "about",
       ];
 
       fields.forEach((key) => {
@@ -146,19 +209,16 @@ const ProfilePage = () => {
     }
   };
 
-  // Qolgan helper funksiyalar (addSkill, updateSkill va h.k.) o'zgarishsiz qoladi...
   const addSkill = () =>
     setFormData({
       ...formData,
       skils: [...formData.skils, { skill: "", experience_years: "" }],
     });
-
   const updateSkill = (index, field, value) => {
     const newskils = [...formData.skils];
     newskils[index][field] = value;
     setFormData({ ...formData, skils: newskils });
   };
-
   const removeSkill = (index) =>
     setFormData({
       ...formData,
@@ -170,13 +230,11 @@ const ProfilePage = () => {
       ...formData,
       language: [...formData.language, { language: "", level: "Beginner" }],
     });
-
   const updateLanguage = (index, field, value) => {
     const newLang = [...formData.language];
     newLang[index][field] = value;
     setFormData({ ...formData, language: newLang });
   };
-
   const removeLanguage = (index) =>
     setFormData({
       ...formData,
@@ -187,22 +245,34 @@ const ProfilePage = () => {
     if (!email || typeof email !== "string") return "—";
     const atIndex = email.indexOf("@");
     if (atIndex === -1) return email;
+
     const name = email.slice(0, atIndex);
     const domain = email.slice(atIndex);
+
     const shortName = name.length > max ? name.slice(0, max) + "..." : name;
     return shortName + domain;
   };
 
   if (loading) {
     return (
-      <div className={`min-h-screen p-8 max-w-6xl mx-auto animate-pulse-custom ${isDark ? "bg-[#121212]" : "bg-[#F8F9FB]"}`}>
+      <div
+        className={`min-h-screen p-8 max-w-6xl mx-auto animate-pulse-custom ${isDark ? "bg-[#121212]" : "bg-[#F8F9FB]"}`}
+      >
         <style>{spinnerStyle}</style>
-        <div className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+        <div
+          className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+        ></div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className={`h-[500px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+          <div
+            className={`h-[500px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+          ></div>
           <div className="lg:col-span-2 space-y-6">
-            <div className={`h-[250px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
-            <div className={`h-[300px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+            <div
+              className={`h-[250px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+            ></div>
+            <div
+              className={`h-[300px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+            ></div>
           </div>
         </div>
       </div>
