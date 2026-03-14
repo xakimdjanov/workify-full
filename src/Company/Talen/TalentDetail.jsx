@@ -636,8 +636,8 @@ const TalentDetail = () => {
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
-                {talent.bio ||
-                  `${talent.first_name} is a highly skilled specialist.`}
+                {talent.about ||
+                  ``}
               </p>
             </div>
           </div>
