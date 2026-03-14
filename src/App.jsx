@@ -50,6 +50,7 @@ import Reactions from "./talent/pages/Reactions/Reactions.jsx";
 import RoleSelection from "./Company/RoleSelect/RoleSelect.jsx";
 import Talent from "./Company/Talen/Talents.jsx";
 import TalentDetail from "./Company/Talen/TalentDetail.jsx";
+import JobDetailPage from "./talent/pages/JobDetail/JobDetail.jsx";
 
 // --- Skrolni tepaga qaytaruvchi yordamchi komponent ---
 const ScrollToTop = () => {
@@ -101,6 +102,9 @@ function App() {
           <Route path="/company/signup/verify" element={<Verify />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/faq" element={<Faaq />} />
+          <Route
+            path="/talent/job-detail-page/:id" element={<JobDetailPage />}
+          />
           <Route
             path="/company/forgot-password-1"
             element={<ForgotPassword1 />}
