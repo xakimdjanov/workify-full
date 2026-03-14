@@ -2,17 +2,13 @@ import React, { useEffect, useState } from "react";
 import { talentApi } from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 import { useTheme } from "../../Context/ThemeContext.jsx";
-import { useNavigate } from "react-router-dom";
-import { FiEdit3 } from "react-icons/fi";
 
 const Dashboard1 = () => {
   const { settings } = useTheme();
   const isDark = settings.darkMode;
-  const navigate = useNavigate();
 
   const [percent, setPercent] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -23,17 +19,6 @@ const Dashboard1 = () => {
         const { id } = jwtDecode(token);
         const res = await talentApi.getById(id);
         const data = res.data;
-
-        // --- SKILL MODAL MANTIQI ---
-        const skillsCount = Array.isArray(data.skils) ? data.skils.length : 0;
-        const hasSeenModal = sessionStorage.getItem("hasSeenSkillModal");
-
-        // Skill 6 tadan kam bo'lsa va bu sessiyada hali modal ko'rinmagan bo'lsa
-        if (skillsCount < 6 && !hasSeenModal) {
-          setIsModalOpen(true);
-          sessionStorage.setItem("hasSeenSkillModal", "true");
-        }
-        // ---------------------------
 
         const values = Object.values(data);
         const filtered = values.filter(
@@ -138,15 +123,16 @@ const Dashboard1 = () => {
   }
 
   return (
-    <div className="w-full relative">
+    <div className="w-full">
       <div className="pt-0 lg:pt-6">
         <div
           className={`w-full lg:max-w-[350px] mx-auto lg:mx-0 
           h-[250px] xs:h-[280px] sm:h-[350px] rounded-xl flex flex-col items-center justify-center px-3 xs:px-4
-          ${isDark
+          ${
+            isDark
               ? "bg-gradient-to-b from-[#0F172A] to-[#1E293B]"
               : "bg-gradient-to-b from-[#163D5C] to-[#6D89CF]"
-            }`}
+          }`}
         >
           <h1 className="text-white text-base xs:text-lg sm:text-xl font-bold text-center">
             Profile completed
@@ -163,48 +149,6 @@ const Dashboard1 = () => {
           </p>
         </div>
       </div>
-
-      {/* --- MODAL (KATTAROQ VA YANGILANGAN DIZAYN) --- */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center px-4">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
-            onClick={() => setIsModalOpen(false)}
-          />
-
-          <div className={`${isDark ? "bg-[#1E293B] text-white" : "bg-white text-[#1E293B]"} 
-            relative w-full max-w-[450px] rounded-[40px] p-10 shadow-2xl text-center animate-in zoom-in-95 fade-in duration-300`}
-          >
-            <div className={`mx-auto mb-8 flex items-center justify-center w-24 h-24 rounded-full ${isDark ? "bg-blue-500/20" : "bg-blue-50"}`}>
-              <FiEdit3 className="text-blue-500 text-4xl" />
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl font-extrabold mb-4 italic">Ko'nikmalarni qo'shing!</h2>
-            <p className={`text-base sm:text-lg mb-10 leading-relaxed ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-              Sizning profilingizda ko'nikmalar kam ko'rinmoqda.
-              Kamida 6 ta ko'nikma qo'shish orqali ish beruvchilar e'tiborini torting!
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className={`flex-1 py-4 rounded-2xl font-semibold text-lg transition-all ${isDark ? "bg-slate-800 hover:bg-slate-700" : "bg-slate-100 hover:bg-slate-200 text-slate-600"}`}
-              >
-                Keyinroq
-              </button>
-              <button
-                onClick={() => {
-                  setIsModalOpen(false);
-                  navigate("/talent/profile", { state: { openModal: "skils" } });
-                }}
-                className="flex-1 py-4 bg-[#4AD395] hover:bg-[#3ebe84] text-white rounded-2xl font-bold text-lg shadow-lg shadow-emerald-500/30 transition-all transform hover:scale-[1.02]"
-              >
-                Qo'shish
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
