@@ -33,7 +33,7 @@ const popularLanguages = [
   "English", "Uzbek", "Russian", "Turkish", "German", "French", "Spanish",
   "Chinese", "Japanese", "Korean", "Arabic", "Portuguese", "Italian",
   "Dutch", "Polish", "Swedish", "Norwegian", "Danish", "Finnish",
-  "Hindi", "Bengali", "Thai", "Vietnamese", "Indonesian", "Malay",
+  "Hindi", "Bengali", "Thai", "Vietnamese", "Indonesian",
   "Greek", "Hebrew", "Persian", "Czech", "Romanian"
 ];
 
