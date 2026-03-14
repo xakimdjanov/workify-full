@@ -219,6 +219,21 @@ const ProfilePage = () => {
     }
   };
 
+  const calculateAge = (birthday) => {
+  if (!birthday) return "—";
+  const birthDate = new Date(birthday);
+  const today = new Date();
+  
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  
+  // Agar tug'ilgan oyi hali kelmagan bo'lsa yoki oyi kelganu kuni kelmagan bo'lsa 1 yosh ayiramiz
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
   const addSkill = () =>
     setFormData({
       ...formData,
@@ -354,7 +369,7 @@ const ProfilePage = () => {
                 <FiCheckCircle className="text-blue-500" size={18} />
               </h2>
               <p className="text-gray-500 font-medium text-sm mt-1">
-                {user?.occupation} {user?.specialty}
+                 {user?.specialty}
               </p>
               <div
                 className={`mt-1 font-bold text-lg ${isDark ? "text-blue-400" : "text-gray-800"}`}
@@ -362,17 +377,7 @@ const ProfilePage = () => {
                 ${user?.minimum_salary?.toLocaleString()}.00
               </div>
 
-              <div className="flex items-center justify-center gap-1 mt-2 text-yellow-400">
-                {[1, 2, 3, 4].map((star) => (
-                  <span key={star}>★</span>
-                ))}
-                <span className={isDark ? "text-gray-700" : "text-gray-300"}>
-                  ★
-                </span>
-                <span className="text-gray-400 text-sm ml-1">
-                  (4.0) | 1K reviews
-                </span>
-              </div>
+              
 
               <div
                 className={`mt-8 pt-6 border-t space-y-3 text-left ${isDark ? "border-gray-800" : "border-gray-100"}`}
@@ -382,11 +387,11 @@ const ProfilePage = () => {
                 >
                   Personal info:
                 </h3>
-                <InfoRow
-                  label="Age"
-                  value={user?.date_of_birth}
-                  isDark={isDark}
-                />
+<InfoRow
+  label="Age"
+  value={calculateAge(user?.date_of_birth)}
+  isDark={isDark}
+/>
                 <InfoRow label="City" value={user?.city} isDark={isDark} />
                 <InfoRow
                   label="Country"
