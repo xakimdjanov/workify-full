@@ -29,6 +29,14 @@ const spinnerStyle = `
   }
 `;
 
+const popularLanguages = [
+  "English", "Uzbek", "Russian", "Turkish", "German", "French", "Spanish",
+  "Chinese", "Japanese", "Korean", "Arabic", "Portuguese", "Italian",
+  "Dutch", "Polish", "Swedish", "Norwegian", "Danish", "Finnish",
+  "Hindi", "Bengali", "Thai", "Vietnamese", "Indonesian", "Malay",
+  "Greek", "Hebrew", "Persian", "Czech", "Romanian"
+];
+
 const skillList = [
   // Frontend
   "HTML5",
@@ -105,6 +113,7 @@ const skillList = [
 const ProfilePage = () => {
   const { settings } = useTheme();
   const isDark = settings.darkMode;
+  const fileInputRef = useRef(null);
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -113,7 +122,8 @@ const ProfilePage = () => {
   const [activeModal, setActiveModal] = useState(null);
   const [showSkillDropdown, setShowSkillDropdown] = useState([]);
   const [formData, setFormData] = useState({});
-  const fileInputRef = useRef(null);
+  const [showLangDropdown, setShowLangDropdown] = useState([]);
+
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
@@ -697,9 +707,7 @@ const ProfilePage = () => {
                     </div>
 
                     {/* LANGUAGES */}
-                    <div
-                      className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}
-                    >
+                    <div className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}>
                       <div className="flex justify-between mb-4">
                         <h4 className="font-bold">Languages</h4>
                         <button
@@ -713,23 +721,52 @@ const ProfilePage = () => {
 
                       {formData.language?.map((l, i) => (
                         <div key={i} className="flex gap-2 mb-2">
-                          <input
-                            placeholder="Language"
-                            value={l.language}
-                            onChange={(e) =>
-                              updateLanguage(i, "language", e.target.value)
-                            }
-                            className={`flex-1 p-3 rounded-xl border outline-none transition ${isDark
-                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
-                          />
+                          {/* Til tanlash qismi (Searchable Dropdown) */}
+                          <div className="relative flex-1">
+                            <input
+                              placeholder="Language"
+                              value={l.language}
+                              onChange={(e) => updateLanguage(i, "language", e.target.value)}
+                              onFocus={() => {
+                                let arr = [...showLangDropdown];
+                                arr[i] = true;
+                                setShowLangDropdown(arr);
+                              }}
+                              onBlur={() =>
+                                setTimeout(() => {
+                                  let arr = [...showLangDropdown];
+                                  arr[i] = false;
+                                  setShowLangDropdown(arr);
+                                }, 200)
+                              }
+                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
+                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                                }`}
+                            />
+
+                            {showLangDropdown[i] && (
+                              <div className="absolute z-40 w-full mt-1 bg-white border rounded-xl shadow-lg max-h-40 overflow-y-auto">
+                                {popularLanguages
+                                  .filter((item) =>
+                                    item.toLowerCase().includes((l.language || "").toLowerCase())
+                                  )
+                                  .map((item, idx) => (
+                                    <div
+                                      key={idx}
+                                      onMouseDown={() => updateLanguage(i, "language", item)}
+                                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                                    >
+                                      {item}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
 
                           <select
                             value={l.level}
-                            onChange={(e) =>
-                              updateLanguage(i, "level", e.target.value)
-                            }
+                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
                             className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
                               ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                               : "bg-gray-50 border-gray-200 focus:border-emerald-500"
