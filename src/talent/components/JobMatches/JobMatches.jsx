@@ -130,25 +130,6 @@ function JobCard({
             </p>
 
             {/* rating mock */}
-            <div className="flex items-center gap-1 mt-1">
-              {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="text-yellow-500 text-sm">
-                  ★
-                </span>
-              ))}
-              <span
-                className={`${isDark ? "text-gray-700" : "text-gray-200"} text-sm`}
-              >
-                ★
-              </span>
-              <span
-                className={`${
-                  isDark ? "text-gray-400" : "text-gray-500"
-                } text-xs font-bold ml-1`}
-              >
-                (4.0)
-              </span>
-            </div>
           </div>
         </div>
 
