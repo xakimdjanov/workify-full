@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // To'g'rilandi
 import { talentApi } from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -29,91 +29,22 @@ const spinnerStyle = `
   }
 `;
 
-const popularLanguages = [
-  "English", "Uzbek", "Russian", "Turkish", "German", "French", "Spanish",
-  "Chinese", "Japanese", "Korean", "Arabic", "Portuguese", "Italian",
-  "Dutch", "Polish", "Swedish", "Norwegian", "Danish", "Finnish",
-  "Hindi", "Bengali", "Thai", "Vietnamese", "Indonesian", "Malay",
-  "Greek", "Hebrew", "Persian", "Czech", "Romanian"
-];
-
+// SkillList o'zgarishsiz qoldi...
 const skillList = [
-  // Frontend
-  "HTML5",
-  "CSS3",
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Vue.js",
-  "Next.js",
-  "Angular",
-  "Tailwind CSS",
-  "SASS/SCSS",
-  "Redux Toolkit",
-  "Zustand",
-  "React Query",
-
-  // Backend
-  "Node.js",
-  "Express.js",
-  "NestJS",
-  "Python",
-  "Django",
-  "FastAPI",
-  "PHP",
-  "Laravel",
-  "Go",
-  "Java",
-  "Spring Boot",
-  "C#",
-  ".NET Core",
-
-  // Database & Infrastructure
-  "PostgreSQL",
-  "MongoDB",
-  "MySQL",
-  "Redis",
-  "Firebase",
-  "Docker",
-  "Kubernetes",
-  "AWS",
-  "Google Cloud",
-
-  // Mobile & Desktop
-  "React Native",
-  "Flutter",
-  "Dart",
-  "Electron",
-
-  // Design & Tools
-  "Figma",
-  "Adobe XD",
-  "Photoshop",
-  "Illustrator",
-
-  // DevOps & Others
-  "Git",
-  "GitHub",
-  "CI/CD",
-  "GraphQL",
-  "REST API",
-  "Unit Testing",
-  "Linux",
-
-  // Project Manager
-  "Scrum",
-  "Agile",
-  "Jira",
-  "ClickUp",
-  "Trello",
-  "Asana",
-  "Sprint Planning",
+  "HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Vue.js", "Next.js",
+  "Angular", "Tailwind CSS", "SASS/SCSS", "Redux Toolkit", "Zustand", "React Query",
+  "Node.js", "Express.js", "NestJS", "Python", "Django", "FastAPI", "PHP",
+  "Laravel", "Go", "Java", "Spring Boot", "C#", ".NET Core",
+  "PostgreSQL", "MongoDB", "MySQL", "Redis", "Firebase", "Docker", "Kubernetes", "AWS", "Google Cloud",
+  "React Native", "Flutter", "Dart", "Electron",
+  "Figma", "Adobe XD", "Photoshop", "Illustrator",
+  "Git", "GitHub", "CI/CD", "GraphQL", "REST API", "Unit Testing", "Linux",
+  "Scrum", "Agile", "Jira", "ClickUp", "Trello", "Asana", "Sprint Planning",
 ];
 
 const ProfilePage = () => {
   const { settings } = useTheme();
   const isDark = settings.darkMode;
-  const fileInputRef = useRef(null);
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -122,9 +53,10 @@ const ProfilePage = () => {
   const [activeModal, setActiveModal] = useState(null);
   const [showSkillDropdown, setShowSkillDropdown] = useState([]);
   const [formData, setFormData] = useState({});
-  const [showLangDropdown, setShowLangDropdown] = useState([]);
+  const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
+  const location = useLocation(); // Dashboarddan kelgan stateni o'qish uchun
 
   const fetchProfile = async () => {
     try {
@@ -155,7 +87,15 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+
+    // DASHBOARDDAN KELGAN SIGNALNI TEKSHIRISH
+    if (location.state && location.state.openModal === "skils") {
+      setActiveModal("skils"); // Skills tahrirlash oynasini ochish
+
+      // History stateni tozalash (sahifa refresh bo'lganda qayta ochilmasligi uchun)
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]); // location o'zgarganda ishga tushadi
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -167,7 +107,6 @@ const ProfilePage = () => {
       fd.append("image", file);
 
       await talentApi.update(user.id, fd);
-
       window.location.reload();
     } catch (err) {
       alert("Rasmni saqlashda xatolik yuz berdi");
@@ -176,7 +115,6 @@ const ProfilePage = () => {
     }
   };
 
-
   const handleUpdate = async (e) => {
     if (e) e.preventDefault();
     setSaveLoading(true);
@@ -184,20 +122,9 @@ const ProfilePage = () => {
     try {
       const fd = new FormData();
       const fields = [
-        "first_name",
-        "last_name",
-        "gender",
-        "date_of_birth",
-        "country",
-        "city",
-        "location",
-        "phone",
-        "occupation",
-        "specialty",
-        "work_type",
-        "workplace_type",
-        "minimum_salary",
-        "about",
+        "first_name", "last_name", "gender", "date_of_birth", "country",
+        "city", "location", "phone", "occupation", "specialty",
+        "work_type", "workplace_type", "minimum_salary", "about",
       ];
 
       fields.forEach((key) => {
@@ -219,31 +146,19 @@ const ProfilePage = () => {
     }
   };
 
-  const calculateAge = (birthday) => {
-  if (!birthday) return "—";
-  const birthDate = new Date(birthday);
-  const today = new Date();
-  
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  
-  // Agar tug'ilgan oyi hali kelmagan bo'lsa yoki oyi kelganu kuni kelmagan bo'lsa 1 yosh ayiramiz
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-  return age;
-};
-
+  // Qolgan helper funksiyalar (addSkill, updateSkill va h.k.) o'zgarishsiz qoladi...
   const addSkill = () =>
     setFormData({
       ...formData,
       skils: [...formData.skils, { skill: "", experience_years: "" }],
     });
+
   const updateSkill = (index, field, value) => {
     const newskils = [...formData.skils];
     newskils[index][field] = value;
     setFormData({ ...formData, skils: newskils });
   };
+
   const removeSkill = (index) =>
     setFormData({
       ...formData,
@@ -255,11 +170,13 @@ const ProfilePage = () => {
       ...formData,
       language: [...formData.language, { language: "", level: "Beginner" }],
     });
+
   const updateLanguage = (index, field, value) => {
     const newLang = [...formData.language];
     newLang[index][field] = value;
     setFormData({ ...formData, language: newLang });
   };
+
   const removeLanguage = (index) =>
     setFormData({
       ...formData,
@@ -270,34 +187,22 @@ const ProfilePage = () => {
     if (!email || typeof email !== "string") return "—";
     const atIndex = email.indexOf("@");
     if (atIndex === -1) return email;
-
     const name = email.slice(0, atIndex);
     const domain = email.slice(atIndex);
-
     const shortName = name.length > max ? name.slice(0, max) + "..." : name;
     return shortName + domain;
   };
 
   if (loading) {
     return (
-      <div
-        className={`min-h-screen p-8 max-w-6xl mx-auto animate-pulse-custom ${isDark ? "bg-[#121212]" : "bg-[#F8F9FB]"}`}
-      >
+      <div className={`min-h-screen p-8 max-w-6xl mx-auto animate-pulse-custom ${isDark ? "bg-[#121212]" : "bg-[#F8F9FB]"}`}>
         <style>{spinnerStyle}</style>
-        <div
-          className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
-        ></div>
+        <div className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div
-            className={`h-[500px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
-          ></div>
+          <div className={`h-[500px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
           <div className="lg:col-span-2 space-y-6">
-            <div
-              className={`h-[250px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
-            ></div>
-            <div
-              className={`h-[300px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
-            ></div>
+            <div className={`h-[250px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+            <div className={`h-[300px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
           </div>
         </div>
       </div>
@@ -369,7 +274,7 @@ const ProfilePage = () => {
                 <FiCheckCircle className="text-blue-500" size={18} />
               </h2>
               <p className="text-gray-500 font-medium text-sm mt-1">
-                 {user?.specialty}
+                {user?.occupation} {user?.specialty}
               </p>
               <div
                 className={`mt-1 font-bold text-lg ${isDark ? "text-blue-400" : "text-gray-800"}`}
@@ -377,7 +282,17 @@ const ProfilePage = () => {
                 ${user?.minimum_salary?.toLocaleString()}.00
               </div>
 
-              
+              <div className="flex items-center justify-center gap-1 mt-2 text-yellow-400">
+                {[1, 2, 3, 4].map((star) => (
+                  <span key={star}>★</span>
+                ))}
+                <span className={isDark ? "text-gray-700" : "text-gray-300"}>
+                  ★
+                </span>
+                <span className="text-gray-400 text-sm ml-1">
+                  (4.0) | 1K reviews
+                </span>
+              </div>
 
               <div
                 className={`mt-8 pt-6 border-t space-y-3 text-left ${isDark ? "border-gray-800" : "border-gray-100"}`}
@@ -387,11 +302,11 @@ const ProfilePage = () => {
                 >
                   Personal info:
                 </h3>
-<InfoRow
-  label="Age"
-  value={calculateAge(user?.date_of_birth)}
-  isDark={isDark}
-/>
+                <InfoRow
+                  label="Age"
+                  value={user?.date_of_birth}
+                  isDark={isDark}
+                />
                 <InfoRow label="City" value={user?.city} isDark={isDark} />
                 <InfoRow
                   label="Country"
@@ -712,7 +627,9 @@ const ProfilePage = () => {
                     </div>
 
                     {/* LANGUAGES */}
-                    <div className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}>
+                    <div
+                      className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}
+                    >
                       <div className="flex justify-between mb-4">
                         <h4 className="font-bold">Languages</h4>
                         <button
@@ -726,52 +643,23 @@ const ProfilePage = () => {
 
                       {formData.language?.map((l, i) => (
                         <div key={i} className="flex gap-2 mb-2">
-                          {/* Til tanlash qismi (Searchable Dropdown) */}
-                          <div className="relative flex-1">
-                            <input
-                              placeholder="Language"
-                              value={l.language}
-                              onChange={(e) => updateLanguage(i, "language", e.target.value)}
-                              onFocus={() => {
-                                let arr = [...showLangDropdown];
-                                arr[i] = true;
-                                setShowLangDropdown(arr);
-                              }}
-                              onBlur={() =>
-                                setTimeout(() => {
-                                  let arr = [...showLangDropdown];
-                                  arr[i] = false;
-                                  setShowLangDropdown(arr);
-                                }, 200)
-                              }
-                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                                }`}
-                            />
-
-                            {showLangDropdown[i] && (
-                              <div className="absolute z-40 w-full mt-1 bg-white border rounded-xl shadow-lg max-h-40 overflow-y-auto">
-                                {popularLanguages
-                                  .filter((item) =>
-                                    item.toLowerCase().includes((l.language || "").toLowerCase())
-                                  )
-                                  .map((item, idx) => (
-                                    <div
-                                      key={idx}
-                                      onMouseDown={() => updateLanguage(i, "language", item)}
-                                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
-                                    >
-                                      {item}
-                                    </div>
-                                  ))}
-                              </div>
-                            )}
-                          </div>
+                          <input
+                            placeholder="Language"
+                            value={l.language}
+                            onChange={(e) =>
+                              updateLanguage(i, "language", e.target.value)
+                            }
+                            className={`flex-1 p-3 rounded-xl border outline-none transition ${isDark
+                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
+                          />
 
                           <select
                             value={l.level}
-                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
+                            onChange={(e) =>
+                              updateLanguage(i, "level", e.target.value)
+                            }
                             className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
                               ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                               : "bg-gray-50 border-gray-200 focus:border-emerald-500"
