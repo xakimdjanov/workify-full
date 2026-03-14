@@ -29,6 +29,14 @@ const spinnerStyle = `
   }
 `;
 
+const popularLanguages = [
+  "English", "Uzbek", "Russian", "Turkish", "German", "French", "Spanish",
+  "Chinese", "Japanese", "Korean", "Arabic", "Portuguese", "Italian",
+  "Dutch", "Polish", "Swedish", "Norwegian", "Danish", "Finnish",
+  "Hindi", "Bengali", "Thai", "Vietnamese", "Indonesian",
+  "Greek", "Hebrew", "Persian", "Czech", "Romanian"
+];
+
 const skillList = [
   // Frontend
   "HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Vue.js", "Next.js", "Angular", "Tailwind CSS", "SASS/SCSS", "Redux Toolkit", "Zustand", "React Query",
