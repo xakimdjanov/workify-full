@@ -77,8 +77,9 @@ function Header() {
 
   const getProfileLink = () => {
     if (userRole === 'company' || userRole === 'employer') return "/company/my-company";
-    if (userRole === 'talent' || userRole === 'job_seeker') return "/talent/my-profile";
-    return "/profile";
+    // BUG FIX: "/talent/my-profile" emas, App.jsx dagi to'g'ri route: "/talent/profile"
+    if (userRole === 'talent' || userRole === 'job_seeker') return "/talent/profile";
+    return "/talent/profile";
   };
 
   const handleLogout = () => {
@@ -120,7 +121,10 @@ function Header() {
                 </Link>
 
                 <div className="relative">
-                  <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLang(false); }} className="flex items-center gap-2 px-3 h-[48px] bg-gray-50 border border-gray-100 rounded-xl font-bold text-[#343C44] hover:bg-white transition-all shadow-sm">
+                  <button
+                    onClick={() => { setShowUserMenu(!showUserMenu); setShowLang(false); }}
+                    className="flex items-center gap-2 px-3 h-[48px] bg-gray-50 border border-gray-100 rounded-xl font-bold text-[#343C44] hover:bg-white transition-all shadow-sm"
+                  >
                     <div className="w-8 h-8 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-[12px] font-bold">
                       {getUserInitial()}
                     </div>
@@ -135,10 +139,18 @@ function Header() {
                         </p>
                         <p className="text-[14px] font-bold truncate text-[#163D5C]">{getUserDisplayName()}</p>
                       </div>
-                      <Link to={getProfileLink()} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#343C44] font-semibold transition-colors">
+                      {/* Desktop dropdown — getProfileLink() endi to'g'ri /talent/profile qaytaradi */}
+                      <Link
+                        to={getProfileLink()}
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-[#343C44] font-semibold transition-colors"
+                      >
                         <IoMdPerson size={18} className="text-[#163D5C]" /> My Profile
                       </Link>
-                      <button onClick={() => { setShowUserMenu(false); setIsLogoutModalOpen(true); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-500 font-semibold transition-colors">
+                      <button
+                        onClick={() => { setShowUserMenu(false); setIsLogoutModalOpen(true); }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-500 font-semibold transition-colors"
+                      >
                         <IoMdLogOut size={18} /> Log Out
                       </button>
                     </div>
@@ -156,7 +168,10 @@ function Header() {
               </div>
             )}
 
-            <button className="lg:hidden text-[32px] text-[#163D5C] hover:bg-gray-50 rounded-lg p-1" onClick={() => setIsOpen(true)}>
+            <button
+              className="lg:hidden text-[32px] text-[#163D5C] hover:bg-gray-50 rounded-lg p-1"
+              onClick={() => setIsOpen(true)}
+            >
               <HiMenuAlt3 />
             </button>
           </div>
@@ -165,17 +180,33 @@ function Header() {
 
       {/* MOBILE SIDEBAR */}
       <div className={`fixed inset-0 z-[100] transition-all duration-300 ${isOpen ? "visible" : "invisible"}`}>
-        <div className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsOpen(false)} />
+        <div
+          className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setIsOpen(false)}
+        />
         <div className={`absolute right-0 top-0 h-full w-[300px] bg-white shadow-2xl transition-transform duration-300 flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
           <div className="p-6 flex items-center justify-between border-b">
             <span className="text-xl font-bold text-[#163D5C]">Menu</span>
-            <button onClick={() => setIsOpen(false)} className="text-3xl text-gray-400 hover:text-red-500 transition-colors"><HiX /></button>
+            <button onClick={() => setIsOpen(false)} className="text-3xl text-gray-400 hover:text-red-500 transition-colors">
+              <HiX />
+            </button>
           </div>
 
           <div className="p-6 flex flex-col gap-6 flex-1 overflow-y-auto">
             {user && (
-              <div className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-2xl">
-                <div className="w-12 h-12 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-lg font-bold shadow-sm">
+              /*
+                BUG FIX: Avatar/ism bloki endi bosiladigan tugma.
+                Bosilganda menyuni yopib, profil sahifasiga o'tadi.
+                Avval bu oddiy div edi — dead click.
+              */
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate(getProfileLink());
+                }}
+                className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-2xl w-full text-left hover:bg-blue-100/60 transition-colors cursor-pointer"
+              >
+                <div className="w-12 h-12 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-lg font-bold shadow-sm shrink-0">
                   {getUserInitial()}
                 </div>
                 <div className="overflow-hidden">
@@ -184,7 +215,7 @@ function Header() {
                     {userRole === 'company' ? 'Verified Company' : 'Verified Talent'}
                   </p>
                 </div>
-              </div>
+              </button>
             )}
 
             <nav className="flex flex-col gap-2">
@@ -192,8 +223,23 @@ function Header() {
               <MobileNavLink to="/jobs" icon={<IoWalletOutline size={24} />} label="Jobs" onClick={() => setIsOpen(false)} />
               {user && (
                 <>
-                  <MobileNavLink to={getDashboardLink()} icon={<MdDashboard size={24} />} label="Dashboard" onClick={() => setIsOpen(false)} />
-                  <MobileNavLink to={getProfileLink()} icon={<IoMdPerson size={24} />} label="Profile" onClick={() => setIsOpen(false)} />
+                  <MobileNavLink
+                    to={getDashboardLink()}
+                    icon={<MdDashboard size={24} />}
+                    label="Dashboard"
+                    onClick={() => setIsOpen(false)}
+                  />
+                  {/*
+                    BUG FIX: getProfileLink() endi /talent/profile qaytaradi.
+                    App.jsx da bu route mavjud: /talent/profile -> <ProfilePage />
+                    Avval /talent/my-profile edi — bu route App.jsx da yo'q edi.
+                  */}
+                  <MobileNavLink
+                    to={getProfileLink()}
+                    icon={<IoMdPerson size={24} />}
+                    label="Profile"
+                    onClick={() => setIsOpen(false)}
+                  />
                 </>
               )}
             </nav>
@@ -201,15 +247,26 @@ function Header() {
             <div className="mt-auto flex flex-col gap-3">
               {!user ? (
                 <>
-                  <Link to="/roleSelection" onClick={() => setIsOpen(false)} className="w-full h-[54px] flex items-center justify-center border-2 border-[#163D5C] rounded-xl font-bold text-[#163D5C] active:scale-95 transition-all">
+                  <Link
+                    to="/roleSelection"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full h-[54px] flex items-center justify-center border-2 border-[#163D5C] rounded-xl font-bold text-[#163D5C] active:scale-95 transition-all"
+                  >
                     Sign In
                   </Link>
-                  <Link to="/roleSelection" onClick={() => setIsOpen(false)} className="w-full h-[54px] flex items-center justify-center bg-[#163D5C] rounded-xl font-bold text-white shadow-lg active:scale-95 transition-all">
+                  <Link
+                    to="/roleSelection"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full h-[54px] flex items-center justify-center bg-[#163D5C] rounded-xl font-bold text-white shadow-lg active:scale-95 transition-all"
+                  >
                     Join Now
                   </Link>
                 </>
               ) : (
-                <button onClick={() => { setIsOpen(false); setIsLogoutModalOpen(true); }} className="w-full h-[54px] flex items-center justify-center gap-2 bg-red-50 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all active:scale-95">
+                <button
+                  onClick={() => { setIsOpen(false); setIsLogoutModalOpen(true); }}
+                  className="w-full h-[54px] flex items-center justify-center gap-2 bg-red-50 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all active:scale-95"
+                >
                   <IoMdLogOut size={22} /> Log Out
                 </button>
               )}
@@ -225,10 +282,16 @@ function Header() {
             <h3 className="text-[20px] font-bold text-[#163D5C] mb-3">Logout</h3>
             <p className="text-[#343C44] mb-8 text-[15px]">Are you sure you want to log out of your account?</p>
             <div className="flex gap-3">
-              <button onClick={() => setIsLogoutModalOpen(false)} className="flex-1 py-3 rounded-2xl font-bold border-2 border-[#163D5C] bg-[#163D5C] text-white hover:bg-white hover:text-[#163D5C] transition-all">
+              <button
+                onClick={() => setIsLogoutModalOpen(false)}
+                className="flex-1 py-3 rounded-2xl font-bold border-2 border-[#163D5C] bg-[#163D5C] text-white hover:bg-white hover:text-[#163D5C] transition-all"
+              >
                 Cancel
               </button>
-              <button onClick={handleLogout} className="flex-1 py-3 rounded-2xl font-bold border-2 border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 transition-all">
+              <button
+                onClick={handleLogout}
+                className="flex-1 py-3 rounded-2xl font-bold border-2 border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 transition-all"
+              >
                 Yes, Logout
               </button>
             </div>
@@ -240,7 +303,13 @@ function Header() {
 }
 
 const MobileNavLink = ({ to, icon, label, onClick }) => (
-  <NavLink to={to} onClick={onClick} className={({ isActive }) => `flex items-center gap-4 text-lg font-bold p-4 rounded-xl transition-all ${isActive ? "bg-gray-100 text-[#163D5C]" : "text-gray-500 hover:bg-gray-50"}`}>
+  <NavLink
+    to={to}
+    onClick={onClick}
+    className={({ isActive }) =>
+      `flex items-center gap-4 text-lg font-bold p-4 rounded-xl transition-all ${isActive ? "bg-gray-100 text-[#163D5C]" : "text-gray-500 hover:bg-gray-50"}`
+    }
+  >
     {icon} {label}
   </NavLink>
 );

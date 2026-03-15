@@ -19,23 +19,14 @@ import nonImg from "../../assets/img.jpg";
 function normalizeSkills(skils) {
   if (!skils) return [];
   if (Array.isArray(skils))
-    return skils
-      .map(String)
-      .map((s) => s.trim())
-      .filter(Boolean);
-  return String(skils)
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+    return skils.map(String).map((s) => s.trim()).filter(Boolean);
+  return String(skils).split(",").map((s) => s.trim()).filter(Boolean);
 }
 
 function normalizeUserSkills(rawskils) {
   const arr = Array.isArray(rawskils)
     ? rawskils
-    : String(rawskils || "")
-        .split(",")
-        .map((s) => s.trim());
-
+    : String(rawskils || "").split(",").map((s) => s.trim());
   return arr
     .map((s) => (typeof s === "string" ? s.toLowerCase() : ""))
     .filter(Boolean);
@@ -74,14 +65,20 @@ function JobCard({
   const companyName = job?.company?.company_name || "Company";
   const workplace = job?.workplace_type || "—";
   const locationText = job?.location || job?.company?.city || "Uzbekistan";
-
   const skills = normalizeSkills(job?.skils);
   const salaryMin = job?.salary_min ?? 0;
   const salaryMax = job?.salary_max ?? 0;
 
   return (
+    /*
+      FIX: Karta flex flex-col ga o'tdi.
+      Karta ichidagi content flex-1 bilan o'sadi,
+      actions qismi esa shrink-0 bilan har doim pastda ko'rinadi.
+      Telegram Mini App da kartochka qancha uzun bo'lmasin,
+      tugmalar hech qachon kesilib qolmaydi.
+    */
     <div
-      className={`rounded-[28px] p-5 md:p-7 border transition-all ${
+      className={`rounded-[28px] border transition-all flex flex-col ${
         isMatch
           ? isDark
             ? "border-blue-900/60 bg-blue-900/10"
@@ -91,222 +88,215 @@ function JobCard({
             : "bg-white border-gray-100"
       }`}
     >
-      {/* TOP */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5 mb-5">
-        {/* LEFT: logo + company */}
-        <div className="flex gap-4">
-          <div className="shrink-0">
-            <div
-              className={`w-16 h-16 rounded-full overflow-hidden shadow-md ring-2 ${
-                isDark ? "ring-gray-700 bg-[#252525]" : "ring-gray-200 bg-white"
-              }`}
-            >
-              <img
-                src={job?.company?.profileimg_url || nonImg}
-                alt={job?.company?.company_name || "Company"}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src = nonImg;
-                }}
-              />
-            </div>
-          </div>
+      {/* SCROLLABLE CONTENT qismi */}
+      <div className="flex-1 p-5 md:p-7">
 
-          <div className="min-w-0">
-            <h3
-              className={`text-lg md:text-xl font-extrabold ${
-                isDark ? "text-gray-100" : "text-gray-900"
-              }`}
-            >
-              {companyName}
-            </h3>
-
-            <p
-              className={`text-sm font-semibold ${
-                isDark ? "text-gray-400" : "text-gray-500"
-              }`}
-            >
-              {job?.company?.industry || "Computer Software"}
-            </p>
-
-            {/* rating mock */}
-            <div className="flex items-center gap-1 mt-1">
-              {[1, 2, 3, 4].map((i) => (
-                <span key={i} className="text-yellow-500 text-sm">
-                  ★
-                </span>
-              ))}
-              <span
-                className={`${isDark ? "text-gray-700" : "text-gray-200"} text-sm`}
-              >
-                ★
-              </span>
-              <span
-                className={`${
-                  isDark ? "text-gray-400" : "text-gray-500"
-                } text-xs font-bold ml-1`}
-              >
-                (4.0)
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT: location + time under it + workplace badge */}
-        <div className="flex flex-col md:items-end gap-2">
-          <div
-            className={`flex items-center gap-2 font-bold text-sm ${
-              isDark ? "text-gray-400" : "text-gray-600"
-            }`}
-          >
-            <FaCity className="text-blue-400" />
-            <span className="truncate max-w-[260px]">{locationText}</span>
-          </div>
-
-          {/* time under location */}
-          <div
-            className={`text-xs font-bold ${
-              isDark ? "text-gray-500" : "text-gray-400"
-            }`}
-          >
-            {daysAgoEn(job?.createdAt)}
-          </div>
-
-          <span
-            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider w-fit ${
-              isDark
-                ? "bg-blue-900/30 text-blue-300"
-                : "bg-emerald-50 text-emerald-600"
-            }`}
-          >
-            {workplace}
-          </span>
-        </div>
-      </div>
-
-      {/* Occupation + Salary in one row with between */}
-      <div className="flex items-center justify-between gap-4 mb-3">
-        <h4
-          className={`text-base md:text-lg font-extrabold ${
-            isDark ? "text-gray-100" : "text-gray-900"
-          }`}
-        >
-          {job?.occupation || "Job title"}
-        </h4>
-
-        <div
-          className={`text-xl md:text-2xl font-black ${
-            isDark ? "text-blue-300" : "text-slate-900"
-          }`}
-        >
-          ${salaryMin} - {salaryMax}
-        </div>
-      </div>
-
-      {/* DESCRIPTION */}
-      <p
-        className={`text-sm leading-relaxed mb-5 line-clamp-2 ${
-          isDark ? "text-gray-400" : "text-gray-600"
-        }`}
-      >
-        {job?.description || "No description provided..."}
-      </p>
-
-      {/* SKILLS */}
-      <div className="mb-6">
-        <p
-          className={`font-black text-sm mb-3 ${
-            isDark ? "text-gray-300" : "text-gray-800"
-          }`}
-        >
-          Required skills:
-        </p>
-
-        <div className="flex flex-wrap gap-2">
-          {skills.length ? (
-            skills.map((skill, idx) => (
-              <span
-                key={`${skill}-${idx}`}
-                className={`px-4 py-2 rounded-xl text-xs font-bold border ${
-                  isDark
-                    ? "bg-[#252525] text-gray-300 border-gray-700"
-                    : "bg-[#F1F3F6] text-gray-700 border-transparent"
+        {/* TOP */}
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5 mb-5">
+          {/* LEFT: logo + company */}
+          <div className="flex gap-4">
+            <div className="shrink-0">
+              <div
+                className={`w-16 h-16 rounded-full overflow-hidden shadow-md ring-2 ${
+                  isDark ? "ring-gray-700 bg-[#252525]" : "ring-gray-200 bg-white"
                 }`}
               >
-                {skill}
-              </span>
-            ))
-          ) : (
-            <span
-              className={`text-sm font-semibold ${
-                isDark ? "text-gray-500" : "text-gray-400"
+                <img
+                  src={job?.company?.profileimg_url || nonImg}
+                  alt={job?.company?.company_name || "Company"}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.src = nonImg; }}
+                />
+              </div>
+            </div>
+
+            <div className="min-w-0">
+              <h3
+                className={`text-lg md:text-xl font-extrabold ${
+                  isDark ? "text-gray-100" : "text-gray-900"
+                }`}
+              >
+                {companyName}
+              </h3>
+
+              <p
+                className={`text-sm font-semibold ${
+                  isDark ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                {job?.company?.industry || "Computer Software"}
+              </p>
+
+              <div className="flex items-center gap-1 mt-1">
+                {[1, 2, 3, 4].map((i) => (
+                  <span key={i} className="text-yellow-500 text-sm">★</span>
+                ))}
+                <span className={`${isDark ? "text-gray-700" : "text-gray-200"} text-sm`}>★</span>
+                <span className={`${isDark ? "text-gray-400" : "text-gray-500"} text-xs font-bold ml-1`}>
+                  (4.0)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: location + time + workplace badge */}
+          <div className="flex flex-col md:items-end gap-2">
+            <div
+              className={`flex items-center gap-2 font-bold text-sm ${
+                isDark ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              Skills not provided
+              <FaCity className="text-blue-400" />
+              <span className="truncate max-w-[260px]">{locationText}</span>
+            </div>
+
+            <div className={`text-xs font-bold ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+              {daysAgoEn(job?.createdAt)}
+            </div>
+
+            <span
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider w-fit ${
+                isDark
+                  ? "bg-blue-900/30 text-blue-300"
+                  : "bg-emerald-50 text-emerald-600"
+              }`}
+            >
+              {workplace}
             </span>
-          )}
+          </div>
+        </div>
+
+        {/* Occupation + Salary */}
+        <div className="flex items-center justify-between gap-4 mb-3">
+          <h4
+            className={`text-base md:text-lg font-extrabold ${
+              isDark ? "text-gray-100" : "text-gray-900"
+            }`}
+          >
+            {job?.occupation || "Job title"}
+          </h4>
+
+          <div
+            className={`text-xl md:text-2xl font-black ${
+              isDark ? "text-blue-300" : "text-slate-900"
+            }`}
+          >
+            ${salaryMin} - {salaryMax}
+          </div>
+        </div>
+
+        {/* DESCRIPTION */}
+        <p
+          className={`text-sm leading-relaxed mb-5 line-clamp-2 ${
+            isDark ? "text-gray-400" : "text-gray-600"
+          }`}
+        >
+          {job?.description || "No description provided..."}
+        </p>
+
+        {/* SKILLS */}
+        <div>
+          <p className={`font-black text-sm mb-3 ${isDark ? "text-gray-300" : "text-gray-800"}`}>
+            Required skills:
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {skills.length ? (
+              skills.map((skill, idx) => (
+                <span
+                  key={`${skill}-${idx}`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold border ${
+                    isDark
+                      ? "bg-[#252525] text-gray-300 border-gray-700"
+                      : "bg-[#F1F3F6] text-gray-700 border-transparent"
+                  }`}
+                >
+                  {skill}
+                </span>
+              ))
+            ) : (
+              <span className={`text-sm font-semibold ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                Skills not provided
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ACTIONS */}
+      {/*
+        FIX — ACTIONS qismi karta ichida pastga yopishtirilgan.
+        shrink-0: hech qachon siqilmaydi.
+        border-t: contentdan ajratib turadi.
+        Bu yondashuv Telegram Mini App da 100% ishonchli:
+        - Karta qisqa bo'lsa ham — tugmalar ko'rinadi
+        - Karta uzun bo'lsa ham — tugmalar har doim karta pastida
+        - Ekran o'lchami qanday bo'lmasin — responsive ishlaydi
+      */}
       <div
-        className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-5 border-t ${
-          isDark ? "border-gray-800" : "border-gray-100"
+        className={`shrink-0 px-5 md:px-7 py-4 md:py-5 border-t rounded-b-[28px] ${
+          isDark
+            ? "border-gray-800 bg-[#1E1E1E]"
+            : "border-gray-100 bg-white"
         }`}
+        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
       >
-        <div className="flex items-center gap-5">
-          <button
-            onClick={onLike}
-            className={`transition-all ${
-              reaction === "like"
-                ? "text-emerald-500 scale-110"
-                : "text-gray-500 hover:text-emerald-400"
-            }`}
-            aria-label="Like"
-            type="button"
-          >
-            <FaThumbsUp size={22} />
-          </button>
-
-          <button
-            onClick={onDislike}
-            className={`transition-all ${
-              reaction === "dislike"
-                ? "text-rose-500 scale-110"
-                : "text-gray-500 hover:text-rose-400"
-            }`}
-            aria-label="Dislike"
-            type="button"
-          >
-            <FaThumbsDown size={22} />
-          </button>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <button
-            onClick={onQuickApply}
-            type="button"
-            className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-black text-sm transition-all ${
-              isDark
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-[#163D5C] hover:bg-[#0f2d45]"
-            } text-white`}
-          >
-            Quick apply
-          </button>
-
-          <Link to={`/talent/job-details/${job.id}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          {/* Like / Dislike */}
+          <div className="flex items-center gap-5">
             <button
-              type="button"
-              className={`flex-1 sm:flex-none px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
-                isDark
-                  ? "border-gray-700 text-gray-200 hover:bg-gray-800"
-                  : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
+              onClick={onLike}
+              className={`transition-all ${
+                reaction === "like"
+                  ? "text-emerald-500 scale-110"
+                  : "text-gray-500 hover:text-emerald-400"
               }`}
+              aria-label="Like"
+              type="button"
             >
-              View job post
+              <FaThumbsUp size={22} />
             </button>
-          </Link>
+
+            <button
+              onClick={onDislike}
+              className={`transition-all ${
+                reaction === "dislike"
+                  ? "text-rose-500 scale-110"
+                  : "text-gray-500 hover:text-rose-400"
+              }`}
+              aria-label="Dislike"
+              type="button"
+            >
+              <FaThumbsDown size={22} />
+            </button>
+          </div>
+
+          {/* Quick Apply + View Job Post */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button
+              onClick={onQuickApply}
+              type="button"
+              className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-black text-sm transition-all ${
+                isDark
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-[#163D5C] hover:bg-[#0f2d45]"
+              } text-white`}
+            >
+              Quick apply
+            </button>
+
+            <Link to={`/talent/job-details/${job.id}`} className="flex-1 sm:flex-none">
+              <button
+                type="button"
+                className={`w-full px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
+                  isDark
+                    ? "border-gray-700 text-gray-200 hover:bg-gray-800"
+                    : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
+                }`}
+              >
+                View job post
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -358,7 +348,6 @@ export default function JobMatches() {
         }
 
         const decoded = jwtDecode(token);
-
         const userRes = await talentApi.getById(decoded.id);
         const lowerUserskils = normalizeUserSkills(userRes.data?.skils);
 
@@ -368,21 +357,13 @@ export default function JobMatches() {
         const sortedJobs = [...jobs].sort((a, b) => {
           const aMatch = lowerUserskils.some(
             (s) =>
-              String(a?.specialty || "")
-                .toLowerCase()
-                .includes(s) ||
-              String(a?.occupation || "")
-                .toLowerCase()
-                .includes(s),
+              String(a?.specialty || "").toLowerCase().includes(s) ||
+              String(a?.occupation || "").toLowerCase().includes(s),
           );
           const bMatch = lowerUserskils.some(
             (s) =>
-              String(b?.specialty || "")
-                .toLowerCase()
-                .includes(s) ||
-              String(b?.occupation || "")
-                .toLowerCase()
-                .includes(s),
+              String(b?.specialty || "").toLowerCase().includes(s) ||
+              String(b?.occupation || "").toLowerCase().includes(s),
           );
           return Number(bMatch) - Number(aMatch);
         });
@@ -398,9 +379,7 @@ export default function JobMatches() {
       }
     })();
 
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, []);
 
   const filteredJobs = useMemo(() => {
@@ -412,37 +391,30 @@ export default function JobMatches() {
         ? job.workplace_type === workplaceType
         : true;
 
-      // YANGI MANTIQ SHU YERDA:
       let matchSalary = true;
       if (minSalary !== "") {
         const min = Number(minSalary);
         if (min === 0) {
-          matchSalary = false; // Agar 0 yozilsa, hech qaysi ish ko'rinmaydi
+          matchSalary = false;
         } else {
           matchSalary = Number(job.salary_max ?? 0) >= min;
         }
       }
 
       const matchCity = city
-        ? String(job.location || "")
-            .toLowerCase()
-            .includes(city.toLowerCase())
-        : true;
-      const q = searchQuery.trim().toLowerCase();
-      const matchSearch = q
-        ? String(job.occupation || "")
-            .toLowerCase()
-            .includes(q) ||
-          String(job.company?.company_name || "")
-            .toLowerCase()
-            .includes(q)
+        ? String(job.location || "").toLowerCase().includes(city.toLowerCase())
         : true;
 
-      return (
-        matchType && matchWorkplace && matchSalary && matchCity && matchSearch
-      );
+      const q = searchQuery.trim().toLowerCase();
+      const matchSearch = q
+        ? String(job.occupation || "").toLowerCase().includes(q) ||
+          String(job.company?.company_name || "").toLowerCase().includes(q)
+        : true;
+
+      return matchType && matchWorkplace && matchSalary && matchCity && matchSearch;
     });
   }, [allJobs, employmentType, workplaceType, minSalary, city, searchQuery]);
+
   const handleLike = useCallback(
     (jobId) => {
       const current = getReaction(jobId);
@@ -471,7 +443,7 @@ export default function JobMatches() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-500 p-4 md:p-8 font-sans ${
+      className={`min-h-screen transition-colors duration-500 p-4 md:p-8 pb-20 font-sans ${
         isDark ? "bg-[#121212] text-white" : "bg-[#F9FAFB] text-[#1E293B]"
       }`}
     >
@@ -516,7 +488,7 @@ export default function JobMatches() {
             }`}
           >
             <div className="p-5 md:p-8 space-y-8">
-              {/* Employment */}
+              {/* Employment type */}
               <div>
                 <label
                   className={`block font-bold mb-3 md:mb-4 ${
@@ -531,17 +503,12 @@ export default function JobMatches() {
                     isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
                   }`}
                 >
-                  {["Full time", "Part time", "Contract", "Freelance"].map(
-                    (type) => (
-                      <button
-                        key={type}
-                        onClick={() =>
-                          setEmploymentType((prev) =>
-                            prev === type ? "" : type,
-                          )
-                        }
-                        type="button"
-                        className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none whitespace-nowrap
+                  {["Full time", "Part time", "Contract", "Freelance"].map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setEmploymentType((prev) => prev === type ? "" : type)}
+                      type="button"
+                      className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none whitespace-nowrap
                         ${
                           employmentType === type
                             ? isDark
@@ -551,16 +518,15 @@ export default function JobMatches() {
                               ? "text-gray-500 hover:text-gray-300"
                               : "text-gray-400 hover:text-gray-600"
                         }`}
-                      >
-                        {type}
-                      </button>
-                    ),
-                  )}
+                    >
+                      {type}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                {/* Workplace */}
+                {/* Workplace type */}
                 <div>
                   <label
                     className={`block font-bold mb-3 md:mb-4 ${
@@ -578,11 +544,7 @@ export default function JobMatches() {
                     {["Onsite", "Remote", "Hybrid"].map((type) => (
                       <button
                         key={type}
-                        onClick={() =>
-                          setWorkplaceType((prev) =>
-                            prev === type ? "" : type,
-                          )
-                        }
+                        onClick={() => setWorkplaceType((prev) => prev === type ? "" : type)}
                         type="button"
                         className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none
                           ${
@@ -651,13 +613,9 @@ export default function JobMatches() {
           />
         </div>
 
-        {/* LIST */}
+        {/* JOB LIST */}
         <div className="space-y-5 md:space-y-6">
-          <p
-            className={`font-bold px-1 ${
-              isDark ? "text-gray-400" : "text-gray-500"
-            }`}
-          >
+          <p className={`font-bold px-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
             {loading ? "Loading..." : `${filteredJobs.length} jobs available`}
           </p>
 
@@ -669,12 +627,8 @@ export default function JobMatches() {
                 userskils.length > 0 &&
                 userskils.some(
                   (s) =>
-                    String(job.specialty || "")
-                      .toLowerCase()
-                      .includes(s) ||
-                    String(job.occupation || "")
-                      .toLowerCase()
-                      .includes(s),
+                    String(job.specialty || "").toLowerCase().includes(s) ||
+                    String(job.occupation || "").toLowerCase().includes(s),
                 );
 
               return (
@@ -687,9 +641,7 @@ export default function JobMatches() {
                   onLike={() => handleLike(job.id)}
                   onDislike={() => handleDislike(job.id)}
                   onQuickApply={() => navigate(`/talent/job-post/${job.id}`)}
-                  onViewJob={() =>
-                    navigate(`/talent/job-details/${job.company_id}`)
-                  }
+                  onViewJob={() => navigate(`/talent/job-details/${job.company_id}`)}
                 />
               );
             })}

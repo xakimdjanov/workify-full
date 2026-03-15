@@ -81,7 +81,7 @@ const MyCompany = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [company, setCompany] = useState(null);
-  const [stats, setStats] = useState({ active: 0, posted: 0, hired: 56 });
+  const [stats, setStats] = useState({ active: 0, posted: 0, hired: 0 });
   const [formData, setFormData] = useState({});
   const [imagePreview, setImagePreview] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -151,9 +151,9 @@ const MyCompany = () => {
           active: myJobs.filter((j) => j.is_activate || j.is_active).length,
           hired: Array.isArray(appsData)
             ? appsData.filter(
-                (app) => app.status === "accepted" || app.status === "hired",
-              ).length || 56
-            : 56,
+              (app) => app.status === "accepted" || app.status === "hired",
+            ).length
+            : 0,
         });
       }
     } catch (error) {
@@ -328,15 +328,6 @@ const MyCompany = () => {
               <h3 className="font-bold text-gray-500 mb-4 text-xs uppercase tracking-wider">
                 Company info
               </h3>
-              <InfoRow
-                label="Since"
-                value={
-                  company?.created_at
-                    ? new Date(company.created_at).getFullYear()
-                    : "2026"
-                }
-                isDark={isDark}
-              />
               <InfoRow label="City" value={company?.city} isDark={isDark} />
               <InfoRow
                 label="Country"
@@ -386,7 +377,7 @@ const MyCompany = () => {
                 className={`text-sm sm:text-base leading-relaxed break-all whitespace-pre-wrap ${isDark ? "text-gray-400" : "text-gray-500"}`}
               >
                 {company?.about_company ||
-                  "Company information not provided..."}
+                  "Write here about your company"}
               </div>
             </div>
           </div>

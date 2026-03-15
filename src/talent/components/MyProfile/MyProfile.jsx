@@ -281,7 +281,7 @@ const ProfilePage = () => {
 
   return (
     <div
-      className={`min-h-screen p-4 md:p-8 font-sans transition-colors duration-500 ${isDark ? "bg-[#121212] text-white" : "bg-[#F8F9FB] text-[#333]"}`}
+      className={`min-h-screen p-4 pb-20 md:p-8 font-sans transition-colors duration-500 ${isDark ? "bg-[#121212] text-white" : "bg-[#F8F9FB] text-[#333]"}`}
     >
       <style>{spinnerStyle}</style>
       <div className="max-w-6xl mx-auto">
