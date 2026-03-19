@@ -2,19 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { companyApi } from "../../services/api";
 import { MdEmail } from "react-icons/md";
-import { IoMdLock, IoMdRefresh } from "react-icons/io";
+import { IoMdLock } from "react-icons/io";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
-// Captcha komponentlari
-import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 
 function SignIn() {
-    const [formData, setFormData] = useState({ email: "", password: "", captcha: "" });
+    const [formData, setFormData] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({ email: false, password: false });
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [showCaptcha, setShowCaptcha] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -27,13 +24,6 @@ function SignIn() {
             navigate(redirectPath || "/company/dashboard", { replace: true });
         }
     }, [navigate, redirectPath]);
-
-    useEffect(() => {
-        if (showCaptcha) {
-            // Talent bilan bir xil: fon oqish, harflar qora (filtr ishlashi uchun)
-            loadCaptchaEnginge(6, '#f8fafc', '#000000');
-        }
-    }, [showCaptcha]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -62,24 +52,6 @@ function SignIn() {
             return;
         }
 
-        if (!showCaptcha) {
-            setShowCaptcha(true);
-            toast("Security check required", { icon: '🛡️' });
-            return;
-        }
-
-        if (!formData.captcha) {
-            toast.error("Please enter the captcha code");
-            return;
-        }
-
-        if (validateCaptcha(formData.captcha) !== true) {
-            toast.error("Invalid Captcha! Try again.");
-            setFormData(p => ({ ...p, captcha: "" }));
-            loadCaptchaEnginge(6, '#f8fafc', '#000000');
-            return;
-        }
-
         setLoading(true);
         try {
             const response = await companyApi.login({
@@ -95,8 +67,6 @@ function SignIn() {
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Wrong email or password");
-            if (showCaptcha) loadCaptchaEnginge(6, '#f8fafc', '#000000');
-            setFormData(p => ({ ...p, captcha: "" }));
         } finally {
             setLoading(false);
         }
@@ -105,17 +75,6 @@ function SignIn() {
     return (
         <>
             <Toaster position="top-right" />
-
-            {/* RAINBOW VA QIYSAYTIRISH FILTRI */}
-            <svg className="hidden">
-                <filter id="company-rainbow-distort">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" result="noise" />
-                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
-                    <feColorMatrix type="hueRotate" values="0">
-                        <animate attributeName="values" from="0" to="360" dur="5s" repeatCount="indefinite" />
-                    </feColorMatrix>
-                </filter>
-            </svg>
 
             <div className="flex flex-col min-h-screen">
                 <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4 font-['Mulish']">
@@ -159,54 +118,11 @@ function SignIn() {
                             <Link to="/company/forgot-password-1" className="text-sm text-[#163D5C] hover:underline font-medium">Forgot password?</Link>
                         </div>
 
-                        {/* CAPTCHA SECTION - TALENT BILAN BIR HIL DIZAYN */}
-                        {showCaptcha && (
-                            <div className="mb-6 p-4 bg-[#fcfcfc] rounded-2xl border-2 border-dashed border-gray-200 animate-fade-in relative">
-                                <div className="flex justify-between items-center mb-3 px-1">
-                                    <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Human Verification</span>
-                                    <button type="button" onClick={() => loadCaptchaEnginge(6, '#f8fafc', '#000000')} className="text-[#163D5C] hover:rotate-180 transition-all duration-500">
-                                        <IoMdRefresh size={20} />
-                                    </button>
-                                </div>
-
-                                <div className="flex flex-col gap-3">
-                                    <div className="company-captcha-box bg-white rounded-xl h-16 flex items-center justify-center overflow-hidden border border-gray-100 shadow-inner">
-                                        <div className="captcha-distort-wrapper">
-                                            <LoadCanvasTemplate reloadText="" />
-                                        </div>
-
-                                        <style dangerouslySetInnerHTML={{
-                                            __html: `
-                                            .company-captcha-box { 
-                                                background-image: linear-gradient(30deg, #f8fafc 12%, transparent 12.5%, transparent 87%, #f8fafc 87.5%, #f8fafc),
-                                                linear-gradient(150deg, #f8fafc 12%, transparent 12.5%, transparent 87%, #f8fafc 87.5%, #f8fafc),
-                                                linear-gradient(60deg, #f1f5f9 25%, transparent 25.5%, transparent 75%, #f1f5f9 75%, #f1f5f9);
-                                                background-size: 20px 35px;
-                                            }
-                                            .captcha-distort-wrapper {
-                                                filter: url(#company-rainbow-distort);
-                                                transform: scale(1.2) rotate(-1deg) skewX(-8deg);
-                                            }
-                                            .captcha-distort-wrapper canvas { margin: 0 !important; }
-                                            .captcha-distort-wrapper span, #reload_href { display: none !important; }
-                                        `}} />
-                                    </div>
-
-                                    <input
-                                        type="text" id="captcha" placeholder="Enter code"
-                                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#163D5C] outline-none text-center font-bold text-2xl transition-all placeholder:text-gray-400 placeholder:text-sm placeholder:font-normal placeholder:tracking-normal"
-                                        style={{ letterSpacing: formData.captcha ? '8px' : 'normal' }}
-                                        value={formData.captcha} onChange={handleChange} autoComplete="off"
-                                    />
-                                </div>
-                            </div>
-                        )}
-
                         <button
                             type="submit" disabled={loading}
                             className={`w-full py-3 rounded-xl text-white font-bold transition-all shadow-md ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#163D5C] hover:bg-[#0f2a40] active:scale-[0.98]"}`}
                         >
-                            {loading ? "Processing..." : (showCaptcha ? "VERIFY & SIGN IN" : "Sign In")}
+                            {loading ? "Processing..." : "Sign In"}
                         </button>
 
                         <p className="text-center text-sm text-gray-600 mt-6">
