@@ -30,28 +30,120 @@ const spinnerStyle = `
 `;
 
 const popularLanguages = [
-  "English", "Uzbek", "Russian", "Turkish", "German", "French", "Spanish",
-  "Chinese", "Japanese", "Korean", "Arabic", "Portuguese", "Italian",
-  "Dutch", "Polish", "Swedish", "Norwegian", "Danish", "Finnish",
-  "Hindi", "Bengali", "Thai", "Vietnamese", "Indonesian",
-  "Greek", "Hebrew", "Persian", "Czech", "Romanian"
+  "English",
+  "Uzbek",
+  "Russian",
+  "Turkish",
+  "German",
+  "French",
+  "Spanish",
+  "Chinese",
+  "Japanese",
+  "Korean",
+  "Arabic",
+  "Portuguese",
+  "Italian",
+  "Dutch",
+  "Polish",
+  "Swedish",
+  "Norwegian",
+  "Danish",
+  "Finnish",
+  "Hindi",
+  "Bengali",
+  "Thai",
+  "Vietnamese",
+  "Indonesian",
+  "Greek",
+  "Hebrew",
+  "Persian",
+  "Czech",
+  "Romanian",
 ];
+
+const calculateAge = (birthday) => {
+  if (!birthday) return "—";
+  const birthDate = new Date(birthday);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age > 0 ? `${age} years old` : "—";
+};
 
 const skillList = [
   // Frontend
-  "HTML5", "CSS3", "JavaScript", "TypeScript", "React", "Vue.js", "Next.js", "Angular", "Tailwind CSS", "SASS/SCSS", "Redux Toolkit", "Zustand", "React Query",
+  "HTML5",
+  "CSS3",
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Vue.js",
+  "Next.js",
+  "Angular",
+  "Tailwind CSS",
+  "SASS/SCSS",
+  "Redux Toolkit",
+  "Zustand",
+  "React Query",
   // Backend
-  "Node.js", "Express.js", "NestJS", "Python", "Django", "FastAPI", "PHP", "Laravel", "Go", "Java", "Spring Boot", "C#", ".NET Core",
+  "Node.js",
+  "Express.js",
+  "NestJS",
+  "Python",
+  "Django",
+  "FastAPI",
+  "PHP",
+  "Laravel",
+  "Go",
+  "Java",
+  "Spring Boot",
+  "C#",
+  ".NET Core",
   // Database & Infrastructure
-  "PostgreSQL", "MongoDB", "MySQL", "Redis", "Firebase", "Docker", "Kubernetes", "AWS", "Google Cloud",
+  "PostgreSQL",
+  "MongoDB",
+  "MySQL",
+  "Redis",
+  "Firebase",
+  "Docker",
+  "Kubernetes",
+  "AWS",
+  "Google Cloud",
   // Mobile & Desktop
-  "React Native", "Flutter", "Dart", "Electron",
+  "React Native",
+  "Flutter",
+  "Dart",
+  "Electron",
   // Design & Tools
-  "Figma", "Adobe XD", "Photoshop", "Illustrator",
+  "Figma",
+  "Adobe XD",
+  "Photoshop",
+  "Illustrator",
   // DevOps & Others
-  "Git", "GitHub", "CI/CD", "GraphQL", "REST API", "Unit Testing", "Linux",
+  "Git",
+  "GitHub",
+  "CI/CD",
+  "GraphQL",
+  "REST API",
+  "Unit Testing",
+  "Linux",
   // Project Manager
-  "Scrum", "Agile", "Jira", "ClickUp", "Trello", "Asana", "Sprint Planning",
+  "Scrum",
+  "Agile",
+  "Jira",
+  "ClickUp",
+  "Trello",
+  "Asana",
+  "Sprint Planning",
 ];
 
 const ProfilePage = () => {
@@ -80,8 +172,14 @@ const ProfilePage = () => {
       const res = await talentApi.getById(decoded.id);
       const data = res.data;
 
-      data.skils = typeof data.skils === "string" ? JSON.parse(data.skils) : data.skils || [];
-      data.language = typeof data.language === "string" ? JSON.parse(data.language) : data.language || [];
+      data.skils =
+        typeof data.skils === "string"
+          ? JSON.parse(data.skils)
+          : data.skils || [];
+      data.language =
+        typeof data.language === "string"
+          ? JSON.parse(data.language)
+          : data.language || [];
 
       setUser(data);
       setFormData({ ...data });
@@ -130,9 +228,20 @@ const ProfilePage = () => {
     try {
       const fd = new FormData();
       const fields = [
-        "first_name", "last_name", "gender", "date_of_birth", "country", "city",
-        "location", "phone", "occupation", "specialty", "work_type",
-        "workplace_type", "minimum_salary", "about",
+        "first_name",
+        "last_name",
+        "gender",
+        "date_of_birth",
+        "country",
+        "city",
+        "location",
+        "phone",
+        "occupation",
+        "specialty",
+        "work_type",
+        "workplace_type",
+        "minimum_salary",
+        "about",
       ];
 
       fields.forEach((key) => {
@@ -210,12 +319,20 @@ const ProfilePage = () => {
         className={`min-h-screen p-8 max-w-6xl mx-auto animate-pulse-custom ${isDark ? "bg-[#121212]" : "bg-[#F8F9FB]"}`}
       >
         <style>{spinnerStyle}</style>
-        <div className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+        <div
+          className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+        ></div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className={`h-[500px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+          <div
+            className={`h-[500px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+          ></div>
           <div className="lg:col-span-2 space-y-6">
-            <div className={`h-[250px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
-            <div className={`h-[300px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}></div>
+            <div
+              className={`h-[250px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+            ></div>
+            <div
+              className={`h-[300px] rounded-[24px] ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
+            ></div>
           </div>
         </div>
       </div>
@@ -287,24 +404,12 @@ const ProfilePage = () => {
                 <FiCheckCircle className="text-blue-500" size={18} />
               </h2>
               <p className="text-gray-500 font-medium text-sm mt-1">
-                {user?.occupation} {user?.specialty}
+                {user?.occupation} || {user?.specialty}
               </p>
               <div
                 className={`mt-1 font-bold text-lg ${isDark ? "text-blue-400" : "text-gray-800"}`}
               >
                 ${user?.minimum_salary?.toLocaleString()}.00
-              </div>
-
-              <div className="flex items-center justify-center gap-1 mt-2 text-yellow-400">
-                {[1, 2, 3, 4].map((star) => (
-                  <span key={star}>★</span>
-                ))}
-                <span className={isDark ? "text-gray-700" : "text-gray-300"}>
-                  ★
-                </span>
-                <span className="text-gray-400 text-sm ml-1">
-                  (4.0) | 1K reviews
-                </span>
               </div>
 
               <div
@@ -317,7 +422,7 @@ const ProfilePage = () => {
                 </h3>
                 <InfoRow
                   label="Age"
-                  value={user?.date_of_birth}
+                  value={calculateAge(user?.date_of_birth)}
                   isDark={isDark}
                 />
                 <InfoRow label="City" value={user?.city} isDark={isDark} />
@@ -419,10 +524,11 @@ const ProfilePage = () => {
                 type="button"
                 onClick={() => navigate("/talent/reactions")}
                 className={`w-full px-8 py-4 rounded-2xl font-black transition-all border shadow-sm flex items-center justify-center gap-3
-      ${isDark
-                    ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
-                    : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
-                  }`}
+      ${
+        isDark
+          ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
+          : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
+      }`}
               >
                 <span className="text-green-500">
                   <FiCheckCircle size={18} />
@@ -570,7 +676,9 @@ const ProfilePage = () => {
                             <input
                               placeholder="Skill"
                               value={s.skill}
-                              onChange={(e) => updateSkill(i, "skill", e.target.value)}
+                              onChange={(e) =>
+                                updateSkill(i, "skill", e.target.value)
+                              }
                               onFocus={() => {
                                 let arr = [...showSkillDropdown];
                                 arr[i] = true;
@@ -583,22 +691,27 @@ const ProfilePage = () => {
                                   setShowSkillDropdown(arr);
                                 }, 200)
                               }
-                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                                }`}
+                              className={`w-full p-3 rounded-xl border outline-none transition ${
+                                isDark
+                                  ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                  : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                             />
 
                             {showSkillDropdown[i] && (
                               <div className="absolute z-40 w-full mt-1 bg-white border rounded-xl shadow-lg max-h-40 overflow-y-auto">
                                 {skillList
                                   .filter((item) =>
-                                    item.toLowerCase().includes((s.skill || "").toLowerCase())
+                                    item
+                                      .toLowerCase()
+                                      .includes((s.skill || "").toLowerCase()),
                                   )
                                   .map((item, idx) => (
                                     <div
                                       key={idx}
-                                      onMouseDown={() => updateSkill(i, "skill", item)}
+                                      onMouseDown={() =>
+                                        updateSkill(i, "skill", item)
+                                      }
                                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                                     >
                                       {item}
@@ -612,10 +725,11 @@ const ProfilePage = () => {
                             onChange={(e) =>
                               updateSkill(i, "experience_years", e.target.value)
                             }
-                            className={`w-32 p-3 rounded-xl border outline-none transition ${isDark
-                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
+                            className={`w-32 p-3 rounded-xl border outline-none transition ${
+                              isDark
+                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                            }`}
                           >
                             <option value="" disabled>
                               Years
@@ -640,7 +754,9 @@ const ProfilePage = () => {
                     </div>
 
                     {/* LANGUAGES */}
-                    <div className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}>
+                    <div
+                      className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}
+                    >
                       <div className="flex justify-between mb-4">
                         <h4 className="font-bold">Languages</h4>
                         <button
@@ -658,7 +774,9 @@ const ProfilePage = () => {
                             <input
                               placeholder="Language"
                               value={l.language || ""}
-                              onChange={(e) => updateLanguage(i, "language", e.target.value)}
+                              onChange={(e) =>
+                                updateLanguage(i, "language", e.target.value)
+                              }
                               onFocus={() => {
                                 let arr = [...showLanguageDropdown];
                                 arr[i] = true;
@@ -671,25 +789,40 @@ const ProfilePage = () => {
                                   setShowLanguageDropdown(arr);
                                 }, 200)
                               }
-                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
+                              className={`w-full p-3 rounded-xl border outline-none transition ${
+                                isDark
                                   ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                                   : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                                }`}
+                              }`}
                             />
 
                             {showLanguageDropdown[i] && (
-                              <div className={`absolute z-40 w-full mt-1 border rounded-xl shadow-lg max-h-40 overflow-y-auto ${isDark ? "bg-[#1E1E1E] border-gray-700" : "bg-white border-gray-100"
-                                }`}>
+                              <div
+                                className={`absolute z-40 w-full mt-1 border rounded-xl shadow-lg max-h-40 overflow-y-auto ${
+                                  isDark
+                                    ? "bg-[#1E1E1E] border-gray-700"
+                                    : "bg-white border-gray-100"
+                                }`}
+                              >
                                 {popularLanguages
                                   .filter((item) =>
-                                    item.toLowerCase().includes((l.language || "").toLowerCase())
+                                    item
+                                      .toLowerCase()
+                                      .includes(
+                                        (l.language || "").toLowerCase(),
+                                      ),
                                   )
                                   .map((item, idx) => (
                                     <div
                                       key={idx}
-                                      onMouseDown={() => updateLanguage(i, "language", item)}
-                                      className={`px-4 py-2 cursor-pointer text-sm ${isDark ? "hover:bg-gray-800 text-gray-300" : "hover:bg-gray-100 text-gray-700"
-                                        }`}
+                                      onMouseDown={() =>
+                                        updateLanguage(i, "language", item)
+                                      }
+                                      className={`px-4 py-2 cursor-pointer text-sm ${
+                                        isDark
+                                          ? "hover:bg-gray-800 text-gray-300"
+                                          : "hover:bg-gray-100 text-gray-700"
+                                      }`}
                                     >
                                       {item}
                                     </div>
@@ -700,11 +833,14 @@ const ProfilePage = () => {
 
                           <select
                             value={l.level || "Beginner"}
-                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
-                            className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
+                            onChange={(e) =>
+                              updateLanguage(i, "level", e.target.value)
+                            }
+                            className={`w-40 p-3 rounded-xl border outline-none transition ${
+                              isDark
                                 ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                                 : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
+                            }`}
                           >
                             <option value="Beginner">Beginner</option>
                             <option value="Intermediate">Intermediate</option>
