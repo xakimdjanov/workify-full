@@ -16,26 +16,14 @@ import { useTheme } from "../../Context/ThemeContext.jsx";
 
 // Animatsiyalar va Mobil moslashuv uchun CSS
 const customStyles = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  .animate-spin-fast {
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  .animate-pulse-custom {
-    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Media 380px dan past bo'lganda kontentni tepaga ko'tarish */
-  @media (max-width: 380px) {
-    .profile-container {
-      padding-bottom: 120px !important; 
-    }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .animate-spin-fast { animation: spin 0.8s linear infinite; }
+  
+  /* 768px dan past bo'lganda (planshet va mobil) pastki paddingni oshiramiz */
+  @media (max-width: 768px) { 
+    .profile-container { 
+      padding-bottom: 100px !important; 
+    } 
   }
 `;
 
