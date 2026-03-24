@@ -278,7 +278,7 @@ function Talents() {
 
                                                             alt={talent.first_name}
 
-                                                            className="w-full h-full rounded-full object-cover grayscale border border-gray-100"
+                                                            className="w-full h-full rounded-full object-cover border border-gray-100"
 
                                                             onError={(e) => {
 

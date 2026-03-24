@@ -70,23 +70,15 @@ function JobCard({
   const salaryMax = job?.salary_max ?? 0;
 
   return (
-    /*
-      FIX: Karta flex flex-col ga o'tdi.
-      Karta ichidagi content flex-1 bilan o'sadi,
-      actions qismi esa shrink-0 bilan har doim pastda ko'rinadi.
-      Telegram Mini App da kartochka qancha uzun bo'lmasin,
-      tugmalar hech qachon kesilib qolmaydi.
-    */
     <div
-      className={`rounded-[28px] border transition-all flex flex-col ${
-        isMatch
-          ? isDark
-            ? "border-blue-900/60 bg-blue-900/10"
-            : "border-blue-200 bg-blue-50/30"
-          : isDark
-            ? "bg-[#1E1E1E] border-gray-800"
-            : "bg-white border-gray-100"
-      }`}
+      className={`rounded-[28px] border transition-all flex flex-col ${isMatch
+        ? isDark
+          ? "border-blue-900/60 bg-blue-900/10"
+          : "border-blue-200 bg-blue-50/30"
+        : isDark
+          ? "bg-[#1E1E1E] border-gray-800"
+          : "bg-white border-gray-100"
+        }`}
     >
       {/* SCROLLABLE CONTENT qismi */}
       <div className="flex-1 p-5 md:p-7">
@@ -97,9 +89,8 @@ function JobCard({
           <div className="flex gap-4">
             <div className="shrink-0">
               <div
-                className={`w-16 h-16 rounded-full overflow-hidden shadow-md ring-2 ${
-                  isDark ? "ring-gray-700 bg-[#252525]" : "ring-gray-200 bg-white"
-                }`}
+                className={`w-16 h-16 rounded-full overflow-hidden shadow-md ring-2 ${isDark ? "ring-gray-700 bg-[#252525]" : "ring-gray-200 bg-white"
+                  }`}
               >
                 <img
                   src={job?.company?.profileimg_url || nonImg}
@@ -112,17 +103,15 @@ function JobCard({
 
             <div className="min-w-0">
               <h3
-                className={`text-lg md:text-xl font-extrabold ${
-                  isDark ? "text-gray-100" : "text-gray-900"
-                }`}
+                className={`text-lg md:text-xl font-extrabold ${isDark ? "text-gray-100" : "text-gray-900"
+                  }`}
               >
                 {companyName}
               </h3>
 
               <p
-                className={`text-sm font-semibold ${
-                  isDark ? "text-gray-400" : "text-gray-500"
-                }`}
+                className={`text-sm font-semibold ${isDark ? "text-gray-400" : "text-gray-500"
+                  }`}
               >
                 {job?.company?.industry || "Computer Software"}
               </p>
@@ -142,9 +131,8 @@ function JobCard({
           {/* RIGHT: location + time + workplace badge */}
           <div className="flex flex-col md:items-end gap-2">
             <div
-              className={`flex items-center gap-2 font-bold text-sm ${
-                isDark ? "text-gray-400" : "text-gray-600"
-              }`}
+              className={`flex items-center gap-2 font-bold text-sm ${isDark ? "text-gray-400" : "text-gray-600"
+                }`}
             >
               <FaCity className="text-blue-400" />
               <span className="truncate max-w-[260px]">{locationText}</span>
@@ -155,11 +143,10 @@ function JobCard({
             </div>
 
             <span
-              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider w-fit ${
-                isDark
-                  ? "bg-blue-900/30 text-blue-300"
-                  : "bg-emerald-50 text-emerald-600"
-              }`}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider w-fit ${isDark
+                ? "bg-blue-900/30 text-blue-300"
+                : "bg-emerald-50 text-emerald-600"
+                }`}
             >
               {workplace}
             </span>
@@ -169,17 +156,15 @@ function JobCard({
         {/* Occupation + Salary */}
         <div className="flex items-center justify-between gap-4 mb-3">
           <h4
-            className={`text-base md:text-lg font-extrabold ${
-              isDark ? "text-gray-100" : "text-gray-900"
-            }`}
+            className={`text-base md:text-lg font-extrabold ${isDark ? "text-gray-100" : "text-gray-900"
+              }`}
           >
             {job?.occupation || "Job title"}
           </h4>
 
           <div
-            className={`text-xl md:text-2xl font-black ${
-              isDark ? "text-blue-300" : "text-slate-900"
-            }`}
+            className={`text-xl md:text-2xl font-black ${isDark ? "text-blue-300" : "text-slate-900"
+              }`}
           >
             ${salaryMin} - {salaryMax}
           </div>
@@ -187,9 +172,8 @@ function JobCard({
 
         {/* DESCRIPTION */}
         <p
-          className={`text-sm leading-relaxed mb-5 line-clamp-2 ${
-            isDark ? "text-gray-400" : "text-gray-600"
-          }`}
+          className={`text-sm leading-relaxed mb-5 line-clamp-2 ${isDark ? "text-gray-400" : "text-gray-600"
+            }`}
         >
           {job?.description || "No description provided..."}
         </p>
@@ -205,11 +189,10 @@ function JobCard({
               skills.map((skill, idx) => (
                 <span
                   key={`${skill}-${idx}`}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold border ${
-                    isDark
-                      ? "bg-[#252525] text-gray-300 border-gray-700"
-                      : "bg-[#F1F3F6] text-gray-700 border-transparent"
-                  }`}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold border ${isDark
+                    ? "bg-[#252525] text-gray-300 border-gray-700"
+                    : "bg-[#F1F3F6] text-gray-700 border-transparent"
+                    }`}
                 >
                   {skill}
                 </span>
@@ -223,21 +206,12 @@ function JobCard({
         </div>
       </div>
 
-      {/*
-        FIX — ACTIONS qismi karta ichida pastga yopishtirilgan.
-        shrink-0: hech qachon siqilmaydi.
-        border-t: contentdan ajratib turadi.
-        Bu yondashuv Telegram Mini App da 100% ishonchli:
-        - Karta qisqa bo'lsa ham — tugmalar ko'rinadi
-        - Karta uzun bo'lsa ham — tugmalar har doim karta pastida
-        - Ekran o'lchami qanday bo'lmasin — responsive ishlaydi
-      */}
+      {/* ACTIONS */}
       <div
-        className={`shrink-0 px-5 md:px-7 py-4 md:py-5 border-t rounded-b-[28px] ${
-          isDark
-            ? "border-gray-800 bg-[#1E1E1E]"
-            : "border-gray-100 bg-white"
-        }`}
+        className={`shrink-0 px-5 md:px-7 py-4 md:py-5 border-t rounded-b-[28px] ${isDark
+          ? "border-gray-800 bg-[#1E1E1E]"
+          : "border-gray-100 bg-white"
+          }`}
         style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
       >
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -245,11 +219,10 @@ function JobCard({
           <div className="flex items-center gap-5">
             <button
               onClick={onLike}
-              className={`transition-all ${
-                reaction === "like"
-                  ? "text-emerald-500 scale-110"
-                  : "text-gray-500 hover:text-emerald-400"
-              }`}
+              className={`transition-all ${reaction === "like"
+                ? "text-emerald-500 scale-110"
+                : "text-gray-500 hover:text-emerald-400"
+                }`}
               aria-label="Like"
               type="button"
             >
@@ -258,11 +231,10 @@ function JobCard({
 
             <button
               onClick={onDislike}
-              className={`transition-all ${
-                reaction === "dislike"
-                  ? "text-rose-500 scale-110"
-                  : "text-gray-500 hover:text-rose-400"
-              }`}
+              className={`transition-all ${reaction === "dislike"
+                ? "text-rose-500 scale-110"
+                : "text-gray-500 hover:text-rose-400"
+                }`}
               aria-label="Dislike"
               type="button"
             >
@@ -275,11 +247,10 @@ function JobCard({
             <button
               onClick={onQuickApply}
               type="button"
-              className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-black text-sm transition-all ${
-                isDark
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-[#163D5C] hover:bg-[#0f2d45]"
-              } text-white`}
+              className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-black text-sm transition-all ${isDark
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-[#163D5C] hover:bg-[#0f2d45]"
+                } text-white`}
             >
               Quick apply
             </button>
@@ -287,11 +258,10 @@ function JobCard({
             <Link to={`/talent/job-details/${job.id}`} className="flex-1 sm:flex-none">
               <button
                 type="button"
-                className={`w-full px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
-                  isDark
-                    ? "border-gray-700 text-gray-200 hover:bg-gray-800"
-                    : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
-                }`}
+                className={`w-full px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${isDark
+                  ? "border-gray-700 text-gray-200 hover:bg-gray-800"
+                  : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
+                  }`}
               >
                 View job post
               </button>
@@ -408,7 +378,7 @@ export default function JobMatches() {
       const q = searchQuery.trim().toLowerCase();
       const matchSearch = q
         ? String(job.occupation || "").toLowerCase().includes(q) ||
-          String(job.company?.company_name || "").toLowerCase().includes(q)
+        String(job.company?.company_name || "").toLowerCase().includes(q)
         : true;
 
       return matchType && matchWorkplace && matchSalary && matchCity && matchSearch;
@@ -443,28 +413,24 @@ export default function JobMatches() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-500 p-4 md:p-8 pb-20 font-sans ${
-        isDark ? "bg-[#121212] text-white" : "bg-[#F9FAFB] text-[#1E293B]"
-      }`}
+      className={`min-h-screen transition-colors duration-500 p-4 md:p-8 pb-20 font-sans ${isDark ? "bg-[#121212] text-white" : "bg-[#F9FAFB] text-[#1E293B]"
+        }`}
     >
       <Toaster position="top-right" toastOptions={toastOptions} />
 
       <div className="max-w-5xl mx-auto">
         {/* FILTER PANEL */}
         <div
-          className={`rounded-3xl shadow-sm border transition-all duration-500 mb-6 overflow-hidden ${
-            isDark ? "bg-[#1E1E1E] border-gray-800" : "bg-white border-gray-100"
-          }`}
+          className={`rounded-3xl shadow-sm border transition-all duration-500 mb-6 overflow-hidden ${isDark ? "bg-[#1E1E1E] border-gray-800" : "bg-white border-gray-100"
+            }`}
         >
           <div
-            className={`p-5 md:p-6 border-b flex justify-between items-center ${
-              isDark ? "border-gray-800" : "border-gray-50"
-            }`}
+            className={`p-5 md:p-6 border-b flex justify-between items-center ${isDark ? "border-gray-800" : "border-gray-50"
+              }`}
           >
             <h2
-              className={`text-xl md:text-2xl font-semibold ${
-                isDark ? "text-blue-400" : "text-[#505151]"
-              }`}
+              className={`text-xl md:text-2xl font-semibold ${isDark ? "text-blue-400" : "text-[#505151]"
+                }`}
             >
               Job Matches
             </h2>
@@ -475,33 +441,29 @@ export default function JobMatches() {
               type="button"
             >
               <FaChevronDown
-                className={`transition-transform duration-300 ${
-                  isExpanded ? "rotate-180" : ""
-                }`}
+                className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
+                  }`}
               />
             </button>
           </div>
 
           <div
-            className={`transition-all duration-500 ease-in-out overflow-hidden ${
-              isExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-            }`}
+            className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+              }`}
           >
             <div className="p-5 md:p-8 space-y-8">
               {/* Employment type */}
               <div>
                 <label
-                  className={`block font-bold mb-3 md:mb-4 ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}
+                  className={`block font-bold mb-3 md:mb-4 ${isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
                 >
                   Employment type
                 </label>
 
                 <div
-                  className={`flex flex-wrap gap-2 md:gap-1 rounded-2xl p-1.5 md:p-1 ${
-                    isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
-                  }`}
+                  className={`flex flex-wrap gap-2 md:gap-1 rounded-2xl p-1.5 md:p-1 ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
+                    }`}
                 >
                   {["Full time", "Part time", "Contract", "Freelance"].map((type) => (
                     <button
@@ -509,14 +471,13 @@ export default function JobMatches() {
                       onClick={() => setEmploymentType((prev) => prev === type ? "" : type)}
                       type="button"
                       className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none whitespace-nowrap
-                        ${
-                          employmentType === type
-                            ? isDark
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "bg-white text-[#163D5C] shadow-sm"
-                            : isDark
-                              ? "text-gray-500 hover:text-gray-300"
-                              : "text-gray-400 hover:text-gray-600"
+                        ${employmentType === type
+                          ? isDark
+                            ? "bg-blue-600 text-white shadow-md"
+                            : "bg-white text-[#163D5C] shadow-sm"
+                          : isDark
+                            ? "text-gray-500 hover:text-gray-300"
+                            : "text-gray-400 hover:text-gray-600"
                         }`}
                     >
                       {type}
@@ -529,17 +490,15 @@ export default function JobMatches() {
                 {/* Workplace type */}
                 <div>
                   <label
-                    className={`block font-bold mb-3 md:mb-4 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
+                    className={`block font-bold mb-3 md:mb-4 ${isDark ? "text-gray-300" : "text-gray-700"
+                      }`}
                   >
                     Workplace type
                   </label>
 
                   <div
-                    className={`flex flex-wrap md:flex-nowrap gap-2 md:gap-1 rounded-2xl p-1.5 md:p-1 ${
-                      isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
-                    }`}
+                    className={`flex flex-wrap md:flex-nowrap gap-2 md:gap-1 rounded-2xl p-1.5 md:p-1 ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
+                      }`}
                   >
                     {["Onsite", "Remote", "Hybrid"].map((type) => (
                       <button
@@ -547,14 +506,13 @@ export default function JobMatches() {
                         onClick={() => setWorkplaceType((prev) => prev === type ? "" : type)}
                         type="button"
                         className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none
-                          ${
-                            workplaceType === type
-                              ? isDark
-                                ? "bg-blue-600 text-white shadow-md"
-                                : "bg-white text-[#163D5C] shadow-sm"
-                              : isDark
-                                ? "text-gray-500 hover:text-gray-300"
-                                : "text-gray-400 hover:text-gray-600"
+                          ${workplaceType === type
+                            ? isDark
+                              ? "bg-blue-600 text-white shadow-md"
+                              : "bg-white text-[#163D5C] shadow-sm"
+                            : isDark
+                              ? "text-gray-500 hover:text-gray-300"
+                              : "text-gray-400 hover:text-gray-600"
                           }`}
                       >
                         {type}
@@ -566,26 +524,23 @@ export default function JobMatches() {
                 {/* Min salary */}
                 <div>
                   <label
-                    className={`block font-bold mb-3 md:mb-4 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
+                    className={`block font-bold mb-3 md:mb-4 ${isDark ? "text-gray-300" : "text-gray-700"
+                      }`}
                   >
                     Minimum salary
                   </label>
 
                   <div className="relative">
                     <FaDollarSign
-                      className={`absolute left-4 top-1/2 -translate-y-1/2 ${
-                        isDark ? "text-blue-400" : "text-[#163D5C]"
-                      }`}
+                      className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-blue-400" : "text-[#163D5C]"
+                        }`}
                     />
                     <input
                       type="number"
-                      className={`w-full pl-12 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-base ${
-                        isDark
-                          ? "bg-[#252525] focus:ring-blue-900"
-                          : "bg-[#F9FAFB] focus:ring-blue-100"
-                      } border-none focus:ring-2 outline-none`}
+                      className={`w-full pl-12 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-base ${isDark
+                        ? "bg-[#252525] focus:ring-blue-900"
+                        : "bg-[#F9FAFB] focus:ring-blue-100"
+                        } border-none focus:ring-2 outline-none`}
                       placeholder="e.g. 500"
                       value={minSalary}
                       onChange={(e) => setMinSalary(e.target.value)}
@@ -602,11 +557,10 @@ export default function JobMatches() {
           <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
           <input
             type="text"
-            className={`w-full pl-16 pr-8 py-4 md:py-5 rounded-2xl shadow-sm text-sm md:text-base ${
-              isDark
-                ? "bg-[#1E1E1E] border-gray-800"
-                : "bg-white border-gray-100"
-            }`}
+            className={`w-full pl-16 pr-8 py-4 md:py-5 rounded-2xl shadow-sm text-sm md:text-base ${isDark
+              ? "bg-[#1E1E1E] border-gray-800"
+              : "bg-white border-gray-100"
+              }`}
             placeholder="Search jobs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

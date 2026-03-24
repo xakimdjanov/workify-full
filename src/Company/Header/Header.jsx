@@ -1,16 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useState, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import { CiUser } from "react-icons/ci";
 import { IoWalletOutline } from "react-icons/io5";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { IoMdArrowDropdown, IoMdLogOut, IoMdPerson } from "react-icons/io";
-import { MdDashboard, MdLanguage } from "react-icons/md";
-import { GoChevronDown } from "react-icons/go";
+import { MdDashboard } from "react-icons/md";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showLang, setShowLang] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -20,7 +18,8 @@ function Header() {
 
   useEffect(() => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    const userInfo = localStorage.getItem("user_info") || sessionStorage.getItem("user_info");
+    const storageUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+    const storageUserInfo = localStorage.getItem("user_info") || sessionStorage.getItem("user_info");
 
     if (token) {
       try {
@@ -28,8 +27,10 @@ function Header() {
         const role = decodedToken.role || decodedToken.role_id;
         setUserRole(role);
 
-        if (userInfo) {
-          const parsedUser = JSON.parse(userInfo);
+        const rawData = storageUser || storageUserInfo;
+
+        if (rawData) {
+          const parsedUser = JSON.parse(rawData);
           setUser({ ...parsedUser, role: role });
         } else {
           setUser({
@@ -37,49 +38,49 @@ function Header() {
             email: decodedToken.email,
             role: role,
             company_name: decodedToken.company_name || null,
-            name: decodedToken.name || decodedToken.full_name || null
+            first_name: decodedToken.first_name || null,
+            last_name: decodedToken.last_name || null,
           });
         }
       } catch (error) {
         console.error("Token decode error:", error);
         handleLogout();
       }
-    } else if (userInfo) {
-      try {
-        const parsedUser = JSON.parse(userInfo);
-        setUser(parsedUser);
-      } catch (e) {
-        console.error("User info parse error", e);
-      }
     }
   }, []);
 
   const getUserDisplayName = () => {
-    if (!user) return '';
-    if (userRole === 'company' || userRole === 'employer') {
-      return user.company_name || user.email || 'Company';
-    } else if (userRole === 'talent' || userRole === 'job_seeker') {
-      return user.name || user.full_name || user.email || 'Talent';
+    if (!user) return "";
+    if (userRole === "company" || user.role === "company") {
+      return user.company_name || "Company";
     }
-    return user.email || 'User';
+    if (userRole === "talent" || userRole === "job_seeker" || user.role === "talent") {
+      const fName = user.first_name || user.firstName;
+      const lName = user.last_name || user.lastName;
+      if (fName) {
+        const initial = lName ? ` ${lName.charAt(0).toUpperCase()}.` : "";
+        return `${fName}${initial}`;
+      }
+      return user.name || user.full_name || user.email || "Talent";
+    }
+    return user.email || "User";
   };
 
   const getUserInitial = () => {
     const name = getUserDisplayName();
-    return name.charAt(0).toUpperCase();
+    return name ? name.charAt(0).toUpperCase() : "U";
   };
 
   const getDashboardLink = () => {
-    if (userRole === 'company' || userRole === 'employer') return "/company/dashboard";
-    if (userRole === 'talent' || userRole === 'job_seeker') return "/talent/dashboard";
+    if (userRole === "company" || userRole === "employer") return "/company/dashboard";
+    if (userRole === "talent" || userRole === "job_seeker") return "/talent/dashboard";
     return "/dashboard";
   };
 
   const getProfileLink = () => {
     if (userRole === 'company' || userRole === 'employer') return "/company/my-company";
-    // BUG FIX: "/talent/my-profile" emas, App.jsx dagi to'g'ri route: "/talent/profile"
     if (userRole === 'talent' || userRole === 'job_seeker') return "/talent/profile";
-    return "/talent/profile";
+    return "/profile";
   };
 
   const handleLogout = () => {
@@ -97,7 +98,6 @@ function Header() {
     <>
       <header className="w-full h-[70px] lg:h-[90px] flex items-center justify-center bg-white shadow-sm sticky top-0 z-50 px-4 md:px-0">
         <div className="w-full md:w-[90%] max-w-[1300px] flex items-center justify-between h-full relative">
-
           <Link to="/" className="text-[#343C44] font-[600] text-[26px] lg:text-[34px] font-sans tracking-tight shrink-0">
             Jobify
           </Link>
@@ -122,24 +122,29 @@ function Header() {
 
                 <div className="relative">
                   <button
-                    onClick={() => { setShowUserMenu(!showUserMenu); setShowLang(false); }}
+                    onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center gap-2 px-3 h-[48px] bg-gray-50 border border-gray-100 rounded-xl font-bold text-[#343C44] hover:bg-white transition-all shadow-sm"
                   >
-                    <div className="w-8 h-8 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-[12px] font-bold">
-                      {getUserInitial()}
+                    <div className="w-8 h-8 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-[12px] font-bold overflow-hidden">
+                      {user.profileimg_url ? (
+                        <img src={user.profileimg_url} alt="profile" className="w-full h-full object-cover" />
+                      ) : (
+                        getUserInitial()
+                      )}
                     </div>
-                    <IoMdArrowDropdown className={`transition-transform duration-300 ${showUserMenu ? 'rotate-180' : ''}`} />
+                    <IoMdArrowDropdown className={`transition-transform duration-300 ${showUserMenu ? "rotate-180" : ""}`} />
                   </button>
 
                   {showUserMenu && (
                     <div className="absolute top-[55px] right-0 w-[220px] bg-white shadow-2xl rounded-2xl py-2 border border-gray-100 animate-in fade-in zoom-in duration-200 z-[60]">
                       <div className="px-4 py-3 border-b border-gray-50 mb-1">
                         <p className="text-[11px] uppercase tracking-wider text-gray-400 font-bold">
-                          {userRole === 'company' ? 'Company Account' : 'Talent Account'}
+                          {userRole === "company" ? "Company Account" : "Talent Account"}
                         </p>
-                        <p className="text-[14px] font-bold truncate text-[#163D5C]">{getUserDisplayName()}</p>
+                        <p className="text-[14px] font-bold truncate text-[#163D5C]">
+                          {getUserDisplayName()}
+                        </p>
                       </div>
-                      {/* Desktop dropdown — getProfileLink() endi to'g'ri /talent/profile qaytaradi */}
                       <Link
                         to={getProfileLink()}
                         onClick={() => setShowUserMenu(false)}
@@ -168,10 +173,7 @@ function Header() {
               </div>
             )}
 
-            <button
-              className="lg:hidden text-[32px] text-[#163D5C] hover:bg-gray-50 rounded-lg p-1"
-              onClick={() => setIsOpen(true)}
-            >
+            <button className="lg:hidden text-[32px] text-[#163D5C] hover:bg-gray-50 rounded-lg p-1" onClick={() => setIsOpen(true)}>
               <HiMenuAlt3 />
             </button>
           </div>
@@ -180,10 +182,7 @@ function Header() {
 
       {/* MOBILE SIDEBAR */}
       <div className={`fixed inset-0 z-[100] transition-all duration-300 ${isOpen ? "visible" : "invisible"}`}>
-        <div
-          className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`}
-          onClick={() => setIsOpen(false)}
-        />
+        <div className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsOpen(false)} />
         <div className={`absolute right-0 top-0 h-full w-[300px] bg-white shadow-2xl transition-transform duration-300 flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
           <div className="p-6 flex items-center justify-between border-b">
             <span className="text-xl font-bold text-[#163D5C]">Menu</span>
@@ -194,26 +193,20 @@ function Header() {
 
           <div className="p-6 flex flex-col gap-6 flex-1 overflow-y-auto">
             {user && (
-              /*
-                BUG FIX: Avatar/ism bloki endi bosiladigan tugma.
-                Bosilganda menyuni yopib, profil sahifasiga o'tadi.
-                Avval bu oddiy div edi — dead click.
-              */
               <button
-                onClick={() => {
-                  setIsOpen(false);
-                  navigate(getProfileLink());
-                }}
+                onClick={() => { setIsOpen(false); navigate(getProfileLink()); }}
                 className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-2xl w-full text-left hover:bg-blue-100/60 transition-colors cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-lg font-bold shadow-sm shrink-0">
-                  {getUserInitial()}
+                <div className="w-12 h-12 rounded-full bg-[#163D5C] text-white flex items-center justify-center text-lg font-bold shadow-sm shrink-0 overflow-hidden">
+                  {user.profileimg_url ? (
+                    <img src={user.profileimg_url} className="w-full h-full object-cover" alt="mobile-profile" />
+                  ) : (
+                    getUserInitial()
+                  )}
                 </div>
                 <div className="overflow-hidden">
                   <p className="font-bold truncate text-[#343C44]">{getUserDisplayName()}</p>
-                  <p className="text-xs text-[#163D5C] font-semibold">
-                    {userRole === 'company' ? 'Verified Company' : 'Verified Talent'}
-                  </p>
+                  <p className="text-xs text-[#163D5C] font-semibold">{userRole === "company" ? "Verified Company" : "Verified Talent"}</p>
                 </div>
               </button>
             )}
@@ -223,23 +216,8 @@ function Header() {
               <MobileNavLink to="/jobs" icon={<IoWalletOutline size={24} />} label="Jobs" onClick={() => setIsOpen(false)} />
               {user && (
                 <>
-                  <MobileNavLink
-                    to={getDashboardLink()}
-                    icon={<MdDashboard size={24} />}
-                    label="Dashboard"
-                    onClick={() => setIsOpen(false)}
-                  />
-                  {/*
-                    BUG FIX: getProfileLink() endi /talent/profile qaytaradi.
-                    App.jsx da bu route mavjud: /talent/profile -> <ProfilePage />
-                    Avval /talent/my-profile edi — bu route App.jsx da yo'q edi.
-                  */}
-                  <MobileNavLink
-                    to={getProfileLink()}
-                    icon={<IoMdPerson size={24} />}
-                    label="Profile"
-                    onClick={() => setIsOpen(false)}
-                  />
+                  <MobileNavLink to={getDashboardLink()} icon={<MdDashboard size={24} />} label="Dashboard" onClick={() => setIsOpen(false)} />
+                  <MobileNavLink to={getProfileLink()} icon={<IoMdPerson size={24} />} label="Profile" onClick={() => setIsOpen(false)} />
                 </>
               )}
             </nav>
@@ -247,20 +225,8 @@ function Header() {
             <div className="mt-auto flex flex-col gap-3">
               {!user ? (
                 <>
-                  <Link
-                    to="/roleSelection"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full h-[54px] flex items-center justify-center border-2 border-[#163D5C] rounded-xl font-bold text-[#163D5C] active:scale-95 transition-all"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    to="/roleSelection"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full h-[54px] flex items-center justify-center bg-[#163D5C] rounded-xl font-bold text-white shadow-lg active:scale-95 transition-all"
-                  >
-                    Join Now
-                  </Link>
+                  <Link to="/roleSelection" onClick={() => setIsOpen(false)} className="w-full h-[54px] flex items-center justify-center border-2 border-[#163D5C] rounded-xl font-bold text-[#163D5C] active:scale-95 transition-all">Sign In</Link>
+                  <Link to="/roleSelection" onClick={() => setIsOpen(false)} className="w-full h-[54px] flex items-center justify-center bg-[#163D5C] rounded-xl font-bold text-white shadow-lg active:scale-95 transition-all">Join Now</Link>
                 </>
               ) : (
                 <button
@@ -275,25 +241,14 @@ function Header() {
         </div>
       </div>
 
-      {/* LOGOUT MODAL */}
       {isLogoutModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] px-4">
           <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full animate-in fade-in zoom-in duration-200">
             <h3 className="text-[20px] font-bold text-[#163D5C] mb-3">Logout</h3>
-            <p className="text-[#343C44] mb-8 text-[15px]">Are you sure you want to log out of your account?</p>
+            <p className="text-[#343C44] mb-8 text-[15px]">Are you sure you want to log out?</p>
             <div className="flex gap-3">
-              <button
-                onClick={() => setIsLogoutModalOpen(false)}
-                className="flex-1 py-3 rounded-2xl font-bold border-2 border-[#163D5C] bg-[#163D5C] text-white hover:bg-white hover:text-[#163D5C] transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex-1 py-3 rounded-2xl font-bold border-2 border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 transition-all"
-              >
-                Yes, Logout
-              </button>
+              <button onClick={() => setIsLogoutModalOpen(false)} className="flex-1 py-3 rounded-2xl font-bold border-2 border-[#163D5C] bg-[#163D5C] text-white hover:bg-white hover:text-[#163D5C] transition-all">Cancel</button>
+              <button onClick={handleLogout} className="flex-1 py-3 rounded-2xl font-bold border-2 border-red-500 bg-red-500 text-white hover:bg-white hover:text-red-500 transition-all">Yes, Logout</button>
             </div>
           </div>
         </div>

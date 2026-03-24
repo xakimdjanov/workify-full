@@ -2,44 +2,56 @@ import React, { useEffect, useState } from "react";
 import { talentApi } from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 import { useTheme } from "../../Context/ThemeContext.jsx";
+import { useNavigate } from "react-router-dom";
+import { FiPlus } from "react-icons/fi";
 
 const Dashboard1 = () => {
   const { settings } = useTheme();
   const isDark = settings.darkMode;
+  const navigate = useNavigate();
 
   const [percent, setPercent] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token || token === "undefined") {
+          setLoading(false);
+          return;
+        }
 
-        const { id } = jwtDecode(token);
-        const res = await talentApi.getById(id);
+        const decoded = jwtDecode(token);
+        const res = await talentApi.getById(decoded.id);
         const data = res.data;
 
-        const values = Object.values(data);
-        const filtered = values.filter(
-          (v) =>
-            typeof v !== "number" &&
-            v !== data.createdAt &&
-            v !== data.updatedAt
-        );
+        let skillsArray = [];
+        if (data.skils) {
+          skillsArray = typeof data.skils === 'string' ? JSON.parse(data.skils) : data.skils;
+        }
 
-        const filled = filtered.filter((v) => {
-          if (v === null || v === "") return false;
+        const skillsCount = Array.isArray(skillsArray) ? skillsArray.length : 0;
+        const hasSeenModal = sessionStorage.getItem("hasSeenSkillModal");
+
+        if (skillsCount < 3 && hasSeenModal !== "true") {
+          setIsModalOpen(true);
+          sessionStorage.setItem("hasSeenSkillModal", "true");
+        }
+
+        const values = Object.values(data);
+        const filtered = values.filter(v => typeof v !== "number" && v !== data.createdAt && v !== data.updatedAt);
+        const filled = filtered.filter(v => {
+          if (!v) return false;
           if (typeof v === "string" && (v === "[]" || v === "{}")) return false;
           if (Array.isArray(v)) return v.length > 0;
-          if (typeof v === "object") return Object.keys(v).length > 0;
           return true;
         });
 
-        const completion = Math.round((filled.length / filtered.length) * 100);
-        setPercent(Math.min(completion, 100));
+        setPercent(Math.round((filled.length / filtered.length) * 100));
       } catch (err) {
-        console.error(err);
+        console.error("Dashboard error:", err);
       } finally {
         setLoading(false);
       }
@@ -48,31 +60,10 @@ const Dashboard1 = () => {
     loadProfile();
   }, []);
 
-  const getProgressColor = (percentage) => {
-    if (percentage <= 30) return "#f7481d";
-    if (percentage <= 70) return "#FB959D";
-    return "#5ABF89";
-  };
-
   const CircleProgress = ({ percentage }) => {
-    const [size, setSize] = useState(100);
-
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth < 400) setSize(90);
-        else if (window.innerWidth < 500) setSize(100);
-        else if (window.innerWidth < 640) setSize(110);
-        else if (window.innerWidth < 768) setSize(120);
-        else if (window.innerWidth < 1024) setSize(130);
-        else setSize(144);
-      };
-
-      handleResize();
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    const strokeWidth = Math.max(12, size * 0.1);
+    // Card kattalashgani uchun aylanani ham sal kattaroq qildik (140 -> 150)
+    const size = 150;
+    const strokeWidth = 14;
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
@@ -84,7 +75,7 @@ const Dashboard1 = () => {
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke={isDark ? "#FFFFFF22" : "#FFFFFF33"}
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth={strokeWidth}
             fill="none"
           />
@@ -92,23 +83,18 @@ const Dashboard1 = () => {
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke={getProgressColor(percentage)}
+            stroke="#5ABF89"
             strokeWidth={strokeWidth}
             fill="none"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            style={{ transition: "stroke-dashoffset 0.6s, stroke 0.4s" }}
+            style={{ transition: "stroke-dashoffset 0.8s ease-in-out" }}
           />
         </svg>
-
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-          <p className="text-xl xs:text-2xl sm:text-3xl font-bold">
-            {percentage}%
-          </p>
-          <p className="text-[10px] xs:text-xs sm:text-sm uppercase tracking-wider mt-1">
-            Complete
-          </p>
+          <span className="text-4xl font-bold tracking-tight">{percentage}%</span>
+          <span className="text-[10px] font-bold uppercase tracking-[2px] mt-1 opacity-90">Complete</span>
         </div>
       </div>
     );
@@ -116,39 +102,60 @@ const Dashboard1 = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[250px] xs:h-[280px] sm:h-[350px]">
-        <div className="animate-spin h-6 w-6 xs:h-7 xs:w-7 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+      <div className="flex items-center justify-center h-[350px]">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="pt-0 lg:pt-6">
+    <div className="w-full flex justify-center lg:justify-start h-full">
+      {/* max-w-[500px] bo'ldi (yana 50px qo'shildi) */}
+      <div className="pt-6 w-full max-w-[500px]">
         <div
-          className={`w-full lg:max-w-[350px] mx-auto lg:mx-0 
-          h-[250px] xs:h-[280px] sm:h-[350px] rounded-xl flex flex-col items-center justify-center px-3 xs:px-4
-          ${
-            isDark
-              ? "bg-gradient-to-b from-[#0F172A] to-[#1E293B]"
-              : "bg-gradient-to-b from-[#163D5C] to-[#6D89CF]"
-          }`}
+          className={`relative overflow-hidden w-full h-[350px] rounded-[24px] 
+          flex flex-col items-center justify-between p-8 text-center
+          ${isDark
+              ? "bg-gradient-to-b from-[#1E293B] to-[#0F172A]"
+              : "bg-gradient-to-b from-[#214D76] to-[#6A89CF]"
+            }`}
         >
-          <h1 className="text-white text-base xs:text-lg sm:text-xl font-bold text-center">
+          {/* Sarlavha */}
+          <h2 className="text-white text-2xl font-bold tracking-wide mt-2">
             Profile completed
-          </h1>
+          </h2>
 
-          <div className="py-4 xs:py-5 sm:py-6 md:py-8">
+          {/* Progress doirasi */}
+          <div className="flex-grow flex items-center justify-center">
             <CircleProgress percentage={percent} />
           </div>
 
-          <p className="text-white/90 text-[11px] xs:text-xs sm:text-sm text-center px-2 xs:px-3 sm:px-4 leading-tight">
-            Complete all parts of your profile and{" "}
-            <br className="hidden xs:block" />
-            increase your chances of finding a job
+          {/* Pastki matn - Kenglikka moslab max-w oshirildi */}
+          <p className="text-white/90 text-[14px] leading-relaxed max-w-[340px] mb-2">
+            Complete all parts of your profile and increase your chances of finding a job
           </p>
         </div>
       </div>
+
+      {/* --- MODAL --- */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
+          <div className={`${isDark ? "bg-[#1E293B] text-white" : "bg-white text-[#1E293B]"} relative w-full max-w-[450px] rounded-[40px] p-10 shadow-2xl text-center`}>
+            <div className={`mx-auto mb-8 flex items-center justify-center w-24 h-24 rounded-full ${isDark ? "bg-emerald-500/20" : "bg-emerald-50"}`}>
+              <FiPlus className="text-[#4AD395] text-5xl" />
+            </div>
+            <h2 className="text-3xl font-extrabold mb-4 italic">Boost Your Profile!</h2>
+            <p className={`text-lg mb-10 leading-relaxed ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+              It looks like you only added a few skills. To attract top companies, we recommend adding more of your expertise!
+            </p>
+            <div className="flex gap-4">
+              <button onClick={() => setIsModalOpen(false)} className={`flex-1 py-4 rounded-2xl font-semibold ${isDark ? "bg-slate-800" : "bg-slate-100"}`}>Maybe Later</button>
+              <button onClick={() => { setIsModalOpen(false); navigate("/talent/profile", { state: { openModal: "skils" } }); }} className="flex-1 py-4 bg-[#4AD395] text-white rounded-2xl font-bold shadow-lg">Add Skills</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

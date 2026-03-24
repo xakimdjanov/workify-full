@@ -1,5 +1,7 @@
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { talentApi } from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -29,6 +31,56 @@ const spinnerStyle = `
   }
 `;
 
+const popularLanguages = [
+  "English",
+  "Uzbek",
+  "Russian",
+  "Turkish",
+  "German",
+  "French",
+  "Spanish",
+  "Chinese",
+  "Japanese",
+  "Korean",
+  "Arabic",
+  "Portuguese",
+  "Italian",
+  "Dutch",
+  "Polish",
+  "Swedish",
+  "Norwegian",
+  "Danish",
+  "Finnish",
+  "Hindi",
+  "Bengali",
+  "Thai",
+  "Vietnamese",
+  "Indonesian",
+  "Greek",
+  "Hebrew",
+  "Persian",
+  "Czech",
+  "Romanian",
+];
+
+const calculateAge = (birthday) => {
+  if (!birthday) return "—";
+  const birthDate = new Date(birthday);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age > 0 ? `${age} years old` : "—";
+};
+
 const skillList = [
   // Frontend
   "HTML5",
@@ -44,7 +96,6 @@ const skillList = [
   "Redux Toolkit",
   "Zustand",
   "React Query",
-
   // Backend
   "Node.js",
   "Express.js",
@@ -59,7 +110,6 @@ const skillList = [
   "Spring Boot",
   "C#",
   ".NET Core",
-
   // Database & Infrastructure
   "PostgreSQL",
   "MongoDB",
@@ -70,19 +120,16 @@ const skillList = [
   "Kubernetes",
   "AWS",
   "Google Cloud",
-
   // Mobile & Desktop
   "React Native",
   "Flutter",
   "Dart",
   "Electron",
-
   // Design & Tools
   "Figma",
   "Adobe XD",
   "Photoshop",
   "Illustrator",
-
   // DevOps & Others
   "Git",
   "GitHub",
@@ -91,7 +138,6 @@ const skillList = [
   "REST API",
   "Unit Testing",
   "Linux",
-
   // Project Manager
   "Scrum",
   "Agile",
@@ -112,9 +158,12 @@ const ProfilePage = () => {
   const [imgUploading, setImgUploading] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [showSkillDropdown, setShowSkillDropdown] = useState([]);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState([]);
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef(null);
+
   const navigate = useNavigate();
+  const location = useLocation(); // Dashboarddan kelgan stateni tutish uchun
 
   const fetchProfile = async () => {
     try {
@@ -136,6 +185,13 @@ const ProfilePage = () => {
 
       setUser(data);
       setFormData({ ...data });
+
+      // Dashboarddan "Profilni to'ldiring" tugmasi bosilganda modalni ochish
+      if (location.state?.openModal) {
+        setActiveModal(location.state.openModal);
+        // Refreshda qayta ochilmasligi uchun stateni tozalaymiz
+        window.history.replaceState({}, document.title);
+      }
     } catch (err) {
       console.error("Yuklashda xatolik:", err);
     } finally {
@@ -158,14 +214,14 @@ const ProfilePage = () => {
 
       await talentApi.update(user.id, fd);
 
-      window.location.reload();
+      // Sahifani to'liq refresh qilmasdan ma'lumotni yangilaymiz
+      await fetchProfile();
     } catch (err) {
       alert("Rasmni saqlashda xatolik yuz berdi");
     } finally {
       setImgUploading(false);
     }
   };
-
 
   const handleUpdate = async (e) => {
     if (e) e.preventDefault();
@@ -208,33 +264,63 @@ const ProfilePage = () => {
       setSaveLoading(false);
     }
   };
+  <ToastContainer />
 
+  // Skill mantiqlari
   const addSkill = () =>
     setFormData({
       ...formData,
       skils: [...formData.skils, { skill: "", experience_years: "" }],
     });
+
   const updateSkill = (index, field, value) => {
+    if (field === "skill" && value !== "") {
+      const isExist = formData.skils.some(
+        (s, i) => s.skill.toLowerCase() === value.toLowerCase() && i !== index
+      );
+      if (isExist) {
+        toast.error("Bu skill allaqachon qo'shilgan!", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDark ? "dark" : "light",
+        });
+        return;
+      }
+    }
+
     const newskils = [...formData.skils];
     newskils[index][field] = value;
     setFormData({ ...formData, skils: newskils });
   };
-  const removeSkill = (index) =>
-    setFormData({
-      ...formData,
-      skils: formData.skils.filter((_, i) => i !== index),
-    });
+
+  //Language mantiqlari
 
   const addLanguage = () =>
     setFormData({
       ...formData,
       language: [...formData.language, { language: "", level: "Beginner" }],
     });
+
   const updateLanguage = (index, field, value) => {
+    if (field === "language" && value !== "") {
+      const isExist = formData.language.some(
+        (l, i) => l.language.toLowerCase() === value.toLowerCase() && i !== index
+      );
+      if (isExist) {
+        toast.error("Bu til allaqachon qo'shilgan!", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDark ? "dark" : "light",
+        });
+        return;
+      }
+    }
+
     const newLang = [...formData.language];
     newLang[index][field] = value;
     setFormData({ ...formData, language: newLang });
   };
+
   const removeLanguage = (index) =>
     setFormData({
       ...formData,
@@ -344,24 +430,12 @@ const ProfilePage = () => {
                 <FiCheckCircle className="text-blue-500" size={18} />
               </h2>
               <p className="text-gray-500 font-medium text-sm mt-1">
-                {user?.occupation} {user?.specialty}
+                {user?.occupation} || {user?.specialty}
               </p>
               <div
                 className={`mt-1 font-bold text-lg ${isDark ? "text-blue-400" : "text-gray-800"}`}
               >
                 ${user?.minimum_salary?.toLocaleString()}.00
-              </div>
-
-              <div className="flex items-center justify-center gap-1 mt-2 text-yellow-400">
-                {[1, 2, 3, 4].map((star) => (
-                  <span key={star}>★</span>
-                ))}
-                <span className={isDark ? "text-gray-700" : "text-gray-300"}>
-                  ★
-                </span>
-                <span className="text-gray-400 text-sm ml-1">
-                  (4.0) | 1K reviews
-                </span>
               </div>
 
               <div
@@ -374,7 +448,7 @@ const ProfilePage = () => {
                 </h3>
                 <InfoRow
                   label="Age"
-                  value={user?.date_of_birth}
+                  value={calculateAge(user?.date_of_birth)}
                   isDark={isDark}
                 />
                 <InfoRow label="City" value={user?.city} isDark={isDark} />
@@ -417,7 +491,7 @@ const ProfilePage = () => {
               </button>
 
               <div className="mb-10">
-                <h3 className="text-md font-bold mb-5">skils</h3>
+                <h3 className="text-md font-bold mb-5">Skills</h3>
                 <div className="flex flex-wrap gap-3">
                   {user?.skils?.length > 0 ? (
                     user.skils.map((s, i) => (
@@ -429,7 +503,7 @@ const ProfilePage = () => {
                       </span>
                     ))
                   ) : (
-                    <p className="text-gray-400 italic">No skils added</p>
+                    <p className="text-gray-400 italic">No skills added</p>
                   )}
                 </div>
               </div>
@@ -476,10 +550,11 @@ const ProfilePage = () => {
                 type="button"
                 onClick={() => navigate("/talent/reactions")}
                 className={`w-full px-8 py-4 rounded-2xl font-black transition-all border shadow-sm flex items-center justify-center gap-3
-      ${isDark
-                    ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
-                    : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
-                  }`}
+      ${
+        isDark
+          ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
+          : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
+      }`}
               >
                 <span className="text-green-500">
                   <FiCheckCircle size={18} />
@@ -627,7 +702,9 @@ const ProfilePage = () => {
                             <input
                               placeholder="Skill"
                               value={s.skill}
-                              onChange={(e) => updateSkill(i, "skill", e.target.value)}
+                              onChange={(e) =>
+                                updateSkill(i, "skill", e.target.value)
+                              }
                               onFocus={() => {
                                 let arr = [...showSkillDropdown];
                                 arr[i] = true;
@@ -640,22 +717,27 @@ const ProfilePage = () => {
                                   setShowSkillDropdown(arr);
                                 }, 200)
                               }
-                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                                }`}
+                              className={`w-full p-3 rounded-xl border outline-none transition ${
+                                isDark
+                                  ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                  : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                             />
 
                             {showSkillDropdown[i] && (
                               <div className="absolute z-40 w-full mt-1 bg-white border rounded-xl shadow-lg max-h-40 overflow-y-auto">
                                 {skillList
                                   .filter((item) =>
-                                    item.toLowerCase().includes((s.skill || "").toLowerCase())
+                                    item
+                                      .toLowerCase()
+                                      .includes((s.skill || "").toLowerCase()),
                                   )
                                   .map((item, idx) => (
                                     <div
                                       key={idx}
-                                      onMouseDown={() => updateSkill(i, "skill", item)}
+                                      onMouseDown={() =>
+                                        updateSkill(i, "skill", item)
+                                      }
                                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
                                     >
                                       {item}
@@ -669,10 +751,11 @@ const ProfilePage = () => {
                             onChange={(e) =>
                               updateSkill(i, "experience_years", e.target.value)
                             }
-                            className={`w-32 p-3 rounded-xl border outline-none transition ${isDark
-                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
+                            className={`w-32 p-3 rounded-xl border outline-none transition ${
+                              isDark
+                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                            }`}
                           >
                             <option value="" disabled>
                               Years
@@ -713,23 +796,70 @@ const ProfilePage = () => {
 
                       {formData.language?.map((l, i) => (
                         <div key={i} className="flex gap-2 mb-2">
-                          <input
-                            placeholder="Language"
-                            value={l.language}
-                            onChange={(e) =>
-                              updateLanguage(i, "language", e.target.value)
-                            }
-                            className={`flex-1 p-3 rounded-xl border outline-none transition ${isDark
-                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                          <div className="relative flex-1">
+                            <input
+                              placeholder="Language"
+                              value={l.language || ""}
+                              onChange={(e) =>
+                                updateLanguage(i, "language", e.target.value)
+                              }
+                              onFocus={() => {
+                                let arr = [...showLanguageDropdown];
+                                arr[i] = true;
+                                setShowLanguageDropdown(arr);
+                              }}
+                              onBlur={() =>
+                                setTimeout(() => {
+                                  let arr = [...showLanguageDropdown];
+                                  arr[i] = false;
+                                  setShowLanguageDropdown(arr);
+                                }, 200)
+                              }
+                              className={`w-full p-3 rounded-xl border outline-none transition ${
+                                isDark
+                                  ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                                  : "bg-gray-50 border-gray-200 focus:border-emerald-500"
                               }`}
-                          />
+                            />
+
+                            {showLanguageDropdown[i] && (
+                              <div
+                                className={`absolute z-40 w-full mt-1 border rounded-xl shadow-lg max-h-40 overflow-y-auto ${
+                                  isDark
+                                    ? "bg-[#1E1E1E] border-gray-700"
+                                    : "bg-white border-gray-100"
+                                }`}
+                              >
+                                {popularLanguages
+                                  .filter((item) =>
+                                    item
+                                      .toLowerCase()
+                                      .includes(
+                                        (l.language || "").toLowerCase(),
+                                      ),
+                                  )
+                                  .map((item, idx) => (
+                                    <div
+                                      key={idx}
+                                      onMouseDown={() =>
+                                        updateLanguage(i, "language", item)
+                                      }
+                                      className={`px-4 py-2 cursor-pointer text-sm ${
+                                        isDark
+                                          ? "hover:bg-gray-800 text-gray-300"
+                                          : "hover:bg-gray-100 text-gray-700"
+                                      }`}
+                                    >
+                                      {item}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
 
                           <select
-                            value={l.level}
-                            onChange={(e) =>
-                              updateLanguage(i, "level", e.target.value)
-                            }
+                            value={l.level || "Beginner"}
+                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
                             className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
                               ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                               : "bg-gray-50 border-gray-200 focus:border-emerald-500"

@@ -123,29 +123,40 @@ const MyCompany = () => {
         localStorage.getItem("token") || sessionStorage.getItem("token");
       if (!token) return setLoading(false);
       const decoded = jwtDecode(token);
-      const companyId = decoded.id;
+      const companyId = String(decoded.id);
+
       let profileData = null;
       try {
         const res = await companyApi.getProfile();
-        profileData = res.data;
+        profileData = res.data?.data || res.data;
       } catch (e) {
         const resById = await companyApi.getById(companyId);
-        profileData = resById.data;
+        profileData = resById.data?.data || resById.data;
       }
+
       if (profileData) {
         setCompany(profileData);
         setFormData({ ...profileData });
       }
+
       const [jobsRes, appsRes] = await Promise.allSettled([
         jobApi.getAll(),
         applicationApi.getAll(),
       ]);
-      const jobsData = jobsRes.status === "fulfilled" ? jobsRes.value.data : [];
-      const appsData = appsRes.status === "fulfilled" ? appsRes.value.data : [];
+
+      const jobsData = jobsRes.status === "fulfilled" ? (jobsRes.value.data?.data || jobsRes.value.data || []) : [];
+      const appsData = appsRes.status === "fulfilled" ? (appsRes.value.data?.data || appsRes.value.data || []) : [];
+
       if (Array.isArray(jobsData)) {
         const myJobs = jobsData.filter(
-          (job) => String(job.company_id) === String(companyId),
+          (job) => String(job.company_id) === companyId
         );
+        
+        const myJobIds = myJobs.map(j => String(j.id));
+        const hiredCount = Array.isArray(appsData) 
+          ? appsData.filter(app => myJobIds.includes(String(app.job_id)) && (app.status === "accepted" || app.status === "hired")).length 
+          : 0;
+
         setStats({
           posted: myJobs.length,
           active: myJobs.filter((j) => j.is_activate || j.is_active).length,
@@ -154,6 +165,7 @@ const MyCompany = () => {
               (app) => app.status === "accepted" || app.status === "hired",
             ).length
             : 0,
+          hired: hiredCount,
         });
       }
     } catch (error) {
@@ -347,18 +359,20 @@ const MyCompany = () => {
 
           {/* Right Content */}
           <div className="space-y-8 overflow-hidden">
-            <div className="bg-gradient-to-br from-[#2B3263] via-[#7B4BA2] to-[#BD4CA1] rounded-[2rem] p-6 sm:p-12 text-white shadow-xl">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-70 mb-8 text-center">
-                Dashboard Statistics
-              </p>
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
-                <StatBox number={stats.active} label="Active" />
-                <div className="border-x border-white/10">
-                  <StatBox number={`+${stats.posted}`} label="Posted" />
-                </div>
-                <StatBox number={stats.hired} label="Hired" />
-              </div>
-            </div>
+ <div className="bg-gradient-to-br from-[#2B3263] via-[#7B4BA2] to-[#BD4CA1] rounded-[2rem] p-8 sm:p-12 text-white shadow-xl relative overflow-hidden">
+  {/* Statlar konteyneri */}
+  <div className="flex flex-row justify-around items-center max-w-2xl mx-auto">
+    {/* Active Stat */}
+    <div className="flex-1 flex justify-center border-r border-white/10">
+      <StatBox number={stats.active} label="Active" />
+    </div>
+
+    {/* Posted Stat */}
+    <div className="flex-1 flex justify-center">
+      <StatBox number={`+${stats.posted}`} label="Posted" />
+    </div>
+  </div>
+</div>
             <div
               className={`w-full rounded-[2rem] p-6 sm:p-10 shadow-sm border relative min-h-[300px] md:min-h-[400px] transition-colors ${isDark ? "bg-[#1E1E1E] border-gray-800" : "bg-white border-gray-100"}`}
             >
@@ -509,6 +523,8 @@ const MyCompany = () => {
     </div>
   );
 };
+
+// --- KOMPONENTLARNI PASTGA KO'CHIRDIM (LEKIN HECH NARSA O'ZGARMADI) ---
 
 const InfoRow = ({ label, value, isLink, isDark }) => (
   <div
