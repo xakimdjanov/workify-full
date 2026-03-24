@@ -14,7 +14,8 @@ import {
 } from "react-icons/fi";
 import { useTheme } from "../../Context/ThemeContext.jsx";
 
-const spinnerStyle = `
+// Animatsiyalar va Mobil moslashuv uchun CSS
+const customStyles = `
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -28,6 +29,13 @@ const spinnerStyle = `
   }
   .animate-pulse-custom {
     animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Media 380px dan past bo'lganda kontentni tepaga ko'tarish */
+  @media (max-width: 380px) {
+    .profile-container {
+      padding-bottom: 120px !important; 
+    }
   }
 `;
 
@@ -63,26 +71,7 @@ const popularLanguages = [
   "Romanian",
 ];
 
-const calculateAge = (birthday) => {
-  if (!birthday) return "—";
-  const birthDate = new Date(birthday);
-  const today = new Date();
-
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birthDate.getDate())
-  ) {
-    age--;
-  }
-
-  return age > 0 ? `${age} years old` : "—";
-};
-
 const skillList = [
-  // Frontend
   "HTML5",
   "CSS3",
   "JavaScript",
@@ -96,7 +85,6 @@ const skillList = [
   "Redux Toolkit",
   "Zustand",
   "React Query",
-  // Backend
   "Node.js",
   "Express.js",
   "NestJS",
@@ -110,7 +98,6 @@ const skillList = [
   "Spring Boot",
   "C#",
   ".NET Core",
-  // Database & Infrastructure
   "PostgreSQL",
   "MongoDB",
   "MySQL",
@@ -120,17 +107,14 @@ const skillList = [
   "Kubernetes",
   "AWS",
   "Google Cloud",
-  // Mobile & Desktop
   "React Native",
   "Flutter",
   "Dart",
   "Electron",
-  // Design & Tools
   "Figma",
   "Adobe XD",
   "Photoshop",
   "Illustrator",
-  // DevOps & Others
   "Git",
   "GitHub",
   "CI/CD",
@@ -138,7 +122,6 @@ const skillList = [
   "REST API",
   "Unit Testing",
   "Linux",
-  // Project Manager
   "Scrum",
   "Agile",
   "Jira",
@@ -147,6 +130,21 @@ const skillList = [
   "Asana",
   "Sprint Planning",
 ];
+
+const calculateAge = (birthday) => {
+  if (!birthday) return "—";
+  const birthDate = new Date(birthday);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age > 0 ? `${age} years old` : "—";
+};
 
 const ProfilePage = () => {
   const { settings } = useTheme();
@@ -163,7 +161,7 @@ const ProfilePage = () => {
   const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
-  const location = useLocation(); // Dashboarddan kelgan stateni tutish uchun
+  const location = useLocation();
 
   const fetchProfile = async () => {
     try {
@@ -186,10 +184,8 @@ const ProfilePage = () => {
       setUser(data);
       setFormData({ ...data });
 
-      // Dashboarddan "Profilni to'ldiring" tugmasi bosilganda modalni ochish
       if (location.state?.openModal) {
         setActiveModal(location.state.openModal);
-        // Refreshda qayta ochilmasligi uchun stateni tozalaymiz
         window.history.replaceState({}, document.title);
       }
     } catch (err) {
@@ -206,15 +202,11 @@ const ProfilePage = () => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setImgUploading(true);
     try {
       const fd = new FormData();
       fd.append("image", file);
-
       await talentApi.update(user.id, fd);
-
-      // Sahifani to'liq refresh qilmasdan ma'lumotni yangilaymiz
       await fetchProfile();
     } catch (err) {
       alert("Rasmni saqlashda xatolik yuz berdi");
@@ -226,7 +218,6 @@ const ProfilePage = () => {
   const handleUpdate = async (e) => {
     if (e) e.preventDefault();
     setSaveLoading(true);
-
     try {
       const fd = new FormData();
       const fields = [
@@ -272,7 +263,6 @@ const ProfilePage = () => {
       ...formData,
       skils: [...formData.skils, { skill: "", experience_years: "" }],
     });
-
   const updateSkill = (index, field, value) => {
     if (field === "skill" && value !== "") {
       const isExist = formData.skils.some(
@@ -292,6 +282,11 @@ const ProfilePage = () => {
     newskils[index][field] = value;
     setFormData({ ...formData, skils: newskils });
   };
+  const removeSkill = (index) =>
+    setFormData({
+      ...formData,
+      skils: formData.skils.filter((_, i) => i !== index),
+    });
 
   //Language mantiqlari
 
@@ -300,7 +295,6 @@ const ProfilePage = () => {
       ...formData,
       language: [...formData.language, { language: "", level: "Beginner" }],
     });
-
   const updateLanguage = (index, field, value) => {
     if (field === "language" && value !== "") {
       const isExist = formData.language.some(
@@ -320,7 +314,6 @@ const ProfilePage = () => {
     newLang[index][field] = value;
     setFormData({ ...formData, language: newLang });
   };
-
   const removeLanguage = (index) =>
     setFormData({
       ...formData,
@@ -331,10 +324,8 @@ const ProfilePage = () => {
     if (!email || typeof email !== "string") return "—";
     const atIndex = email.indexOf("@");
     if (atIndex === -1) return email;
-
     const name = email.slice(0, atIndex);
     const domain = email.slice(atIndex);
-
     const shortName = name.length > max ? name.slice(0, max) + "..." : name;
     return shortName + domain;
   };
@@ -344,7 +335,7 @@ const ProfilePage = () => {
       <div
         className={`min-h-screen p-8 max-w-6xl mx-auto animate-pulse-custom ${isDark ? "bg-[#121212]" : "bg-[#F8F9FB]"}`}
       >
-        <style>{spinnerStyle}</style>
+        <style>{customStyles}</style>
         <div
           className={`h-16 rounded-xl mb-6 ${isDark ? "bg-[#1E1E1E]" : "bg-white"}`}
         ></div>
@@ -367,15 +358,15 @@ const ProfilePage = () => {
 
   return (
     <div
-      className={`min-h-screen p-4 md:p-8 font-sans transition-colors duration-500 ${isDark ? "bg-[#121212] text-white" : "bg-[#F8F9FB] text-[#333]"}`}
+      className={`min-h-screen p-4 md:p-8 pb-6  profile-container font-sans transition-colors duration-500 ${isDark ? "bg-[#121212] text-white" : "bg-[#F8F9FB] text-[#333]"}`}
     >
-      <style>{spinnerStyle}</style>
+      <style>{customStyles}</style>
       <div className="max-w-6xl mx-auto">
         <div
           className={`rounded-xl p-4 mb-6 shadow-sm flex justify-between items-center border ${isDark ? "bg-[#1E1E1E] border-gray-800" : "bg-white border-gray-100"}`}
         >
           <h1
-            className={`text-xl md:text-2xl font-semibold ${isDark ? "text-gray-200" : "text-{#505151"}`}
+            className={`text-xl md:text-2xl font-semibold ${isDark ? "text-gray-200" : "text-[#505151]"}`}
           >
             My profile
           </h1>
@@ -426,7 +417,7 @@ const ProfilePage = () => {
               </div>
 
               <h2 className="mt-4 text-xl font-bold flex items-center justify-center gap-2">
-                {user?.first_name} {user?.last_name}
+                {user?.first_name} {user?.last_name}{" "}
                 <FiCheckCircle className="text-blue-500" size={18} />
               </h2>
               <p className="text-gray-500 font-medium text-sm mt-1">
@@ -489,7 +480,6 @@ const ProfilePage = () => {
               >
                 <FiEdit2 size={18} />
               </button>
-
               <div className="mb-10">
                 <h3 className="text-md font-bold mb-5">Skills</h3>
                 <div className="flex flex-wrap gap-3">
@@ -545,23 +535,15 @@ const ProfilePage = () => {
                 {user?.about || "Please tell us something about yourself..."}
               </p>
             </div>
-            <div className="mt-6">
-              <button
-                type="button"
-                onClick={() => navigate("/talent/reactions")}
-                className={`w-full px-8 py-4 rounded-2xl font-black transition-all border shadow-sm flex items-center justify-center gap-3
-      ${
-        isDark
-          ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]"
-          : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"
-      }`}
-              >
-                <span className="text-green-500">
-                  <FiCheckCircle size={18} />
-                </span>
-                View Likes / Dislikes
-              </button>
-            </div>
+            <button
+              onClick={() => navigate("/talent/reactions")}
+              className={`w-full px-8 py-4 rounded-2xl font-black transition-all border shadow-sm flex items-center justify-center gap-3 ${isDark ? "bg-[#1E1E1E] border-gray-800 text-gray-200 hover:bg-[#252525]" : "bg-white border-gray-100 text-[#163D5C] hover:bg-gray-50"}`}
+            >
+              <span className="text-green-500">
+                <FiCheckCircle size={18} />
+              </span>{" "}
+              View Likes / Dislikes
+            </button>
           </div>
         </div>
       </div>
@@ -584,106 +566,103 @@ const ProfilePage = () => {
                 </button>
               </div>
 
-              {activeModal === "personal" && (
-                <div className="flex flex-col items-center mb-8 pb-6 border-b border-gray-100 dark:border-gray-800">
-                  <div
-                    className="relative group cursor-pointer"
-                    onClick={() => fileInputRef.current.click()}
-                  >
-                    <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-emerald-500 p-1">
-                      {imgUploading ? (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin-fast"></div>
-                        </div>
-                      ) : (
-                        <img
-                          src={
-                            user?.image ||
-                            "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
-                          }
-                          className="w-full h-full object-cover rounded-full"
-                          alt="Avatar"
-                        />
-                      )}
-                    </div>
-                    <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                      <FiCamera className="text-white" size={24} />
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-2 font-medium">
-                    Click to change photo
-                  </p>
-                </div>
-              )}
-
               <form onSubmit={handleUpdate} className="space-y-6">
                 {activeModal === "personal" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InputGroup
-                      label="First Name"
-                      value={formData.first_name}
-                      onChange={(v) =>
-                        setFormData({ ...formData, first_name: v })
-                      }
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="Last Name"
-                      value={formData.last_name}
-                      onChange={(v) =>
-                        setFormData({ ...formData, last_name: v })
-                      }
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="Occupation"
-                      value={formData.occupation}
-                      onChange={(v) =>
-                        setFormData({ ...formData, occupation: v })
-                      }
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="Specialty"
-                      value={formData.specialty}
-                      onChange={(v) =>
-                        setFormData({ ...formData, specialty: v })
-                      }
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="Country"
-                      value={formData.country}
-                      onChange={(v) => setFormData({ ...formData, country: v })}
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="City"
-                      value={formData.city}
-                      onChange={(v) => setFormData({ ...formData, city: v })}
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="Phone"
-                      value={formData.phone}
-                      onChange={(v) => setFormData({ ...formData, phone: v })}
-                      isDark={isDark}
-                    />
-                    <InputGroup
-                      label="Salary ($)"
-                      type="number"
-                      value={formData.minimum_salary}
-                      onChange={(v) =>
-                        setFormData({ ...formData, minimum_salary: v })
-                      }
-                      isDark={isDark}
-                    />
-                  </div>
+                  <>
+                    <div className="flex flex-col items-center mb-8 pb-2 border-b border-gray-100 dark:border-gray-800">
+                      <div
+                        className="relative group cursor-pointer"
+                        onClick={() => fileInputRef.current.click()}
+                      >
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-emerald-500 p-1">
+                          {imgUploading ? (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin-fast"></div>
+                            </div>
+                          ) : (
+                            <img
+                              src={
+                                user?.image ||
+                                "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                              }
+                              className="w-full h-full object-cover rounded-full"
+                              alt="Avatar"
+                            />
+                          )}
+                        </div>
+                        <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                          <FiCamera className="text-white" size={24} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <InputGroup
+                        label="First Name"
+                        value={formData.first_name}
+                        onChange={(v) =>
+                          setFormData({ ...formData, first_name: v })
+                        }
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="Last Name"
+                        value={formData.last_name}
+                        onChange={(v) =>
+                          setFormData({ ...formData, last_name: v })
+                        }
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="Occupation"
+                        value={formData.occupation}
+                        onChange={(v) =>
+                          setFormData({ ...formData, occupation: v })
+                        }
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="Specialty"
+                        value={formData.specialty}
+                        onChange={(v) =>
+                          setFormData({ ...formData, specialty: v })
+                        }
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="Country"
+                        value={formData.country}
+                        onChange={(v) =>
+                          setFormData({ ...formData, country: v })
+                        }
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="City"
+                        value={formData.city}
+                        onChange={(v) => setFormData({ ...formData, city: v })}
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="Phone"
+                        value={formData.phone}
+                        onChange={(v) => setFormData({ ...formData, phone: v })}
+                        isDark={isDark}
+                      />
+                      <InputGroup
+                        label="Salary ($)"
+                        type="number"
+                        value={formData.minimum_salary}
+                        onChange={(v) =>
+                          setFormData({ ...formData, minimum_salary: v })
+                        }
+                        isDark={isDark}
+                      />
+                    </div>
+                  </>
                 )}
 
                 {activeModal === "skils" && (
                   <div className="space-y-8">
-                    {/* SKILLS */}
                     <div>
                       <div className="flex justify-between mb-4">
                         <h4 className="font-bold">Skills</h4>
@@ -695,7 +674,6 @@ const ProfilePage = () => {
                           <FiPlus /> Add
                         </button>
                       </div>
-
                       {formData.skils?.map((s, i) => (
                         <div key={i} className="flex gap-2 mb-2">
                           <div className="relative flex-1">
@@ -717,13 +695,8 @@ const ProfilePage = () => {
                                   setShowSkillDropdown(arr);
                                 }, 200)
                               }
-                              className={`w-full p-3 rounded-xl border outline-none transition ${
-                                isDark
-                                  ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                  : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
+                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500" : "bg-gray-50 border-gray-200 focus:border-emerald-500"}`}
                             />
-
                             {showSkillDropdown[i] && (
                               <div className="absolute z-40 w-full mt-1 bg-white border rounded-xl shadow-lg max-h-40 overflow-y-auto">
                                 {skillList
@@ -738,7 +711,7 @@ const ProfilePage = () => {
                                       onMouseDown={() =>
                                         updateSkill(i, "skill", item)
                                       }
-                                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
                                     >
                                       {item}
                                     </div>
@@ -751,23 +724,24 @@ const ProfilePage = () => {
                             onChange={(e) =>
                               updateSkill(i, "experience_years", e.target.value)
                             }
-                            className={`w-32 p-3 rounded-xl border outline-none transition ${
-                              isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                            }`}
+                            className={`w-32 p-3 rounded-xl border outline-none transition ${isDark ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500" : "bg-gray-50 border-gray-200 focus:border-emerald-500"}`}
                           >
                             <option value="" disabled>
                               Years
                             </option>
-                            <option value="1 year">1 year</option>
-                            <option value="2 years">2 years</option>
-                            <option value="3 years">3 years</option>
-                            <option value="4 years">4 years</option>
-                            <option value="5 years">5 years</option>
-                            <option value="6+ years">6+ years</option>
+                            {[
+                              "1 year",
+                              "2 years",
+                              "3 years",
+                              "4 years",
+                              "5 years",
+                              "6+ years",
+                            ].map((y) => (
+                              <option key={y} value={y}>
+                                {y}
+                              </option>
+                            ))}
                           </select>
-
                           <button
                             type="button"
                             onClick={() => removeSkill(i)}
@@ -778,8 +752,6 @@ const ProfilePage = () => {
                         </div>
                       ))}
                     </div>
-
-                    {/* LANGUAGES */}
                     <div
                       className={`pt-6 border-t ${isDark ? "border-gray-800" : "border-gray-100"}`}
                     >
@@ -793,7 +765,6 @@ const ProfilePage = () => {
                           <FiPlus /> Add
                         </button>
                       </div>
-
                       {formData.language?.map((l, i) => (
                         <div key={i} className="flex gap-2 mb-2">
                           <div className="relative flex-1">
@@ -815,20 +786,11 @@ const ProfilePage = () => {
                                   setShowLanguageDropdown(arr);
                                 }, 200)
                               }
-                              className={`w-full p-3 rounded-xl border outline-none transition ${
-                                isDark
-                                  ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                  : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                              }`}
+                              className={`w-full p-3 rounded-xl border outline-none transition ${isDark ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500" : "bg-gray-50 border-gray-200 focus:border-emerald-500"}`}
                             />
-
                             {showLanguageDropdown[i] && (
                               <div
-                                className={`absolute z-40 w-full mt-1 border rounded-xl shadow-lg max-h-40 overflow-y-auto ${
-                                  isDark
-                                    ? "bg-[#1E1E1E] border-gray-700"
-                                    : "bg-white border-gray-100"
-                                }`}
+                                className={`absolute z-40 w-full mt-1 border rounded-xl shadow-lg max-h-40 overflow-y-auto ${isDark ? "bg-[#1E1E1E] border-gray-700" : "bg-white border-gray-100"}`}
                               >
                                 {popularLanguages
                                   .filter((item) =>
@@ -844,11 +806,7 @@ const ProfilePage = () => {
                                       onMouseDown={() =>
                                         updateLanguage(i, "language", item)
                                       }
-                                      className={`px-4 py-2 cursor-pointer text-sm ${
-                                        isDark
-                                          ? "hover:bg-gray-800 text-gray-300"
-                                          : "hover:bg-gray-100 text-gray-700"
-                                      }`}
+                                      className={`px-4 py-2 cursor-pointer text-sm ${isDark ? "hover:bg-gray-800 text-gray-300" : "hover:bg-gray-100 text-gray-700"}`}
                                     >
                                       {item}
                                     </div>
@@ -856,21 +814,29 @@ const ProfilePage = () => {
                               </div>
                             )}
                           </div>
-
                           <select
                             value={l.level || "Beginner"}
+                            onChange={(e) =>
+                              updateLanguage(i, "level", e.target.value)
+                            }
+                            className={`w-40 p-3 rounded-xl border outline-none transition ${isDark ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500" : "bg-gray-50 border-gray-200 focus:border-emerald-500"}`}
                             onChange={(e) => updateLanguage(i, "level", e.target.value)}
                             className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
                               ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
                               : "bg-gray-50 border-gray-200 focus:border-emerald-500"
                               }`}
                           >
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                            <option value="Native">Native</option>
+                            {[
+                              "Beginner",
+                              "Intermediate",
+                              "Advanced",
+                              "Native",
+                            ].map((lv) => (
+                              <option key={lv} value={lv}>
+                                {lv}
+                              </option>
+                            ))}
                           </select>
-
                           <button
                             type="button"
                             onClick={() => removeLanguage(i)}

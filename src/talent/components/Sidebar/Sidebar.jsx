@@ -93,12 +93,12 @@ const Sidebar = () => {
             <>
               <img
                 src={user?.image || userPng}
-              alt="avatar"
-              onError={(e) => {
-                e.currentTarget.src = userPng;
-              }}
-              className={`w-11 h-11 rounded-full object-cover border shadow-sm ${isDark ? "border-gray-700" : "border-gray-100"
-                }`}
+                alt="avatar"
+                onError={(e) => {
+                  e.currentTarget.src = userPng;
+                }}
+                className={`w-11 h-11 rounded-full object-cover border shadow-sm ${isDark ? "border-gray-700" : "border-gray-100"
+                  }`}
               />
 
               <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -168,8 +168,7 @@ const Sidebar = () => {
           <div className="hidden md:block md:mt-auto md:pt-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className={`flex flex-col md:flex-row items-center gap-1 md:gap-4 px-3 md:px-6 py-2 md:py-[14px] rounded-xl md:rounded-[14px] transition-all duration-200 text-[10px] md:text-[16px] font-bold text-red-500 w-full ${isDark ? "hover:bg-red-900/20" : "hover:bg-red-50"
-                }`}
+              className={`flex flex-col md:flex-row items-center gap-1 md:gap-4 px-3 md:px-6 py-2 md:py-[14px] rounded-xl md:rounded-[14px] transition-all duration-200 text-[10px] md:text-[16px] font-bold text-red-500 w-full bg-transparent`}
             >
               <span className="text-[22px] md:text-[24px]">
                 <HiOutlineLogout />
@@ -228,12 +227,12 @@ const MenuItem = ({ to, icon, label, badge, isDark }) => (
       px-2 md:px-6 py-2 md:py-[14px]
       rounded-xl md:rounded-[14px] transition-all duration-200
       text-[9px] md:text-[16px] font-bold
-      relative group flex-1 md:w-full
+      relative group flex-1 md:w-full bg-transparent
       ${isActive
-        ? "bg-[#163853] text-white shadow-md"
+        ? isDark ? "text-[#5cc992]" : "text-[#163853]"
         : isDark
-          ? "text-gray-500 hover:bg-gray-800 hover:text-gray-300"
-          : "text-[#a0a8b1] hover:bg-gray-50 hover:text-[#94a3b8]"
+          ? "text-gray-500 hover:text-gray-300"
+          : "text-[#a0a8b1] hover:text-[#94a3b8]"
       }
     `}
   >

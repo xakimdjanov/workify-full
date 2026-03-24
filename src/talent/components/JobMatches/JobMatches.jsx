@@ -128,12 +128,10 @@ function JobCard({
             >
               {job?.company?.industry || "Computer Software"}
             </p>
-
-            {/* rating mock */}
           </div>
         </div>
 
-        {/* RIGHT: location + time under it + workplace badge */}
+        {/* RIGHT: location + time */}
         <div className="flex flex-col md:items-end gap-2">
           <div
             className={`flex items-center gap-2 font-bold text-sm ${
@@ -144,7 +142,6 @@ function JobCard({
             <span className="truncate max-w-[260px]">{locationText}</span>
           </div>
 
-          {/* time under location */}
           <div
             className={`text-xs font-bold ${
               isDark ? "text-gray-500" : "text-gray-400"
@@ -165,8 +162,8 @@ function JobCard({
         </div>
       </div>
 
-      {/* Occupation + Salary in one row with between */}
-      <div className="flex items-center justify-between gap-4 mb-3">
+      {/* Occupation + Salary */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
         <h4
           className={`text-base md:text-lg font-extrabold ${
             isDark ? "text-gray-100" : "text-gray-900"
@@ -229,45 +226,49 @@ function JobCard({
         </div>
       </div>
 
-      {/* ACTIONS */}
+      {/* ACTIONS - Fixed for small screens */}
       <div
-        className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-5 border-t ${
+        className={`flex flex-col gap-4 pt-5 border-t ${
           isDark ? "border-gray-800" : "border-gray-100"
         }`}
       >
-        <div className="flex items-center gap-5">
-          <button
-            onClick={onLike}
-            className={`transition-all ${
-              reaction === "like"
-                ? "text-emerald-500 scale-110"
-                : "text-gray-500 hover:text-emerald-400"
-            }`}
-            aria-label="Like"
-            type="button"
-          >
-            <FaThumbsUp size={22} />
-          </button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-5">
+            <button
+              onClick={onLike}
+              className={`transition-all ${
+                reaction === "like"
+                  ? "text-emerald-500 scale-110"
+                  : "text-gray-500 hover:text-emerald-400"
+              }`}
+              aria-label="Like"
+              type="button"
+            >
+              <FaThumbsUp size={22} />
+            </button>
 
-          <button
-            onClick={onDislike}
-            className={`transition-all ${
-              reaction === "dislike"
-                ? "text-rose-500 scale-110"
-                : "text-gray-500 hover:text-rose-400"
-            }`}
-            aria-label="Dislike"
-            type="button"
-          >
-            <FaThumbsDown size={22} />
-          </button>
+            <button
+              onClick={onDislike}
+              className={`transition-all ${
+                reaction === "dislike"
+                  ? "text-rose-500 scale-110"
+                  : "text-gray-500 hover:text-rose-400"
+              }`}
+              aria-label="Dislike"
+              type="button"
+            >
+              <FaThumbsDown size={22} />
+            </button>
+          </div>
+          {/* Mobile padding info for small screens inside card if needed */}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        {/* Buttons: stacked on very small screens, row on sm+ */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full">
           <button
             onClick={onQuickApply}
             type="button"
-            className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-black text-sm transition-all ${
+            className={`w-full sm:flex-1 px-4 py-4 rounded-2xl font-black text-sm transition-all ${
               isDark
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-[#163D5C] hover:bg-[#0f2d45]"
@@ -276,10 +277,13 @@ function JobCard({
             Quick apply
           </button>
 
-          <Link to={`/talent/job-details/${job.id}`}>
+          <Link
+            to={`/talent/job-details/${job.id}`}
+            className="w-full sm:flex-1"
+          >
             <button
               type="button"
-              className={`flex-1 sm:flex-none px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
+              className={`w-full px-4 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
                 isDark
                   ? "border-gray-700 text-gray-200 hover:bg-gray-800"
                   : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
@@ -327,7 +331,6 @@ export default function JobMatches() {
 
   useEffect(() => {
     let isMounted = true;
-
     (async () => {
       try {
         setLoading(true);
@@ -337,12 +340,9 @@ export default function JobMatches() {
           setUserskils([]);
           return;
         }
-
         const decoded = jwtDecode(token);
-
         const userRes = await talentApi.getById(decoded.id);
         const lowerUserskils = normalizeUserSkills(userRes.data?.skils);
-
         const jobRes = await jobApi.getAll();
         const jobs = jobRes.data || [];
 
@@ -378,7 +378,6 @@ export default function JobMatches() {
         if (isMounted) setLoading(false);
       }
     })();
-
     return () => {
       isMounted = false;
     };
@@ -386,24 +385,17 @@ export default function JobMatches() {
 
   const filteredJobs = useMemo(() => {
     const typeFilter = normalizeJobTypeFilter(employmentType);
-
     return allJobs.filter((job) => {
       const matchType = typeFilter ? job.job_type === typeFilter : true;
       const matchWorkplace = workplaceType
         ? job.workplace_type === workplaceType
         : true;
-
-      // YANGI MANTIQ SHU YERDA:
       let matchSalary = true;
       if (minSalary !== "") {
         const min = Number(minSalary);
-        if (min === 0) {
-          matchSalary = false; // Agar 0 yozilsa, hech qaysi ish ko'rinmaydi
-        } else {
-          matchSalary = Number(job.salary_max ?? 0) >= min;
-        }
+        if (min === 0) matchSalary = false;
+        else matchSalary = Number(job.salary_max ?? 0) >= min;
       }
-
       const matchCity = city
         ? String(job.location || "")
             .toLowerCase()
@@ -418,12 +410,12 @@ export default function JobMatches() {
             .toLowerCase()
             .includes(q)
         : true;
-
       return (
         matchType && matchWorkplace && matchSalary && matchCity && matchSearch
       );
     });
   }, [allJobs, employmentType, workplaceType, minSalary, city, searchQuery]);
+
   const handleLike = useCallback(
     (jobId) => {
       const current = getReaction(jobId);
@@ -454,7 +446,7 @@ export default function JobMatches() {
     <div
       className={`min-h-screen transition-colors duration-500 p-4 md:p-8 font-sans ${
         isDark ? "bg-[#121212] text-white" : "bg-[#F9FAFB] text-[#1E293B]"
-      }`}
+      } pb-24 md:pb-8`} // PB-24: Pastki panel uchun joy (350px-380px uchun)
     >
       <Toaster position="top-right" toastOptions={toastOptions} />
 
@@ -471,46 +463,35 @@ export default function JobMatches() {
             }`}
           >
             <h2
-              className={`text-xl md:text-2xl font-semibold ${
-                isDark ? "text-blue-400" : "text-[#505151]"
-              }`}
+              className={`text-xl md:text-2xl font-semibold ${isDark ? "text-blue-400" : "text-[#505151]"}`}
             >
               Job Matches
             </h2>
-
             <button
               onClick={() => setIsExpanded((v) => !v)}
               className="p-2"
               type="button"
             >
               <FaChevronDown
-                className={`transition-transform duration-300 ${
-                  isExpanded ? "rotate-180" : ""
-                }`}
+                className={`transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
               />
             </button>
           </div>
 
           <div
             className={`transition-all duration-500 ease-in-out overflow-hidden ${
-              isExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+              isExpanded ? "max-h-[1200px] opacity-100" : "max-h-0 opacity-0"
             }`}
           >
             <div className="p-5 md:p-8 space-y-8">
-              {/* Employment */}
               <div>
                 <label
-                  className={`block font-bold mb-3 md:mb-4 ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}
+                  className={`block font-bold mb-3 md:mb-4 ${isDark ? "text-gray-300" : "text-gray-700"}`}
                 >
                   Employment type
                 </label>
-
                 <div
-                  className={`flex flex-wrap gap-2 md:gap-1 rounded-2xl p-1.5 md:p-1 ${
-                    isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
-                  }`}
+                  className={`flex flex-wrap gap-2 rounded-2xl p-1.5 ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"}`}
                 >
                   {["Full time", "Part time", "Contract", "Freelance"].map(
                     (type) => (
@@ -522,7 +503,7 @@ export default function JobMatches() {
                           )
                         }
                         type="button"
-                        className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none whitespace-nowrap
+                        className={`px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all flex-1 min-w-[100px]
                         ${
                           employmentType === type
                             ? isDark
@@ -540,21 +521,15 @@ export default function JobMatches() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                {/* Workplace */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label
-                    className={`block font-bold mb-3 md:mb-4 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
+                    className={`block font-bold mb-3 ${isDark ? "text-gray-300" : "text-gray-700"}`}
                   >
                     Workplace type
                   </label>
-
                   <div
-                    className={`flex flex-wrap md:flex-nowrap gap-2 md:gap-1 rounded-2xl p-1.5 md:p-1 ${
-                      isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"
-                    }`}
+                    className={`flex flex-wrap gap-2 rounded-2xl p-1.5 ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"}`}
                   >
                     {["Onsite", "Remote", "Hybrid"].map((type) => (
                       <button
@@ -565,15 +540,15 @@ export default function JobMatches() {
                           )
                         }
                         type="button"
-                        className={`px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-bold text-sm md:text-base transition-all flex-1 md:flex-none
+                        className={`px-4 py-2.5 rounded-xl font-bold text-xs flex-1
                           ${
                             workplaceType === type
                               ? isDark
-                                ? "bg-blue-600 text-white shadow-md"
+                                ? "bg-blue-600 text-white"
                                 : "bg-white text-[#163D5C] shadow-sm"
                               : isDark
-                                ? "text-gray-500 hover:text-gray-300"
-                                : "text-gray-400 hover:text-gray-600"
+                                ? "text-gray-500"
+                                : "text-gray-400"
                           }`}
                       >
                         {type}
@@ -581,30 +556,19 @@ export default function JobMatches() {
                     ))}
                   </div>
                 </div>
-
-                {/* Min salary */}
                 <div>
                   <label
-                    className={`block font-bold mb-3 md:mb-4 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
+                    className={`block font-bold mb-3 ${isDark ? "text-gray-300" : "text-gray-700"}`}
                   >
                     Minimum salary
                   </label>
-
                   <div className="relative">
                     <FaDollarSign
-                      className={`absolute left-4 top-1/2 -translate-y-1/2 ${
-                        isDark ? "text-blue-400" : "text-[#163D5C]"
-                      }`}
+                      className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-blue-400" : "text-[#163D5C]"}`}
                     />
                     <input
                       type="number"
-                      className={`w-full pl-12 py-3 md:py-4 rounded-2xl font-bold text-sm md:text-base ${
-                        isDark
-                          ? "bg-[#252525] focus:ring-blue-900"
-                          : "bg-[#F9FAFB] focus:ring-blue-100"
-                      } border-none focus:ring-2 outline-none`}
+                      className={`w-full pl-12 py-3 rounded-2xl font-bold text-sm ${isDark ? "bg-[#252525]" : "bg-[#F9FAFB]"} outline-none`}
                       placeholder="e.g. 500"
                       value={minSalary}
                       onChange={(e) => setMinSalary(e.target.value)}
@@ -617,15 +581,11 @@ export default function JobMatches() {
         </div>
 
         {/* SEARCH */}
-        <div className="relative mb-8 md:mb-10">
-          <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+        <div className="relative mb-8">
+          <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            className={`w-full pl-16 pr-8 py-4 md:py-5 rounded-2xl shadow-sm text-sm md:text-base ${
-              isDark
-                ? "bg-[#1E1E1E] border-gray-800"
-                : "bg-white border-gray-100"
-            }`}
+            className={`w-full pl-16 pr-8 py-4 rounded-2xl shadow-sm ${isDark ? "bg-[#1E1E1E] border-gray-800" : "bg-white border-gray-100"}`}
             placeholder="Search jobs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -633,11 +593,9 @@ export default function JobMatches() {
         </div>
 
         {/* LIST */}
-        <div className="space-y-5 md:space-y-6">
+        <div className="space-y-6">
           <p
-            className={`font-bold px-1 ${
-              isDark ? "text-gray-400" : "text-gray-500"
-            }`}
+            className={`font-bold px-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}
           >
             {loading ? "Loading..." : `${filteredJobs.length} jobs available`}
           </p>
@@ -645,7 +603,6 @@ export default function JobMatches() {
           {!loading &&
             filteredJobs.map((job) => {
               const reaction = getReaction(job.id);
-
               const isMatch =
                 userskils.length > 0 &&
                 userskils.some(

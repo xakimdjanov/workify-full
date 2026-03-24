@@ -31,7 +31,11 @@ function parseTalentSkills(raw) {
   if (Array.isArray(raw)) {
     return raw
       .map((x) => (typeof x === "string" ? x : x?.skill))
-      .map((s) => String(s || "").trim().toLowerCase())
+      .map((s) =>
+        String(s || "")
+          .trim()
+          .toLowerCase(),
+      )
       .filter(Boolean);
   }
 
@@ -43,7 +47,11 @@ function parseTalentSkills(raw) {
       if (Array.isArray(arr)) {
         return arr
           .map((o) => o?.skill)
-          .map((s) => String(s || "").trim().toLowerCase())
+          .map((s) =>
+            String(s || "")
+              .trim()
+              .toLowerCase(),
+          )
           .filter(Boolean);
       }
     } catch {
@@ -60,7 +68,10 @@ function parseTalentSkills(raw) {
 function normalizeSkills(skils) {
   if (!skils) return [];
   if (Array.isArray(skils))
-    return skils.map(String).map((s) => s.trim()).filter(Boolean);
+    return skils
+      .map(String)
+      .map((s) => s.trim())
+      .filter(Boolean);
   return String(skils)
     .split(",")
     .map((s) => s.trim())
@@ -68,7 +79,9 @@ function normalizeSkills(skils) {
 }
 
 function parseJobSkillsLower(raw) {
-  return normalizeSkills(raw).map((s) => s.toLowerCase()).filter(Boolean);
+  return normalizeSkills(raw)
+    .map((s) => s.toLowerCase())
+    .filter(Boolean);
 }
 
 function makeJobBlob(job) {
@@ -106,7 +119,9 @@ function safeUrl(url) {
   if (!url) return "";
   const s = String(url).trim();
   if (!s) return "";
-  return s.startsWith("http://") || s.startsWith("https://") ? s : `https://${s}`;
+  return s.startsWith("http://") || s.startsWith("https://")
+    ? s
+    : `https://${s}`;
 }
 
 function JobCard({
@@ -135,13 +150,12 @@ function JobCard({
             ? "border-blue-900/60 bg-blue-900/10"
             : "border-blue-200 bg-blue-50/30"
           : isDark
-          ? "bg-[#1E1E1E] border-gray-800"
-          : "bg-white border-gray-100"
+            ? "bg-[#1E1E1E] border-gray-800"
+            : "bg-white border-gray-100"
       }`}
     >
       {/* TOP */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5 mb-5">
-        {/* LEFT */}
         <div className="flex gap-4">
           <div className="shrink-0">
             <div
@@ -199,7 +213,6 @@ function JobCard({
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="flex flex-col md:items-end gap-2">
           <div
             className={`flex items-center gap-2 font-bold text-sm ${
@@ -230,7 +243,6 @@ function JobCard({
         </div>
       </div>
 
-      {/* Occupation + Salary */}
       <div className="flex items-center justify-between gap-4 mb-3">
         <h4
           className={`text-base md:text-lg font-extrabold ${
@@ -249,7 +261,6 @@ function JobCard({
         </div>
       </div>
 
-      {/* DESCRIPTION */}
       <p
         className={`text-sm leading-relaxed mb-5 line-clamp-2 ${
           isDark ? "text-gray-400" : "text-gray-600"
@@ -258,7 +269,6 @@ function JobCard({
         {job?.description || "No description provided..."}
       </p>
 
-      {/* SKILLS */}
       <div className="mb-6">
         <p
           className={`font-black text-sm mb-3 ${
@@ -294,13 +304,13 @@ function JobCard({
         </div>
       </div>
 
-      {/* ACTIONS */}
+      {/* ACTIONS - Tuzatilgan qism: 350px-480px oralig'ida chiroyli chiqishi uchun */}
       <div
         className={`flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-5 border-t ${
           isDark ? "border-gray-800" : "border-gray-100"
         }`}
       >
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 justify-center md:justify-start">
           <button
             onClick={onLike}
             className={`transition-all ${
@@ -332,7 +342,7 @@ function JobCard({
           <button
             onClick={onQuickApply}
             type="button"
-            className={`flex-1 sm:flex-none px-8 py-4 rounded-2xl font-black text-sm transition-all ${
+            className={`w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm transition-all ${
               isDark
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-[#163D5C] hover:bg-[#0f2d45]"
@@ -341,24 +351,27 @@ function JobCard({
             Quick apply
           </button>
 
-          <Link to={`/talent/job-details/${job.id}`}>
-          <button
-            type="button"
-            className={`flex-1 sm:flex-none px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
-              isDark
-                ? "border-gray-700 text-gray-200 hover:bg-gray-800"
-                : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
-            }`}
+          <Link
+            to={`/talent/job-details/${job.id}`}
+            className="w-full sm:w-auto"
           >
-            View job post
-          </button></Link>
+            <button
+              type="button"
+              className={`w-full px-8 py-4 border-2 rounded-2xl font-black text-sm transition-all ${
+                isDark
+                  ? "border-gray-700 text-gray-200 hover:bg-gray-800"
+                  : "border-[#163D5C] text-[#163D5C] hover:bg-gray-50"
+              }`}
+            >
+              View job post
+            </button>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-/** ✅ Applied card = JobMatches style + ACCEPTED extra company details */
 function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
   const job = app?.job;
   const company = job?.company;
@@ -381,9 +394,7 @@ function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
         isDark ? "bg-[#1E1E1E] border-gray-800" : "bg-white border-gray-100"
       }`}
     >
-      {/* TOP */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5 mb-5">
-        {/* LEFT */}
         <div className="flex gap-4">
           <div className="shrink-0">
             <div
@@ -429,10 +440,10 @@ function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
                   String(app?.status || "").toLowerCase() === "accepted"
                     ? "bg-green-500/10 text-green-500"
                     : String(app?.status || "").toLowerCase() === "rejected"
-                    ? "bg-red-500/10 text-red-500"
-                    : isDark
-                    ? "bg-blue-900/30 text-blue-400"
-                    : "bg-gray-100 text-gray-500"
+                      ? "bg-red-500/10 text-red-500"
+                      : isDark
+                        ? "bg-blue-900/30 text-blue-400"
+                        : "bg-gray-100 text-gray-500"
                 }`}
               >
                 {app?.status || "pending"}
@@ -441,7 +452,6 @@ function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
           </div>
         </div>
 
-        {/* RIGHT */}
         <div className="flex flex-col md:items-end gap-2">
           <div
             className={`flex items-center gap-2 font-bold text-sm ${
@@ -452,7 +462,9 @@ function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
             <span className="truncate max-w-[260px]">{locationText}</span>
           </div>
 
-          <div className={`text-xs font-bold ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+          <div
+            className={`text-xs font-bold ${isDark ? "text-gray-500" : "text-gray-400"}`}
+          >
             Applied {daysAgoEn(app?.createdAt)}
           </div>
 
@@ -468,40 +480,52 @@ function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
         </div>
       </div>
 
-      {/* Occupation + Salary */}
       <div className="flex items-center justify-between gap-4 mb-3">
-        <h4 className={`text-base md:text-lg font-extrabold ${isDark ? "text-gray-100" : "text-gray-900"}`}>
+        <h4
+          className={`text-base md:text-lg font-extrabold ${isDark ? "text-gray-100" : "text-gray-900"}`}
+        >
           {job?.occupation || "Job title"}
         </h4>
 
-        <div className={`text-xl md:text-2xl font-black ${isDark ? "text-blue-300" : "text-slate-900"}`}>
+        <div
+          className={`text-xl md:text-2xl font-black ${isDark ? "text-blue-300" : "text-slate-900"}`}
+        >
           ${salaryMin} - {salaryMax}
         </div>
       </div>
 
-      {/* ✅ ACCEPTED: show more company info */}
       {showCompanyDetails && (
         <div
           className={`rounded-2xl p-4 mb-5 border ${
-            isDark ? "border-gray-800 bg-[#161616]" : "border-gray-100 bg-[#F9FAFB]"
+            isDark
+              ? "border-gray-800 bg-[#161616]"
+              : "border-gray-100 bg-[#F9FAFB]"
           }`}
         >
-          <p className={`text-sm font-black mb-3 ${isDark ? "text-gray-200" : "text-gray-800"}`}>
+          <p
+            className={`text-sm font-black mb-3 ${isDark ? "text-gray-200" : "text-gray-800"}`}
+          >
             Company details
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <div
+              className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}
+            >
               <FaBuilding className="text-blue-400" />
               <span className="truncate">{industry || "—"}</span>
             </div>
 
-            <div className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <div
+              className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}
+            >
               <FaPhoneAlt className="text-blue-400" />
               <span className="truncate">{phone || "—"}</span>
             </div>
 
-            <div className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <div
+              className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}
+            >
               <FaGlobe className="text-blue-400" />
               {website ? (
                 <a
@@ -517,28 +541,42 @@ function AppliedCard({ app, isDark, onDelete, showCompanyDetails }) {
               )}
             </div>
 
-            <div className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <div
+              className={`flex items-center gap-2 text-sm font-bold ${isDark ? "text-gray-400" : "text-gray-600"}`}
+            >
               <FaMapMarkerAlt className="text-blue-400" />
-              <span className="truncate">{company?.city ? `${company.city}, ${company?.country || ""}` : "—"}</span>
+              <span className="truncate">
+                {company?.city
+                  ? `${company.city}, ${company?.country || ""}`
+                  : "—"}
+              </span>
             </div>
           </div>
 
           {about ? (
-            <p className={`text-sm mt-3 leading-relaxed ${isDark ? "text-gray-400" : "text-gray-600"} line-clamp-3`}>
+            <p
+              className={`text-sm mt-3 leading-relaxed ${isDark ? "text-gray-400" : "text-gray-600"} line-clamp-3`}
+            >
               {about}
             </p>
           ) : null}
         </div>
       )}
 
-      {/* Cover letter */}
-      <p className={`text-sm leading-relaxed mb-5 ${isDark ? "text-gray-400" : "text-gray-600"} line-clamp-2`}>
-        {app?.cover_letter ? `"${app.cover_letter}"` : `"No cover letter provided."`}
+      <p
+        className={`text-sm leading-relaxed mb-5 ${isDark ? "text-gray-400" : "text-gray-600"} line-clamp-2`}
+      >
+        {app?.cover_letter
+          ? `"${app.cover_letter}"`
+          : `"No cover letter provided."`}
       </p>
 
-      {/* Bottom actions */}
-      <div className={`pt-5 border-t flex items-center justify-between ${isDark ? "border-gray-800" : "border-gray-100"}`}>
-        <div className={`text-xs font-bold ${isDark ? "text-gray-500" : "text-gray-500"}`}>
+      <div
+        className={`pt-5 border-t flex items-center justify-between ${isDark ? "border-gray-800" : "border-gray-100"}`}
+      >
+        <div
+          className={`text-xs font-bold ${isDark ? "text-gray-500" : "text-gray-500"}`}
+        >
           Status: <span className="uppercase">{app?.status || "pending"}</span>
         </div>
 
@@ -575,18 +613,14 @@ export default function JobCenter() {
         fontWeight: 700,
       },
     }),
-    [isDark]
+    [isDark],
   );
 
-  const [activeTab, setActiveTab] = useState("jobs"); // "jobs" | "applied"
-
-  // jobs
+  const [activeTab, setActiveTab] = useState("jobs");
   const [jobs, setJobs] = useState([]);
   const [jobsLoading, setJobsLoading] = useState(true);
   const [jobSearch, setJobSearch] = useState("");
   const [userSkills, setUserSkills] = useState([]);
-
-  // applications
   const [applications, setApplications] = useState([]);
   const [appsLoading, setAppsLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
@@ -595,17 +629,14 @@ export default function JobCenter() {
   const fetchJobs = async () => {
     try {
       setJobsLoading(true);
-
       const token = localStorage.getItem("token");
       if (!token) {
         setUserSkills([]);
         setJobs([]);
         return;
       }
-
       const decoded = jwtDecode(token);
       const meRes = await talentApi.getById(decoded.id);
-
       const skills = parseTalentSkills(meRes.data?.skils);
       setUserSkills(skills);
 
@@ -624,8 +655,6 @@ export default function JobCenter() {
       }
     } catch {
       toast.error("Error fetching jobs.", toastOptions);
-      setJobs([]);
-      setUserSkills([]);
     } finally {
       setJobsLoading(false);
     }
@@ -638,43 +667,19 @@ export default function JobCenter() {
       const allApplications = Array.isArray(res.data)
         ? res.data
         : res.data?.data || [];
-
       const token = localStorage.getItem("token");
       if (!token) {
         setApplications([]);
         return;
       }
-
-      let userId = null;
-      try {
-        const decoded = jwtDecode(token);
-        userId =
-          decoded?.id ||
-          decoded?.userId ||
-          decoded?.talentId ||
-          decoded?.talent_id ||
-          decoded?.profileId;
-      } catch {
-        userId = null;
-      }
-
-      const myApps = userId
-        ? allApplications.filter(
-            (app) =>
-              app.talentId === userId ||
-              app.talent_id === userId ||
-              app.applicantId === userId ||
-              app.applicant_id === userId ||
-              app.userId === userId ||
-              app.user_id === userId ||
-              app.profileId === userId
-          )
-        : allApplications;
-
+      const decoded = jwtDecode(token);
+      const userId = decoded?.id || decoded?.userId;
+      const myApps = allApplications.filter(
+        (app) => app.talentId === userId || app.userId === userId,
+      );
       setApplications(myApps);
     } catch {
       toast.error("Error fetching applications.", toastOptions);
-      setApplications([]);
     } finally {
       setAppsLoading(false);
     }
@@ -688,16 +693,14 @@ export default function JobCenter() {
 
   const filteredJobs = useMemo(() => {
     const q = jobSearch.trim().toLowerCase();
-
     return (jobs || []).filter((job) => {
       const blob = makeJobBlob(job);
       const searchOk = q ? blob.includes(q) : true;
-
       if (!userSkills.length) return searchOk;
-
       const jobSkillsLower = parseJobSkillsLower(job?.skils);
-      const anyMatch = userSkills.some((s) => blob.includes(s) || jobSkillsLower.includes(s));
-
+      const anyMatch = userSkills.some(
+        (s) => blob.includes(s) || jobSkillsLower.includes(s),
+      );
       return searchOk && anyMatch;
     });
   }, [jobs, jobSearch, userSkills]);
@@ -710,7 +713,8 @@ export default function JobCenter() {
   }, [applications, filterStatus]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this application?")) return;
+    if (!window.confirm("Are you sure you want to delete this application?"))
+      return;
     try {
       await applicationApi.delete(id);
       toast.success("Application deleted successfully.", toastOptions);
@@ -724,9 +728,12 @@ export default function JobCenter() {
     (jobId) => {
       const current = getReaction(jobId);
       toggleLike(jobId);
-      toast(current === "like" ? "Removed from liked jobs" : "Added to liked jobs", toastOptions);
+      toast(
+        current === "like" ? "Removed from liked jobs" : "Added to liked jobs",
+        toastOptions,
+      );
     },
-    [getReaction, toggleLike, toastOptions]
+    [getReaction, toggleLike, toastOptions],
   );
 
   const handleDislike = useCallback(
@@ -734,16 +741,18 @@ export default function JobCenter() {
       const current = getReaction(jobId);
       toggleDislike(jobId);
       toast(
-        current === "dislike" ? "Removed from disliked jobs" : "Added to disliked jobs",
-        toastOptions
+        current === "dislike"
+          ? "Removed from disliked jobs"
+          : "Added to disliked jobs",
+        toastOptions,
       );
     },
-    [getReaction, toggleDislike, toastOptions]
+    [getReaction, toggleDislike, toastOptions],
   );
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-500 p-4 md:p-8 font-sans ${
+      className={`min-h-screen transition-colors duration-500 p-4 md:p-8 font-sans pb-24 ${
         isDark ? "bg-[#121212] text-white" : "bg-[#F9FAFB] text-[#1E293B]"
       }`}
     >
@@ -757,42 +766,27 @@ export default function JobCenter() {
           }`}
         >
           <div
-            className={`p-6 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4 ${
-              isDark ? "border-gray-800" : "border-gray-50"
-            }`}
+            className={`p-6 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4 ${isDark ? "border-gray-800" : "border-gray-50"}`}
           >
-            <h2 className={`text-xl md:text-2xl font-semibold ${isDark ? "text-blue-400" : "text-[#505151]"}`}>
+            <h2
+              className={`text-xl md:text-2xl font-semibold ${isDark ? "text-blue-400" : "text-[#505151]"}`}
+            >
               Job Alerts
             </h2>
 
-            <div className={`flex rounded-2xl p-1 gap-1 w-fit ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"}`}>
+            <div
+              className={`flex rounded-2xl p-1 gap-1 w-fit ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"}`}
+            >
               <button
                 onClick={() => setActiveTab("jobs")}
-                className={`px-6 py-2.5 rounded-xl font-bold transition-all ${
-                  activeTab === "jobs"
-                    ? isDark
-                      ? "bg-blue-600 text-white shadow-md"
-                      : "bg-white text-[#163D5C] shadow-sm"
-                    : isDark
-                    ? "text-gray-500 hover:text-gray-300"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
+                className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === "jobs" ? (isDark ? "bg-blue-600 text-white shadow-md" : "bg-white text-[#163D5C] shadow-sm") : isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"}`}
                 type="button"
               >
                 All Jobs
               </button>
-
               <button
                 onClick={() => setActiveTab("applied")}
-                className={`px-6 py-2.5 rounded-xl font-bold transition-all ${
-                  activeTab === "applied"
-                    ? isDark
-                      ? "bg-blue-600 text-white shadow-md"
-                      : "bg-white text-[#163D5C] shadow-sm"
-                    : isDark
-                    ? "text-gray-500 hover:text-gray-300"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
+                className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === "applied" ? (isDark ? "bg-blue-600 text-white shadow-md" : "bg-white text-[#163D5C] shadow-sm") : isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"}`}
                 type="button"
               >
                 I Applied
@@ -800,7 +794,6 @@ export default function JobCenter() {
             </div>
           </div>
 
-          {/* ALL JOBS SEARCH */}
           {activeTab === "jobs" && (
             <div className="p-6">
               <div className="relative">
@@ -809,54 +802,57 @@ export default function JobCenter() {
                   value={jobSearch}
                   onChange={(e) => setJobSearch(e.target.value)}
                   placeholder="Search jobs..."
-                  className={`w-full pl-12 pr-4 py-4 rounded-2xl font-bold text-sm ${
-                    isDark ? "bg-[#252525] text-white" : "bg-[#F9FAFB] text-slate-900"
-                  } border-none outline-none`}
+                  className={`w-full pl-12 pr-4 py-4 rounded-2xl font-bold text-sm ${isDark ? "bg-[#252525] text-white" : "bg-[#F9FAFB] text-slate-900"} border-none outline-none`}
                 />
               </div>
             </div>
           )}
 
-          {/* I APPLIED FILTER */}
           {activeTab === "applied" && (
             <>
-              <div className={`p-6 border-b flex justify-between items-center ${isDark ? "border-gray-800" : "border-gray-50"}`}>
-                <h3 className={`${isDark ? "text-gray-300" : "text-gray-700"} font-bold`}>
+              <div
+                className={`p-6 border-b flex justify-between items-center ${isDark ? "border-gray-800" : "border-gray-50"}`}
+              >
+                <h3
+                  className={`${isDark ? "text-gray-300" : "text-gray-700"} font-bold`}
+                >
                   Filter by Status
                 </h3>
-
                 <button
                   onClick={() => setIsFilterExpanded(!isFilterExpanded)}
-                  className={`p-2 rounded-full transition-all ${
-                    isDark ? "hover:bg-gray-800 text-gray-400" : "hover:bg-gray-50 text-gray-600"
-                  }`}
+                  className={`p-2 rounded-full transition-all ${isDark ? "hover:bg-gray-800 text-gray-400" : "hover:bg-gray-50 text-gray-600"}`}
                   type="button"
                 >
-                  <FaChevronDown className={`transition-transform duration-300 ${isFilterExpanded ? "rotate-180" : ""}`} />
+                  <FaChevronDown
+                    className={`transition-transform duration-300 ${isFilterExpanded ? "rotate-180" : ""}`}
+                  />
                 </button>
               </div>
-
-              <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isFilterExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+              <div
+                className={`transition-all duration-500 ease-in-out overflow-hidden ${isFilterExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
+              >
                 <div className="p-6">
-                  <div className={`flex flex-wrap rounded-2xl p-1 gap-1 w-fit ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"}`}>
+                  <div
+                    className={`flex flex-wrap rounded-2xl p-1 gap-1 w-fit ${isDark ? "bg-[#252525]" : "bg-[#F1F3F6]"}`}
+                  >
                     {[
                       { id: "all", label: "All", icon: <FaBriefcase /> },
                       { id: "pending", label: "Pending", icon: <FaClock /> },
-                      { id: "accepted", label: "Accepted", icon: <FaFileContract /> },
-                      { id: "rejected", label: "Rejected", icon: <FaUserTie /> },
+                      {
+                        id: "accepted",
+                        label: "Accepted",
+                        icon: <FaFileContract />,
+                      },
+                      {
+                        id: "rejected",
+                        label: "Rejected",
+                        icon: <FaUserTie />,
+                      },
                     ].map((tab) => (
                       <button
                         key={tab.id}
                         onClick={() => setFilterStatus(tab.id)}
-                        className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold transition-all ${
-                          filterStatus === tab.id
-                            ? isDark
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "bg-white text-[#163D5C] shadow-sm"
-                            : isDark
-                            ? "text-gray-500 hover:text-gray-300"
-                            : "text-gray-400 hover:text-gray-600"
-                        }`}
+                        className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold transition-all ${filterStatus === tab.id ? (isDark ? "bg-blue-600 text-white shadow-md" : "bg-white text-[#163D5C] shadow-sm") : isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"}`}
                         type="button"
                       >
                         {tab.icon} {tab.label}
@@ -870,90 +866,56 @@ export default function JobCenter() {
         </div>
 
         {/* CONTENT */}
-        {activeTab === "jobs" ? (
-          <div className="space-y-5 md:space-y-6">
-            <p className={`font-bold px-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-              {jobsLoading ? "Loading..." : `${filteredJobs.length} jobs available`}
-            </p>
-
-            {jobsLoading ? (
+        <div className="space-y-6">
+          {activeTab === "jobs" ? (
+            jobsLoading ? (
               <div className="flex justify-center py-20">
-                <div
-                  className={`w-10 h-10 border-4 rounded-full animate-spin ${
-                    isDark ? "border-gray-800 border-t-blue-500" : "border-gray-100 border-t-[#163D5C]"
-                  }`}
-                />
+                <div className="w-10 h-10 border-4 rounded-full animate-spin border-t-blue-500" />
               </div>
             ) : filteredJobs.length === 0 ? (
               <div
-                className={`text-center py-20 rounded-[32px] border border-dashed ${
-                  isDark ? "bg-[#1E1E1E] border-gray-700 text-gray-500" : "bg-white border-gray-200 text-gray-400"
-                }`}
+                className={`text-center py-20 rounded-[32px] border border-dashed ${isDark ? "bg-[#1E1E1E] border-gray-700 text-gray-500" : "bg-white border-gray-200 text-gray-400"}`}
               >
                 No jobs matched your skills.
               </div>
             ) : (
-              filteredJobs.map((job) => {
-                const blob = makeJobBlob(job);
-                const jobSkillsLower = parseJobSkillsLower(job?.skils);
-
-                const isMatch =
-                  userSkills.length > 0 &&
-                  userSkills.some((s) => blob.includes(s) || jobSkillsLower.includes(s));
-
-                const reaction = getReaction(job.id);
-
-                return (
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                    isDark={isDark}
-                    isMatch={isMatch}
-                    reaction={reaction}
-                    onLike={() => handleLike(job.id)}
-                    onDislike={() => handleDislike(job.id)}
-                    onQuickApply={() => navigate(`/talent/job-post/${job.id}`)}
-                    onViewJob={() => navigate(`/talent/job-details/${job.company_id}`)}
-                  />
-                );
-              })
-            )}
-          </div>
-        ) : (
-          <div className="space-y-5 md:space-y-6">
-            <p className={`font-bold px-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-              {appsLoading ? "Loading..." : `${filteredApps.length} applications found`}
-            </p>
-
-            {appsLoading ? (
-              <div className="flex justify-center py-20">
-                <div
-                  className={`w-10 h-10 border-4 rounded-full animate-spin ${
-                    isDark ? "border-gray-800 border-t-blue-500" : "border-gray-100 border-t-[#163D5C]"
-                  }`}
-                />
-              </div>
-            ) : filteredApps.length === 0 ? (
-              <div
-                className={`text-center py-20 rounded-[32px] border border-dashed ${
-                  isDark ? "bg-[#1E1E1E] border-gray-700 text-gray-500" : "bg-white border-gray-200 text-gray-400"
-                }`}
-              >
-                No applications found for the selected filter.
-              </div>
-            ) : (
-              filteredApps.map((app) => (
-                <AppliedCard
-                  key={app.id}
-                  app={app}
+              filteredJobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
                   isDark={isDark}
-                  onDelete={() => handleDelete(app.id)}
-                  showCompanyDetails={String(app?.status || "").toLowerCase() === "accepted"} // ✅ only Accepted
+                  isMatch={true}
+                  reaction={getReaction(job.id)}
+                  onLike={() => handleLike(job.id)}
+                  onDislike={() => handleDislike(job.id)}
+                  onQuickApply={() => navigate(`/talent/job-post/${job.id}`)}
                 />
               ))
-            )}
-          </div>
-        )}
+            )
+          ) : appsLoading ? (
+            <div className="flex justify-center py-20">
+              <div className="w-10 h-10 border-4 rounded-full animate-spin border-t-blue-500" />
+            </div>
+          ) : filteredApps.length === 0 ? (
+            <div
+              className={`text-center py-20 rounded-[32px] border border-dashed ${isDark ? "bg-[#1E1E1E] border-gray-700 text-gray-500" : "bg-white border-gray-200 text-gray-400"}`}
+            >
+              No applications found.
+            </div>
+          ) : (
+            filteredApps.map((app) => (
+              <AppliedCard
+                key={app.id}
+                app={app}
+                isDark={isDark}
+                onDelete={() => handleDelete(app.id)}
+                showCompanyDetails={
+                  String(app?.status).toLowerCase() === "accepted"
+                }
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
