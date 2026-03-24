@@ -234,22 +234,22 @@ const Contact = () => {
               {[
                 {
                   icon: <MdEmail />,
-                  text: "supportjobifu777@mail.ru",
-                  href: "mailto:jobifysupport777@mail.ru",
+                  text: "isomiddinxakimjanov@gmail.com",
+                  href: "mailto:isomiddinxakimjanov@gmail.com",
                 },
                 {
                   icon: <MdPhoneInTalk />,
-                  text: "+99894-498-6565",
-                  href: "tel:+998944986565",
+                  text: "+998-50-570-1920",
+                  href: "tel:+998505701920",
                 },
                 {
                   icon: <AiOutlineGlobal />,
-                  text: "www.SyncSoft.uz",
-                  href: " https://SyncSoft.uz",
+                  text: "www.jobify.uz",
+                  href: " https://jobify.uz",
                 },
                 {
                   icon: <MdLocationOn />,
-                  text: " A.Xodjayev Street, Korzinka near Namangan City",
+                  text: "Namangan shahar monomarkaz",
                   href: null,
                 },
               ].map((item, idx) => (

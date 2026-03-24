@@ -1,3 +1,5 @@
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { talentApi } from "../../services/api";
@@ -253,6 +255,7 @@ const ProfilePage = () => {
       setSaveLoading(false);
     }
   };
+  <ToastContainer />
 
   // Skill mantiqlari
   const addSkill = () =>
@@ -261,6 +264,20 @@ const ProfilePage = () => {
       skils: [...formData.skils, { skill: "", experience_years: "" }],
     });
   const updateSkill = (index, field, value) => {
+    if (field === "skill" && value !== "") {
+      const isExist = formData.skils.some(
+        (s, i) => s.skill.toLowerCase() === value.toLowerCase() && i !== index
+      );
+      if (isExist) {
+        toast.error("Bu skill allaqachon qo'shilgan!", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDark ? "dark" : "light",
+        });
+        return;
+      }
+    }
+
     const newskils = [...formData.skils];
     newskils[index][field] = value;
     setFormData({ ...formData, skils: newskils });
@@ -271,13 +288,28 @@ const ProfilePage = () => {
       skils: formData.skils.filter((_, i) => i !== index),
     });
 
-  // Til mantiqlari
+  //Language mantiqlari
+
   const addLanguage = () =>
     setFormData({
       ...formData,
       language: [...formData.language, { language: "", level: "Beginner" }],
     });
   const updateLanguage = (index, field, value) => {
+    if (field === "language" && value !== "") {
+      const isExist = formData.language.some(
+        (l, i) => l.language.toLowerCase() === value.toLowerCase() && i !== index
+      );
+      if (isExist) {
+        toast.error("Bu til allaqachon qo'shilgan!", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDark ? "dark" : "light",
+        });
+        return;
+      }
+    }
+
     const newLang = [...formData.language];
     newLang[index][field] = value;
     setFormData({ ...formData, language: newLang });
@@ -788,6 +820,11 @@ const ProfilePage = () => {
                               updateLanguage(i, "level", e.target.value)
                             }
                             className={`w-40 p-3 rounded-xl border outline-none transition ${isDark ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500" : "bg-gray-50 border-gray-200 focus:border-emerald-500"}`}
+                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
+                            className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
+                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                           >
                             {[
                               "Beginner",

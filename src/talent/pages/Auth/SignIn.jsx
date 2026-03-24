@@ -106,7 +106,7 @@ const SignIn = () => {
       <div className="flex flex-col min-h-screen">
         <Header />
 
-        <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4 font-['Mulish']">
+        <main className="flex-grow flex flex-col justify-center items-center bg-gray-100 py-10 px-4 min-h-[106vh] font-['Mulish']">
           <h2 className="text-3xl font-semibold text-center mb-6 text-gray-700">
             Login
           </h2>
