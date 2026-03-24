@@ -256,13 +256,13 @@ function Footer() {
 
                         <div className="flex md:order-2 gap-6 md:gap-[20px] text-white text-[24px] md:text-[24px]">
 
-                            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><BiLogoInstagramAlt /></a>
+                            <a href="https://www.instagram.com/xakimdjanov.7/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><BiLogoInstagramAlt /></a>
 
                             <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><FaFacebook /></a>
 
-                            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><FaYoutube /></a>
+                            <a href="https://www.youtube.com/@IsomiddinXakimjanov-r7p" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><FaYoutube /></a>
 
-                            <a href="https://t.me" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><FaTelegram /></a>
+                            <a href="https://t.me/jobifyUz" target="_blank" rel="noreferrer" className="hover:text-slate-300 transition-transform hover:-translate-y-1"><FaTelegram /></a>
 
                         </div>
 
