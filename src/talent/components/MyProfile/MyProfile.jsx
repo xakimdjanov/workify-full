@@ -1,5 +1,7 @@
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // useLocation qo'shildi
+import { useNavigate, useLocation } from "react-router-dom";
 import { talentApi } from "../../services/api";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -262,6 +264,7 @@ const ProfilePage = () => {
       setSaveLoading(false);
     }
   };
+  <ToastContainer />
 
   // Skill mantiqlari
   const addSkill = () =>
@@ -271,18 +274,27 @@ const ProfilePage = () => {
     });
 
   const updateSkill = (index, field, value) => {
+    if (field === "skill" && value !== "") {
+      const isExist = formData.skils.some(
+        (s, i) => s.skill.toLowerCase() === value.toLowerCase() && i !== index
+      );
+      if (isExist) {
+        toast.error("Bu skill allaqachon qo'shilgan!", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDark ? "dark" : "light",
+        });
+        return;
+      }
+    }
+
     const newskils = [...formData.skils];
     newskils[index][field] = value;
     setFormData({ ...formData, skils: newskils });
   };
 
-  const removeSkill = (index) =>
-    setFormData({
-      ...formData,
-      skils: formData.skils.filter((_, i) => i !== index),
-    });
+  //Language mantiqlari
 
-  // Til mantiqlari
   const addLanguage = () =>
     setFormData({
       ...formData,
@@ -290,6 +302,20 @@ const ProfilePage = () => {
     });
 
   const updateLanguage = (index, field, value) => {
+    if (field === "language" && value !== "") {
+      const isExist = formData.language.some(
+        (l, i) => l.language.toLowerCase() === value.toLowerCase() && i !== index
+      );
+      if (isExist) {
+        toast.error("Bu til allaqachon qo'shilgan!", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDark ? "dark" : "light",
+        });
+        return;
+      }
+    }
+
     const newLang = [...formData.language];
     newLang[index][field] = value;
     setFormData({ ...formData, language: newLang });
@@ -465,7 +491,7 @@ const ProfilePage = () => {
               </button>
 
               <div className="mb-10">
-                <h3 className="text-md font-bold mb-5">skils</h3>
+                <h3 className="text-md font-bold mb-5">Skills</h3>
                 <div className="flex flex-wrap gap-3">
                   {user?.skils?.length > 0 ? (
                     user.skils.map((s, i) => (
@@ -477,7 +503,7 @@ const ProfilePage = () => {
                       </span>
                     ))
                   ) : (
-                    <p className="text-gray-400 italic">No skils added</p>
+                    <p className="text-gray-400 italic">No skills added</p>
                   )}
                 </div>
               </div>
@@ -833,14 +859,11 @@ const ProfilePage = () => {
 
                           <select
                             value={l.level || "Beginner"}
-                            onChange={(e) =>
-                              updateLanguage(i, "level", e.target.value)
-                            }
-                            className={`w-40 p-3 rounded-xl border outline-none transition ${
-                              isDark
-                                ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
-                                : "bg-gray-50 border-gray-200 focus:border-emerald-500"
-                            }`}
+                            onChange={(e) => updateLanguage(i, "level", e.target.value)}
+                            className={`w-40 p-3 rounded-xl border outline-none transition ${isDark
+                              ? "bg-[#252525] border-gray-700 text-white focus:border-emerald-500"
+                              : "bg-gray-50 border-gray-200 focus:border-emerald-500"
+                              }`}
                           >
                             <option value="Beginner">Beginner</option>
                             <option value="Intermediate">Intermediate</option>
